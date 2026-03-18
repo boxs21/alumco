@@ -1,257 +1,114 @@
 "use client";
 import { useState } from "react";
 
-const COLORS = {
-  bg: "#0f1117",
-  surface: "#181c27",
-  surfaceHover: "#1e2336",
-  border: "#2a3050",
-  accent: "#22d3ee",
-  accentDim: "#0e7490",
-  accentGlow: "rgba(34,211,238,0.12)",
-  text: "#e8eaf6",
-  textMuted: "#6b7db3",
-  textDim: "#3d4f7a",
-  success: "#4ade80",
-  danger: "#f87171",
-  warning: "#fbbf24",
+const C = {
+  forest: "#1a5c4a", forestMid: "#2d7a62", forestLight: "#4aa87f",
+  sage: "#a8c5b5", sagePale: "#e4ede9", teal: "#0f7ea3", tealLight: "#e0f2f9",
+  ink: "#121d1a", inkMid: "#2e3f3a", inkSoft: "#5a6e68", muted: "#8fa49e",
+  border: "#d4e2dc", surface: "#f5f9f7", white: "#ffffff",
+  gold: "#c8943a", goldLight: "#fdf3e3", red: "#c0392b", redLight: "#fdecea",
 };
 
-const styles = {
-  app: {
-    fontFamily: "'DM Sans', 'Segoe UI', sans-serif",
-    background: COLORS.bg,
-    minHeight: "100vh",
-    color: COLORS.text,
-  },
-  loginWrap: {
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: `radial-gradient(ellipse at 60% 40%, rgba(34,211,238,0.07) 0%, ${COLORS.bg} 60%)`,
-  },
-  loginCard: {
-    background: COLORS.surface,
-    border: `1px solid ${COLORS.border}`,
-    borderRadius: 16,
-    padding: "48px 40px",
-    width: 380,
-    boxShadow: "0 24px 80px rgba(0,0,0,0.5)",
-  },
-  loginLogo: { display: "flex", alignItems: "center", gap: 10, marginBottom: 32 },
-  logoMark: {
-    width: 36, height: 36, background: COLORS.accent, borderRadius: 8,
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontWeight: 700, fontSize: 16, color: COLORS.bg,
-  },
-  logoText: { fontSize: 18, fontWeight: 600, color: COLORS.text },
-  loginTitle: { fontSize: 24, fontWeight: 700, marginBottom: 6 },
-  loginSub: { fontSize: 14, color: COLORS.textMuted, marginBottom: 32 },
-  label: { fontSize: 13, color: COLORS.textMuted, marginBottom: 6, display: "block" },
-  input: {
-    width: "100%", background: COLORS.bg, border: `1px solid ${COLORS.border}`,
-    borderRadius: 8, padding: "10px 14px", color: COLORS.text, fontSize: 14,
-    outline: "none", boxSizing: "border-box" as const, marginBottom: 16,
-  },
-  btnPrimary: {
-    width: "100%", background: COLORS.accent, color: COLORS.bg, border: "none",
-    borderRadius: 8, padding: "12px 0", fontWeight: 700, fontSize: 15,
-    cursor: "pointer", marginBottom: 12,
-  },
-  btnSecondary: {
-    width: "100%", background: "transparent", color: COLORS.accent,
-    border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: "11px 0",
-    fontWeight: 600, fontSize: 14, cursor: "pointer",
-  },
+const S = {
+  app: { fontFamily: "'DM Sans','Segoe UI',sans-serif", background: C.surface, minHeight: "100vh", color: C.ink, fontSize: 14, lineHeight: 1.6 },
   layout: { display: "flex", minHeight: "100vh" },
-  sidebar: {
-    width: 220, background: COLORS.surface, borderRight: `1px solid ${COLORS.border}`,
-    padding: "24px 0", flexShrink: 0, display: "flex", flexDirection: "column" as const,
-  },
-  sidebarLogo: {
-    display: "flex", alignItems: "center", gap: 10,
-    padding: "0 20px 28px", borderBottom: `1px solid ${COLORS.border}`, marginBottom: 16,
-  },
-  navItem: (active: boolean) => ({
-    display: "flex", alignItems: "center", gap: 10, padding: "10px 20px", fontSize: 14,
-    color: active ? COLORS.accent : COLORS.textMuted,
-    background: active ? COLORS.accentGlow : "transparent",
-    borderLeft: active ? `3px solid ${COLORS.accent}` : "3px solid transparent",
-    cursor: "pointer", fontWeight: active ? 600 : 400,
-  }),
-  main: { flex: 1, padding: "32px 36px", overflowY: "auto" as const },
-  pageTitle: { fontSize: 24, fontWeight: 700, marginBottom: 4 },
-  pageSub: { fontSize: 14, color: COLORS.textMuted, marginBottom: 32 },
-  statsGrid: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 32 },
-  statCard: {
-    background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-    borderRadius: 12, padding: "20px 20px",
-  },
-  statLabel: { fontSize: 12, color: COLORS.textMuted, marginBottom: 8, textTransform: "uppercase" as const, letterSpacing: "0.08em" },
-  statValue: { fontSize: 28, fontWeight: 700, marginBottom: 2 },
-  statDelta: { fontSize: 12, color: COLORS.success },
-  card: {
-    background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-    borderRadius: 12, marginBottom: 24, overflow: "hidden",
-  },
-  cardHeader: {
-    padding: "18px 24px", borderBottom: `1px solid ${COLORS.border}`,
-    display: "flex", justifyContent: "space-between", alignItems: "center",
-  },
-  cardTitle: { fontSize: 15, fontWeight: 600 },
+  sidebar: { width: 240, minHeight: "100vh", background: C.ink, display: "flex", flexDirection: "column" as const, flexShrink: 0 },
+  sidebarBrand: { padding: "24px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center", gap: 12 },
+  brandIcon: { width: 38, height: 38, background: `linear-gradient(135deg,${C.forestLight},${C.teal})`, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 },
+  sidebarUser: { padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center", gap: 10 },
+  avatar: (admin: boolean) => ({ width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, color: C.white, flexShrink: 0, background: admin ? `linear-gradient(135deg,${C.forestLight},${C.teal})` : `linear-gradient(135deg,${C.gold},#e2aa56)` }),
+  navItem: (active: boolean) => ({ display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 8, color: active ? C.forestLight : "rgba(255,255,255,0.55)", background: active ? "rgba(74,168,127,0.15)" : "transparent", cursor: "pointer", fontSize: 13.5, fontWeight: active ? 500 : 400, marginBottom: 1 }),
+  main: { flex: 1, display: "flex", flexDirection: "column" as const },
+  topbar: { background: C.white, borderBottom: `1px solid ${C.border}`, padding: "0 28px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky" as const, top: 0, zIndex: 50 },
+  pageContent: { padding: 28, flex: 1 },
+  card: { background: C.white, borderRadius: 12, border: `1.5px solid ${C.border}`, boxShadow: "0 2px 12px rgba(26,92,74,0.09)", marginBottom: 20 },
+  cardHeader: { padding: "18px 22px 14px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" },
+  cardBody: { padding: 22 },
+  statsGrid: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16, marginBottom: 24 },
+  statCard: { background: C.white, border: `1.5px solid ${C.border}`, borderRadius: 12, padding: "20px 22px", boxShadow: "0 2px 12px rgba(26,92,74,0.09)" },
+  btnPrimary: { background: C.forest, color: C.white, border: "none", borderRadius: 7, padding: "11px 20px", fontWeight: 500, fontSize: 14, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 },
+  btnSecondary: { background: C.sagePale, color: C.forest, border: `1.5px solid ${C.border}`, borderRadius: 7, padding: "10px 18px", fontWeight: 500, fontSize: 14, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 },
+  btnGhost: { background: "transparent", color: C.inkSoft, border: "none", borderRadius: 7, padding: "7px 14px", fontSize: 13, cursor: "pointer", fontFamily: "inherit" },
   table: { width: "100%", borderCollapse: "collapse" as const },
-  th: {
-    padding: "12px 24px", textAlign: "left" as const, fontSize: 11, color: COLORS.textDim,
-    textTransform: "uppercase" as const, letterSpacing: "0.1em",
-    borderBottom: `1px solid ${COLORS.border}`, background: "rgba(255,255,255,0.02)",
+  th: { padding: "10px 14px", textAlign: "left" as const, fontSize: 11, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" as const, color: C.muted, borderBottom: `1.5px solid ${C.border}`, background: C.surface },
+  td: { padding: "13px 14px", borderBottom: `1px solid ${C.sagePale}`, fontSize: 13, verticalAlign: "middle" as const },
+  badge: (type: string) => {
+    const m: Record<string, [string, string]> = { green: ["rgba(74,168,127,0.12)", C.forestMid], teal: [C.tealLight, C.teal], gold: [C.goldLight, C.gold], gray: [C.sagePale, C.muted], red: [C.redLight, C.red] };
+    const [bg, color] = m[type] || m.gray;
+    return { display: "inline-flex", alignItems: "center", padding: "3px 9px", borderRadius: 20, fontSize: 11, fontWeight: 500, background: bg, color };
   },
-  td: { padding: "14px 24px", fontSize: 14, borderBottom: `1px solid ${COLORS.border}` },
-  badge: (color: string) => ({
-    display: "inline-block", padding: "3px 10px", borderRadius: 20, fontSize: 12, fontWeight: 600,
-    background: color === "green" ? "rgba(74,222,128,0.12)" : color === "yellow" ? "rgba(251,191,36,0.12)" : "rgba(99,102,241,0.12)",
-    color: color === "green" ? COLORS.success : color === "yellow" ? COLORS.warning : "#818cf8",
-  }),
-  btnSmall: {
-    background: COLORS.accentGlow, color: COLORS.accent, border: `1px solid ${COLORS.accentDim}`,
-    borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer",
-  },
-  btnGhost: {
-    background: "transparent", color: COLORS.textMuted, border: `1px solid ${COLORS.border}`,
-    borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer",
-  },
-  trainingHero: {
-    background: `linear-gradient(135deg, ${COLORS.surface} 0%, #1a2040 100%)`,
-    border: `1px solid ${COLORS.border}`, borderRadius: 16, padding: "32px", marginBottom: 24,
-  },
-  progressBar: () => ({
-    height: 6, background: COLORS.border, borderRadius: 99,
-    overflow: "hidden", position: "relative" as const,
-  }),
-  progressFill: (pct: number) => ({
-    position: "absolute" as const, left: 0, top: 0, bottom: 0,
-    width: `${pct}%`, background: COLORS.accent, borderRadius: 99,
-  }),
-  fileList: { display: "flex", flexDirection: "column" as const, gap: 12, marginBottom: 24 },
-  fileItem: (active: boolean) => ({
-    display: "flex", alignItems: "center", gap: 16, padding: "16px 20px",
-    background: active ? COLORS.accentGlow : COLORS.surface,
-    border: `1px solid ${active ? COLORS.accentDim : COLORS.border}`,
-    borderRadius: 10, cursor: "pointer",
-  }),
-  fileIcon: (type: string) => ({
-    width: 40, height: 40, borderRadius: 8,
-    background: type === "pdf" ? "rgba(248,113,113,0.15)" : type === "video" ? "rgba(251,191,36,0.15)" : "rgba(99,102,241,0.15)",
-    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0,
-  }),
-  quizWrap: { maxWidth: 640, margin: "0 auto" },
-  questionCard: {
-    background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-    borderRadius: 14, padding: "32px", marginBottom: 20,
-  },
-  optionItem: (selected: boolean) => ({
-    display: "flex", alignItems: "center", gap: 14, padding: "14px 18px",
-    background: selected ? COLORS.accentGlow : "transparent",
-    border: `1px solid ${selected ? COLORS.accentDim : COLORS.border}`,
-    borderRadius: 8, cursor: "pointer", marginBottom: 10, transition: "all 0.15s",
-  }),
-  optionDot: (selected: boolean) => ({
-    width: 18, height: 18, borderRadius: "50%",
-    border: `2px solid ${selected ? COLORS.accent : COLORS.textDim}`,
-    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-  }),
-  optionDotFill: { width: 8, height: 8, borderRadius: "50%", background: COLORS.accent },
-  resultCard: {
-    background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-    borderRadius: 16, padding: "48px", textAlign: "center" as const,
-    maxWidth: 480, margin: "0 auto",
-  },
-  resultCircle: (passed: boolean) => ({
-    width: 100, height: 100, borderRadius: "50%",
-    background: passed ? "rgba(74,222,128,0.12)" : "rgba(248,113,113,0.12)",
-    border: `3px solid ${passed ? COLORS.success : COLORS.danger}`,
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: 36, margin: "0 auto 24px",
-  }),
-  portalGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 },
-  portalCard: {
-    background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-    borderRadius: 12, padding: "24px", cursor: "pointer",
-  },
-  portalCardTop: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
+  progressWrap: { height: 6, background: C.sagePale, borderRadius: 10, overflow: "hidden" },
+  progressFill: (pct: number, color?: string) => ({ height: "100%", borderRadius: 10, width: `${pct}%`, background: color || `linear-gradient(90deg,${C.forestMid},${C.forestLight})` }),
+  loginWrap: { minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(140deg,#0d3a2e 0%,${C.forest} 50%,${C.teal} 100%)` },
+  loginCard: { background: C.white, borderRadius: 20, padding: "52px 48px", width: 420, boxShadow: "0 32px 80px rgba(0,0,0,0.25)" },
+  input: { width: "100%", padding: "12px 16px", border: `1.5px solid ${C.border}`, borderRadius: 7, fontFamily: "inherit", fontSize: 14, color: C.ink, background: C.surface, outline: "none", boxSizing: "border-box" as const, marginBottom: 16 },
+  label: { display: "block", fontSize: 12, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" as const, color: C.inkSoft, marginBottom: 7 },
+  courseCard: { background: C.white, border: `1.5px solid ${C.border}`, borderRadius: 12, overflow: "hidden", cursor: "pointer" },
+  optionItem: (sel: boolean) => ({ display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", borderRadius: 8, marginBottom: 8, cursor: "pointer", border: `1.5px solid ${sel ? C.forestMid : C.border}`, background: sel ? "rgba(45,122,98,0.06)" : C.white, fontSize: 13.5, color: sel ? C.forest : C.ink }),
+  resultBanner: (passed: boolean) => ({ textAlign: "center" as const, padding: 36, borderRadius: 12, marginBottom: 20, background: passed ? "rgba(74,168,127,0.1)" : C.redLight, border: `1.5px solid ${passed ? "rgba(74,168,127,0.25)" : "rgba(192,57,43,0.15)"}` }),
 };
 
-// ─── TYPES ───
 interface Cap { id: number; titulo: string; area: string; estado: string; colaboradores: number; completados: number; }
 
-// ─── DATA MOCK ───
 const capacitaciones: Cap[] = [
   { id: 1, titulo: "Protocolo de Higiene Personal", area: "Cuidado", estado: "Publicado", colaboradores: 12, completados: 8 },
   { id: 2, titulo: "Manejo de Emergencias Médicas", area: "Enfermería", estado: "Publicado", colaboradores: 6, completados: 2 },
   { id: 3, titulo: "Normativa SENAMA 2025", area: "Todos", estado: "Borrador", colaboradores: 0, completados: 0 },
 ];
-
 const colaboradores = [
-  { nombre: "María González", area: "Cuidado", estado: "Completado", nota: 85 },
-  { nombre: "Juan Pérez", area: "Enfermería", estado: "Pendiente", nota: null },
-  { nombre: "Ana Torres", area: "Cuidado", estado: "Completado", nota: 72 },
-  { nombre: "Carlos Ruiz", area: "Enfermería", estado: "En progreso", nota: null },
+  { nombre: "María González", area: "Cuidado", estado: "Completado", nota: 85 as number | null },
+  { nombre: "Juan Pérez", area: "Enfermería", estado: "Pendiente", nota: null as number | null },
+  { nombre: "Ana Torres", area: "Cuidado", estado: "Completado", nota: 72 as number | null },
+  { nombre: "Carlos Ruiz", area: "Enfermería", estado: "En progreso", nota: null as number | null },
 ];
-
 const archivos = [
   { nombre: "Manual de higiene personal.pdf", tipo: "pdf", duracion: "15 min lectura" },
   { nombre: "Video explicativo — técnicas básicas", tipo: "video", duracion: "8 min" },
   { nombre: "Presentación: normativa vigente", tipo: "ppt", duracion: "5 min lectura" },
 ];
-
 const preguntas = [
-  {
-    texto: "¿Con qué frecuencia se debe realizar el lavado de manos durante el turno?",
-    opciones: ["Una vez al iniciar el turno", "Antes y después de cada atención directa al residente", "Solo cuando las manos están visiblemente sucias", "Cada 2 horas independientemente de la actividad"],
-    correcta: 1,
-  },
-  {
-    texto: "¿Cuál es el tiempo mínimo recomendado para el lavado de manos con agua y jabón?",
-    opciones: ["10 segundos", "20 segundos", "40 segundos", "60 segundos"],
-    correcta: 1,
-  },
-  {
-    texto: "En caso de contacto con fluidos corporales, ¿qué debe hacer primero?",
-    opciones: ["Continuar la atención y lavarse al terminar", "Lavarse las manos inmediatamente y notificar al supervisor", "Usar gel antibacterial y continuar", "Esperar al término del turno para reportar"],
-    correcta: 1,
-  },
+  { texto: "¿Con qué frecuencia se debe realizar el lavado de manos durante el turno?", opciones: ["Una vez al iniciar el turno", "Antes y después de cada atención directa al residente", "Solo cuando las manos están visiblemente sucias", "Cada 2 horas independientemente de la actividad"], correcta: 1 },
+  { texto: "¿Cuál es el tiempo mínimo recomendado para el lavado de manos con agua y jabón?", opciones: ["10 segundos", "20 segundos", "40 segundos", "60 segundos"], correcta: 1 },
+  { texto: "En caso de contacto con fluidos corporales, ¿qué debe hacer primero?", opciones: ["Continuar la atención y lavarse al terminar", "Lavarse las manos inmediatamente y notificar al supervisor", "Usar gel antibacterial y continuar", "Esperar al término del turno para reportar"], correcta: 1 },
 ];
 
-// ─── COMPONENTS ───
 function Sidebar({ rol, active, onNav, onLogout }: { rol: string | null; active: string; onNav: (id: string) => void; onLogout: () => void }) {
-  const adminNav = [
-    { id: "dashboard", icon: "⊞", label: "Dashboard" },
-    { id: "capacitaciones", icon: "📚", label: "Capacitaciones" },
-    { id: "colaboradores", icon: "👥", label: "Colaboradores" },
-  ];
-  const portalNav = [
-    { id: "portal", icon: "⊞", label: "Mis capacitaciones" },
-    { id: "historial", icon: "📋", label: "Mi historial" },
-  ];
-  const nav = rol === "admin" ? adminNav : portalNav;
+  const isAdmin = rol === "admin";
+  const nav = isAdmin
+    ? [{ section: "Principal", items: [{ id: "dashboard", icon: "🏠", label: "Inicio" }, { id: "capacitaciones", icon: "📚", label: "Capacitaciones" }, { id: "colaboradores", icon: "👥", label: "Colaboradores" }] }]
+    : [{ section: "Mi espacio", items: [{ id: "portal", icon: "🏠", label: "Inicio" }, { id: "miscursos", icon: "📖", label: "Mis capacitaciones" }, { id: "historial", icon: "📜", label: "Mi historial" }] }];
   return (
-    <div style={styles.sidebar}>
-      <div style={styles.sidebarLogo}>
-        <div style={styles.logoMark}>A</div>
-        <span style={styles.logoText}>ALUMCO</span>
+    <div style={S.sidebar}>
+      <div style={S.sidebarBrand}>
+        <div style={S.brandIcon}>🌱</div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <strong style={{ fontFamily: "Georgia,serif", fontSize: 16, color: C.white, lineHeight: 1.1 }}>ALUMCO</strong>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: "0.05em", textTransform: "uppercase" }}>Capacitación</span>
+        </div>
       </div>
-      <div style={{ flex: 1 }}>
-        {nav.map((item) => (
-          <div key={item.id} style={styles.navItem(active === item.id)} onClick={() => onNav(item.id)}>
-            <span>{item.icon}</span>
-            <span>{item.label}</span>
+      <div style={S.sidebarUser}>
+        <div style={S.avatar(isAdmin)}>{isAdmin ? "AB" : "MG"}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <strong style={{ display: "block", fontSize: 13, color: C.white, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{isAdmin ? "Ana Beltrán" : "María González"}</strong>
+          <span style={{ fontSize: 10, padding: "1px 7px", borderRadius: 20, fontWeight: 600, background: isAdmin ? "rgba(74,168,127,0.2)" : "rgba(200,148,58,0.2)", color: isAdmin ? C.forestLight : "#e2aa56" }}>{isAdmin ? "Admin" : "Colaboradora"}</span>
+        </div>
+      </div>
+      <nav style={{ flex: 1, padding: "12px 0", overflowY: "auto" as const }}>
+        {nav.map(section => (
+          <div key={section.section} style={{ padding: "0 12px", marginBottom: 4 }}>
+            <div style={{ fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", padding: "8px 10px 4px" }}>{section.section}</div>
+            {section.items.map(item => (
+              <div key={item.id} style={S.navItem(active === item.id)} onClick={() => onNav(item.id)}>
+                <span style={{ fontSize: 16, width: 20, textAlign: "center", flexShrink: 0 }}>{item.icon}</span>
+                {item.label}
+              </div>
+            ))}
           </div>
         ))}
-      </div>
-      <div style={{ padding: "0 16px" }}>
-        <div style={{ ...styles.navItem(false), borderTop: `1px solid ${COLORS.border}`, paddingTop: 16 }} onClick={onLogout}>
-          <span>↩</span>
-          <span>Cerrar sesión</span>
+      </nav>
+      <div style={{ padding: 12, borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={S.navItem(false)} onClick={onLogout}>
+          <span style={{ fontSize: 16 }}>🚪</span> Cerrar sesión
         </div>
       </div>
     </div>
@@ -259,38 +116,39 @@ function Sidebar({ rol, active, onNav, onLogout }: { rol: string | null; active:
 }
 
 function LoginPage({ onLogin }: { onLogin: (rol: string) => void }) {
-  const [hover, setHover] = useState<string | null>(null);
+  const [role, setRole] = useState("admin");
   return (
-    <div style={styles.loginWrap}>
-      <div style={styles.loginCard}>
-        <div style={styles.loginLogo}>
-          <div style={styles.logoMark}>A</div>
-          <span style={styles.logoText}>ALUMCO Capacitación</span>
+    <div style={S.loginWrap}>
+      <div style={S.loginCard}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 36 }}>
+          <div style={{ width: 48, height: 48, background: `linear-gradient(135deg,${C.forest},${C.forestLight})`, borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>🌱</div>
+          <div>
+            <strong style={{ fontFamily: "Georgia,serif", fontSize: 22, color: C.ink, display: "block", lineHeight: 1 }}>ALUMCO</strong>
+            <span style={{ fontSize: 11, color: C.muted, letterSpacing: "0.04em", textTransform: "uppercase" }}>Plataforma de Capacitación</span>
+          </div>
         </div>
-        <div style={styles.loginTitle}>Iniciar sesión</div>
-        <div style={styles.loginSub}>Sistema de Gestión del Aprendizaje</div>
-        <label style={styles.label}>Correo electrónico</label>
-        <input style={styles.input} defaultValue="admin@alumco.cl" placeholder="correo@alumco.cl" />
-        <label style={styles.label}>Contraseña</label>
-        <input style={styles.input} type="password" defaultValue="••••••••" />
-        <button
-          style={{ ...styles.btnPrimary, opacity: hover === "admin" ? 0.88 : 1 }}
-          onMouseEnter={() => setHover("admin")}
-          onMouseLeave={() => setHover(null)}
-          onClick={() => onLogin("admin")}
-        >
-          Entrar como Administrador
+        <h2 style={{ fontFamily: "Georgia,serif", fontSize: 26, marginBottom: 6 }}>Bienvenido</h2>
+        <p style={{ color: C.inkSoft, fontSize: 13, marginBottom: 24 }}>Ingresa a tu cuenta para continuar</p>
+        <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+          {[["admin", "👤 Administrador"], ["colaborador", "📚 Colaborador"]].map(([r, label]) => (
+            <button key={r} onClick={() => setRole(r)} style={{ flex: 1, padding: 10, borderRadius: 8, border: `1.5px solid ${role === r ? C.forestMid : C.border}`, background: role === r ? "rgba(45,122,98,0.07)" : C.surface, cursor: "pointer", fontFamily: "inherit", fontSize: 13, fontWeight: 500, color: role === r ? C.forest : C.inkSoft }}>
+              {label}
+            </button>
+          ))}
+        </div>
+        <label style={S.label}>Correo electrónico</label>
+        <input style={S.input} defaultValue={role === "admin" ? "admin@alumco.cl" : "colaborador@alumco.cl"} />
+        <label style={S.label}>Contraseña</label>
+        <input style={S.input} type="password" defaultValue="••••••••" />
+        <button style={{ ...S.btnPrimary, width: "100%", padding: "13px 0", fontSize: 15, marginTop: 6 }} onClick={() => onLogin(role)}>
+          Iniciar sesión
         </button>
-        <button
-          style={{ ...styles.btnSecondary, opacity: hover === "colab" ? 0.8 : 1 }}
-          onMouseEnter={() => setHover("colab")}
-          onMouseLeave={() => setHover(null)}
-          onClick={() => onLogin("colaborador")}
-        >
-          Entrar como Colaborador
-        </button>
-        <div style={{ marginTop: 20, fontSize: 12, color: COLORS.textDim, textAlign: "center" }}>
-          Demo MVP — ONG ALUMCO · 2026
+        <div style={{ marginTop: 20, paddingTop: 20, borderTop: `1px solid ${C.border}` }}>
+          <p style={{ fontSize: 11, color: C.muted, textAlign: "center", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.04em" }}>Acceso rápido de demostración</p>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button style={{ ...S.btnSecondary, flex: 1, fontSize: 12 }} onClick={() => onLogin("admin")}>🔧 Admin</button>
+            <button style={{ ...S.btnSecondary, flex: 1, fontSize: 12 }} onClick={() => onLogin("colaborador")}>📖 Colaborador</button>
+          </div>
         </div>
       </div>
     </div>
@@ -299,115 +157,113 @@ function LoginPage({ onLogin }: { onLogin: (rol: string) => void }) {
 
 function Dashboard({ onNav }: { onNav: (id: string) => void }) {
   return (
-    <div style={styles.main}>
-      <div style={styles.pageTitle}>Dashboard</div>
-      <div style={styles.pageSub}>Resumen general de capacitaciones — Marzo 2026</div>
-      <div style={styles.statsGrid}>
+    <div style={S.pageContent}>
+      <div style={S.statsGrid}>
         {[
-          { label: "Colaboradores", value: "18", delta: "+2 este mes", color: COLORS.accent },
-          { label: "Capacitaciones activas", value: "3", delta: "1 en borrador", color: COLORS.warning },
-          { label: "Completadas (mes)", value: "10", delta: "↑ 25% vs febrero", color: COLORS.success },
-          { label: "Certificados emitidos", value: "10", delta: "Descargables", color: "#818cf8" },
-        ].map((s) => (
-          <div key={s.label} style={styles.statCard}>
-            <div style={styles.statLabel}>{s.label}</div>
-            <div style={{ ...styles.statValue, color: s.color }}>{s.value}</div>
-            <div style={{ ...styles.statDelta, color: s.color }}>{s.delta}</div>
+          { label: "Colaboradores", value: "18", icon: "👥", bg: "rgba(74,168,127,0.12)" },
+          { label: "Capacitaciones activas", value: "3", icon: "📚", bg: "rgba(15,126,163,0.12)" },
+          { label: "Completadas (mes)", value: "10", icon: "✅", bg: "rgba(200,148,58,0.12)" },
+          { label: "Certificados emitidos", value: "10", icon: "🎓", bg: "rgba(168,197,181,0.25)" },
+        ].map(s => (
+          <div key={s.label} style={S.statCard}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, background: s.bg, marginBottom: 10 }}>{s.icon}</div>
+            <div style={{ fontFamily: "Georgia,serif", fontSize: 32, fontWeight: 700, color: C.ink, lineHeight: 1 }}>{s.value}</div>
+            <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>{s.label}</div>
           </div>
         ))}
       </div>
-      <div style={styles.card}>
-        <div style={styles.cardHeader}>
-          <span style={styles.cardTitle}>Capacitaciones recientes</span>
-          <button style={styles.btnSmall} onClick={() => onNav("capacitaciones")}>Ver todas</button>
-        </div>
-        <table style={styles.table}>
-          <thead>
-            <tr>{["Título", "Área", "Estado", "Progreso", ""].map((h) => <th key={h} style={styles.th}>{h}</th>)}</tr>
-          </thead>
-          <tbody>
-            {capacitaciones.map((c) => (
-              <tr key={c.id}>
-                <td style={styles.td}>{c.titulo}</td>
-                <td style={styles.td}><span style={{ color: COLORS.textMuted }}>{c.area}</span></td>
-                <td style={styles.td}><span style={styles.badge(c.estado === "Publicado" ? "green" : "yellow")}>{c.estado}</span></td>
-                <td style={styles.td}>
-                  {c.colaboradores > 0 ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div style={{ ...styles.progressBar(), width: 80 }}>
-                        <div style={styles.progressFill(Math.round((c.completados / c.colaboradores) * 100))} />
-                      </div>
-                      <span style={{ fontSize: 12, color: COLORS.textMuted }}>{c.completados}/{c.colaboradores}</span>
-                    </div>
-                  ) : <span style={{ color: COLORS.textDim, fontSize: 13 }}>Sin asignar</span>}
-                </td>
-                <td style={styles.td}><button style={styles.btnGhost}>Ver detalle</button></td>
-              </tr>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+        <div style={S.card}>
+          <div style={S.cardHeader}>
+            <span style={{ fontFamily: "Georgia,serif", fontSize: 15 }}>Progreso por área</span>
+            <span style={S.badge("green")}>Este mes</span>
+          </div>
+          <div style={S.cardBody}>
+            {[["Cuidado", 80], ["Enfermería", 55], ["Administración", 90], ["General", 70]].map(([area, pct]) => (
+              <div key={area as string} style={{ marginBottom: 14 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4, fontSize: 13 }}>
+                  <span>{area}</span><span style={{ fontWeight: 600, color: C.inkSoft }}>{pct}%</span>
+                </div>
+                <div style={S.progressWrap}><div style={S.progressFill(pct as number)} /></div>
+              </div>
             ))}
-          </tbody>
-        </table>
-      </div>
-      <div style={styles.card}>
-        <div style={styles.cardHeader}>
-          <span style={styles.cardTitle}>Colaboradores — estado reciente</span>
-          <button style={styles.btnSmall} onClick={() => onNav("colaboradores")}>Ver todos</button>
+          </div>
         </div>
-        <table style={styles.table}>
-          <thead>
-            <tr>{["Nombre", "Área", "Estado", "Última nota"].map((h) => <th key={h} style={styles.th}>{h}</th>)}</tr>
-          </thead>
-          <tbody>
-            {colaboradores.map((c) => (
-              <tr key={c.nombre}>
-                <td style={styles.td}>{c.nombre}</td>
-                <td style={styles.td}><span style={{ color: COLORS.textMuted }}>{c.area}</span></td>
-                <td style={styles.td}>
-                  <span style={styles.badge(c.estado === "Completado" ? "green" : c.estado === "En progreso" ? "purple" : "yellow")}>{c.estado}</span>
-                </td>
-                <td style={styles.td}>
-                  {c.nota ? <span style={{ color: c.nota >= 60 ? COLORS.success : COLORS.danger, fontWeight: 600 }}>{c.nota}%</span>
-                    : <span style={{ color: COLORS.textDim }}>—</span>}
-                </td>
-              </tr>
+        <div style={S.card}>
+          <div style={S.cardHeader}>
+            <span style={{ fontFamily: "Georgia,serif", fontSize: 15 }}>Actividad reciente</span>
+            <button style={S.btnGhost} onClick={() => onNav("colaboradores")}>Ver todo →</button>
+          </div>
+          <div style={S.cardBody}>
+            {[
+              { dot: C.forestLight, action: "María González completó", curso: "Protocolo de Higiene Personal", time: "hace 10 min" },
+              { dot: C.teal, action: "Ana Torres obtuvo certificado", curso: "Protocolo de Higiene Personal", time: "hace 1 hr" },
+              { dot: C.gold, action: "Juan Pérez inició", curso: "Manejo de Emergencias Médicas", time: "hace 2 hr" },
+            ].map((a, i, arr) => (
+              <div key={i} style={{ display: "flex", gap: 12, padding: "10px 0", borderBottom: i < arr.length - 1 ? `1px solid ${C.sagePale}` : "none" }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: a.dot, marginTop: 5, flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <strong style={{ fontSize: 13 }}>{a.action}</strong>
+                  <p style={{ fontSize: 12, color: C.muted }}>{a.curso}</p>
+                </div>
+                <span style={{ fontSize: 11, color: C.muted, whiteSpace: "nowrap" }}>{a.time}</span>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function CapacitacionesPage({ onVerCapacitacion }: { onVerCapacitacion: (c: Cap) => void }) {
+function CapacitacionesPage({ onVerCap }: { onVerCap: (c: Cap) => void }) {
+  const meta = [{ color: C.sagePale, emoji: "🧼" }, { color: C.tealLight, emoji: "🚑" }, { color: C.goldLight, emoji: "📋" }];
   return (
-    <div style={styles.main}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
-        <div>
-          <div style={styles.pageTitle}>Capacitaciones</div>
-          <div style={styles.pageSub}>Gestiona y publica módulos de capacitación</div>
-        </div>
-        <button style={{ ...styles.btnSmall, fontSize: 14, padding: "8px 18px" }}>+ Nueva capacitación</button>
+    <div style={S.pageContent}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+        {capacitaciones.map((c, i) => (
+          <div key={c.id} style={S.courseCard} onClick={() => onVerCap(c)}>
+            <div style={{ height: 100, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, background: meta[i].color }}>{meta[i].emoji}</div>
+            <div style={{ padding: 16 }}>
+              <h4 style={{ fontFamily: "Georgia,serif", fontSize: 14, color: C.ink, marginBottom: 6, lineHeight: 1.3 }}>{c.titulo}</h4>
+              <p style={{ fontSize: 12, color: C.muted }}>Área: {c.area}</p>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", margin: "10px 0" }}>
+                <span style={S.badge("teal")}>PDF + Evaluación</span>
+                <span style={S.badge(c.estado === "Publicado" ? "green" : "gold")}>{c.estado}</span>
+              </div>
+              {c.colaboradores > 0 && (
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: C.muted, marginBottom: 4 }}>
+                    <span>Cumplimiento</span><span>{Math.round((c.completados / c.colaboradores) * 100)}%</span>
+                  </div>
+                  <div style={S.progressWrap}><div style={S.progressFill(Math.round((c.completados / c.colaboradores) * 100))} /></div>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
-      <div style={styles.card}>
-        <table style={styles.table}>
-          <thead>
-            <tr>{["Título", "Área", "Estado", "Asignados", "Completados", ""].map((h) => <th key={h} style={styles.th}>{h}</th>)}</tr>
-          </thead>
+    </div>
+  );
+}
+
+function ColaboradoresPage() {
+  return (
+    <div style={S.pageContent}>
+      <div style={S.card}>
+        <div style={S.cardHeader}>
+          <span style={{ fontFamily: "Georgia,serif", fontSize: 15 }}>Colaboradores</span>
+          <span style={S.badge("green")}>{colaboradores.length} registrados</span>
+        </div>
+        <table style={S.table}>
+          <thead><tr>{["Nombre", "Área", "Estado", "Última nota"].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead>
           <tbody>
-            {capacitaciones.map((c) => (
-              <tr key={c.id}>
-                <td style={{ ...styles.td, fontWeight: 500 }}>{c.titulo}</td>
-                <td style={styles.td}><span style={{ color: COLORS.textMuted }}>{c.area}</span></td>
-                <td style={styles.td}><span style={styles.badge(c.estado === "Publicado" ? "green" : "yellow")}>{c.estado}</span></td>
-                <td style={styles.td}><span style={{ color: COLORS.textMuted }}>{c.colaboradores}</span></td>
-                <td style={styles.td}>
-                  {c.colaboradores > 0
-                    ? <span style={{ color: COLORS.success }}>{c.completados} / {c.colaboradores}</span>
-                    : <span style={{ color: COLORS.textDim }}>—</span>}
-                </td>
-                <td style={{ ...styles.td, display: "flex", gap: 8 }}>
-                  <button style={styles.btnSmall} onClick={() => onVerCapacitacion(c)}>Ver</button>
-                  <button style={styles.btnGhost}>Editar</button>
-                </td>
+            {colaboradores.map(c => (
+              <tr key={c.nombre}>
+                <td style={{ ...S.td, fontWeight: 500 }}>{c.nombre}</td>
+                <td style={S.td}><span style={{ color: C.muted }}>{c.area}</span></td>
+                <td style={S.td}><span style={S.badge(c.estado === "Completado" ? "green" : c.estado === "En progreso" ? "teal" : "gold")}>{c.estado}</span></td>
+                <td style={S.td}>{c.nota ? <span style={{ color: c.nota >= 60 ? C.forestMid : C.red, fontWeight: 600 }}>{c.nota}%</span> : <span style={{ color: C.muted }}>—</span>}</td>
               </tr>
             ))}
           </tbody>
@@ -420,69 +276,52 @@ function CapacitacionesPage({ onVerCapacitacion }: { onVerCapacitacion: (c: Cap)
 function TrainingView({ cap, onStartQuiz, onBack }: { cap: Cap; onStartQuiz: () => void; onBack: () => void }) {
   const [activeFile, setActiveFile] = useState(0);
   return (
-    <div style={styles.main}>
-      <button style={{ ...styles.btnGhost, marginBottom: 24 }} onClick={onBack}>← Volver</button>
-      <div style={styles.trainingHero}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+    <div style={S.pageContent}>
+      <button style={{ ...S.btnGhost, paddingLeft: 0, marginBottom: 20 }} onClick={onBack}>← Volver</button>
+      <div style={{ ...S.card, background: `linear-gradient(135deg,${C.surface},#ddf0e8)`, padding: 28, marginBottom: 20 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
           <div>
-            <span style={styles.badge("green")}>{cap.area}</span>
-            <div style={{ fontSize: 22, fontWeight: 700, margin: "12px 0 6px" }}>{cap.titulo}</div>
-            <div style={{ color: COLORS.textMuted, fontSize: 14, marginBottom: 20 }}>
-              3 archivos de estudio · Evaluación disponible al finalizar
-            </div>
+            <span style={S.badge("green")}>{cap.area}</span>
+            <h2 style={{ fontFamily: "Georgia,serif", fontSize: 22, marginTop: 10, marginBottom: 6 }}>{cap.titulo}</h2>
+            <p style={{ color: C.inkSoft, fontSize: 14 }}>3 archivos de estudio · Evaluación disponible al finalizar</p>
           </div>
-          <span style={styles.badge("green")}>{cap.estado}</span>
+          <span style={S.badge(cap.estado === "Publicado" ? "green" : "gold")}>{cap.estado}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ ...styles.progressBar(), flex: 1 }}>
-            <div style={styles.progressFill(66)} />
-          </div>
-          <span style={{ fontSize: 13, color: COLORS.textMuted }}>2 / 3 revisados</span>
+          <div style={{ ...S.progressWrap, flex: 1 }}><div style={S.progressFill(66)} /></div>
+          <span style={{ fontSize: 13, color: C.inkSoft }}>2 / 3 revisados</span>
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20 }}>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16 }}>Material de estudio</div>
-          <div style={styles.fileList}>
-            {archivos.map((f, i) => (
-              <div key={i} style={styles.fileItem(activeFile === i)} onClick={() => setActiveFile(i)}>
-                <div style={styles.fileIcon(f.tipo)}>
-                  {f.tipo === "pdf" ? "📄" : f.tipo === "video" ? "▶" : "📊"}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 3 }}>{f.nombre}</div>
-                  <div style={{ fontSize: 12, color: COLORS.textMuted }}>{f.duracion}</div>
-                </div>
-                {i < 2 && <span style={{ fontSize: 18, color: COLORS.success }}>✓</span>}
+          <h3 style={{ fontFamily: "Georgia,serif", fontSize: 15, marginBottom: 14 }}>Material de estudio</h3>
+          {archivos.map((f, i) => (
+            <div key={i} onClick={() => setActiveFile(i)} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", background: activeFile === i ? "rgba(45,122,98,0.06)" : C.white, border: `1.5px solid ${activeFile === i ? C.forestMid : C.border}`, borderRadius: 10, cursor: "pointer", marginBottom: 10 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, background: f.tipo === "pdf" ? C.redLight : f.tipo === "video" ? C.goldLight : C.tealLight }}>
+                {f.tipo === "pdf" ? "📄" : f.tipo === "video" ? "▶" : "📊"}
               </div>
-            ))}
-          </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 500 }}>{f.nombre}</div>
+                <div style={{ fontSize: 12, color: C.muted }}>{f.duracion}</div>
+              </div>
+              {i < 2 && <span style={{ color: C.forestLight, fontSize: 18 }}>✓</span>}
+            </div>
+          ))}
         </div>
-        <div style={{ ...styles.card, padding: 24 }}>
-          <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>Evaluación</div>
-          <div style={{ fontSize: 13, color: COLORS.textMuted, marginBottom: 20, lineHeight: 1.6 }}>
-            3 preguntas · Nota mínima aprobación: 60% · 3 intentos disponibles
-          </div>
-          <div style={{ marginBottom: 16 }}>
+        <div style={{ ...S.card, padding: 22 }}>
+          <h3 style={{ fontFamily: "Georgia,serif", fontSize: 15, marginBottom: 8 }}>Evaluación</h3>
+          <p style={{ fontSize: 13, color: C.muted, marginBottom: 18, lineHeight: 1.6 }}>3 preguntas · Nota mínima: 60% · 3 intentos</p>
+          <div style={{ marginBottom: 18 }}>
             {["Completar el material", "Responder la evaluación", "Obtener certificado"].map((step, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10, fontSize: 13 }}>
-                <div style={{
-                  width: 22, height: 22, borderRadius: "50%",
-                  background: i < 1 ? COLORS.success : i === 1 ? COLORS.accentGlow : COLORS.surface,
-                  border: `2px solid ${i < 1 ? COLORS.success : i === 1 ? COLORS.accent : COLORS.border}`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 11, color: i < 1 ? COLORS.bg : i === 1 ? COLORS.accent : COLORS.textDim,
-                  fontWeight: 700, flexShrink: 0,
-                }}>
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: i < 1 ? C.forestLight : "transparent", border: `2px solid ${i < 1 ? C.forestLight : i === 1 ? C.forestMid : C.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: i < 1 ? C.white : i === 1 ? C.forestMid : C.muted, fontWeight: 700, flexShrink: 0 }}>
                   {i < 1 ? "✓" : i + 1}
                 </div>
-                <span style={{ color: i === 0 ? COLORS.success : i === 1 ? COLORS.text : COLORS.textDim }}>{step}</span>
+                <span style={{ color: i === 0 ? C.forestMid : i === 1 ? C.ink : C.muted }}>{step}</span>
               </div>
             ))}
           </div>
-          <button style={{ ...styles.btnPrimary, marginBottom: 0 }} onClick={onStartQuiz}>
-            Comenzar evaluación
-          </button>
+          <button style={{ ...S.btnPrimary, width: "100%" }} onClick={onStartQuiz}>Comenzar evaluación</button>
         </div>
       </div>
     </div>
@@ -492,63 +331,35 @@ function TrainingView({ cap, onStartQuiz, onBack }: { cap: Cap; onStartQuiz: () 
 function QuizPage({ onFinish }: { onFinish: (score: number) => void }) {
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSelect = (idx: number) => {
-    if (!submitted) setAnswers({ ...answers, [current]: idx });
-  };
-
+  const q = preguntas[current];
   const handleSubmit = () => {
     const correct = preguntas.filter((q, i) => answers[i] === q.correcta).length;
-    const score = Math.round((correct / preguntas.length) * 100);
-    setSubmitted(true);
-    setTimeout(() => onFinish(score), 200);
+    onFinish(Math.round((correct / preguntas.length) * 100));
   };
-
-  const q = preguntas[current];
   return (
-    <div style={styles.main}>
-      <div style={styles.quizWrap}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <div style={{ fontSize: 14, color: COLORS.textMuted }}>Pregunta {current + 1} de {preguntas.length}</div>
-          <div style={{ display: "flex", gap: 6 }}>
-            {preguntas.map((_, i) => (
-              <div key={i} style={{
-                width: 28, height: 6, borderRadius: 99,
-                background: i === current ? COLORS.accent : i < current ? COLORS.accentDim : COLORS.border,
-                cursor: "pointer",
-              }} onClick={() => setCurrent(i)} />
-            ))}
-          </div>
+    <div style={{ ...S.pageContent, maxWidth: 660 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <span style={{ fontSize: 14, color: C.muted }}>Pregunta {current + 1} de {preguntas.length}</span>
+        <div style={{ display: "flex", gap: 6 }}>
+          {preguntas.map((_, i) => <div key={i} onClick={() => setCurrent(i)} style={{ width: 28, height: 6, borderRadius: 99, background: i === current ? C.forest : i < current ? C.forestLight : C.border, cursor: "pointer" }} />)}
         </div>
-        <div style={styles.questionCard}>
-          <div style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.6, marginBottom: 24 }}>{q.texto}</div>
-          {q.opciones.map((op, i) => (
-            <div key={i} style={styles.optionItem(answers[current] === i)} onClick={() => handleSelect(i)}>
-              <div style={styles.optionDot(answers[current] === i)}>
-                {answers[current] === i && <div style={styles.optionDotFill} />}
-              </div>
-              <span style={{ fontSize: 14 }}>{op}</span>
+      </div>
+      <div style={{ ...S.card, padding: 28, marginBottom: 16 }}>
+        <p style={{ fontSize: 17, fontWeight: 500, lineHeight: 1.6, marginBottom: 22 }}>{q.texto}</p>
+        {q.opciones.map((op, i) => (
+          <div key={i} style={S.optionItem(answers[current] === i)} onClick={() => setAnswers({ ...answers, [current]: i })}>
+            <div style={{ width: 18, height: 18, borderRadius: "50%", border: `2px solid ${answers[current] === i ? C.forestMid : C.border}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              {answers[current] === i && <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.forestMid }} />}
             </div>
-          ))}
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-          <button style={{ ...styles.btnGhost, flex: 1, padding: "11px 0" }}
-            onClick={() => setCurrent(Math.max(0, current - 1))} disabled={current === 0}>
-            ← Anterior
-          </button>
-          {current < preguntas.length - 1 ? (
-            <button style={{ ...styles.btnPrimary, flex: 1, marginBottom: 0 }}
-              onClick={() => setCurrent(current + 1)} disabled={answers[current] === undefined}>
-              Siguiente →
-            </button>
-          ) : (
-            <button style={{ ...styles.btnPrimary, flex: 1, marginBottom: 0 }}
-              onClick={handleSubmit} disabled={Object.keys(answers).length < preguntas.length}>
-              Enviar evaluación
-            </button>
-          )}
-        </div>
+            {op}
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 10 }}>
+        <button style={{ ...S.btnSecondary, flex: 1 }} onClick={() => setCurrent(Math.max(0, current - 1))} disabled={current === 0}>← Anterior</button>
+        {current < preguntas.length - 1
+          ? <button style={{ ...S.btnPrimary, flex: 1 }} onClick={() => setCurrent(current + 1)} disabled={answers[current] === undefined}>Siguiente →</button>
+          : <button style={{ ...S.btnPrimary, flex: 1 }} onClick={handleSubmit} disabled={Object.keys(answers).length < preguntas.length}>Enviar evaluación ✓</button>}
       </div>
     </div>
   );
@@ -557,53 +368,43 @@ function QuizPage({ onFinish }: { onFinish: (score: number) => void }) {
 function ResultPage({ score, onBack }: { score: number; onBack: () => void }) {
   const passed = score >= 60;
   return (
-    <div style={styles.main}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
-        <div style={styles.resultCard}>
-          <div style={styles.resultCircle(passed)}>{passed ? "✓" : "✗"}</div>
-          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>
-            {passed ? "¡Evaluación aprobada!" : "Evaluación no aprobada"}
-          </div>
-          <div style={{ fontSize: 42, fontWeight: 800, color: passed ? COLORS.success : COLORS.danger, margin: "12px 0" }}>
-            {score}%
-          </div>
-          <div style={{ color: COLORS.textMuted, fontSize: 14, marginBottom: 32, lineHeight: 1.6 }}>
-            {passed
-              ? "Has completado exitosamente la capacitación. Tu certificado está disponible para descargar."
-              : "No alcanzaste el puntaje mínimo de 60%. Puedes intentarlo nuevamente."}
-          </div>
-          {passed && <button style={{ ...styles.btnPrimary, marginBottom: 12 }}>📄 Descargar certificado</button>}
-          <button style={styles.btnGhost} onClick={onBack}>
-            {passed ? "Volver al portal" : "Reintentar evaluación"}
-          </button>
-        </div>
+    <div style={{ ...S.pageContent, maxWidth: 520 }}>
+      <div style={S.resultBanner(passed)}>
+        <div style={{ fontSize: 52, marginBottom: 14 }}>{passed ? "🎉" : "😔"}</div>
+        <div style={{ fontFamily: "Georgia,serif", fontSize: 52, fontWeight: 700, color: passed ? C.forest : C.red, lineHeight: 1 }}>{score}%</div>
+        <p style={{ marginTop: 10, fontSize: 14, color: C.inkSoft }}>{passed ? "¡Aprobaste! Tu certificado está disponible para descargar." : "No alcanzaste el mínimo de 60%. Puedes intentarlo nuevamente."}</p>
+      </div>
+      <div style={{ display: "flex", gap: 10 }}>
+        {passed && <button style={{ ...S.btnPrimary, flex: 1 }}>📄 Descargar certificado</button>}
+        <button style={{ ...S.btnSecondary, flex: 1 }} onClick={onBack}>{passed ? "Volver" : "Reintentar"}</button>
       </div>
     </div>
   );
 }
 
-function PortalHome({ onVerCapacitacion }: { onVerCapacitacion: (c: Cap) => void }) {
-  const misCapacitaciones = [
-    { id: 1, titulo: "Protocolo de Higiene Personal", area: "Cuidado", estado: "En progreso", progreso: 66, fechaLimite: "31 mar", colaboradores: 0, completados: 0 },
-    { id: 2, titulo: "Manejo de Emergencias Médicas", area: "Enfermería", estado: "Pendiente", progreso: 0, fechaLimite: "15 abr", colaboradores: 0, completados: 0 },
+function PortalHome({ onVerCap }: { onVerCap: (c: Cap) => void }) {
+  const misc = [
+    { id: 1, titulo: "Protocolo de Higiene Personal", area: "Cuidado", estado: "En progreso", progreso: 66, fechaLimite: "31 mar", colaboradores: 0, completados: 0, emoji: "🧼", color: C.sagePale },
+    { id: 2, titulo: "Manejo de Emergencias Médicas", area: "Enfermería", estado: "Pendiente", progreso: 0, fechaLimite: "15 abr", colaboradores: 0, completados: 0, emoji: "🚑", color: C.tealLight },
   ];
   return (
-    <div style={styles.main}>
-      <div style={styles.pageTitle}>Mis capacitaciones</div>
-      <div style={styles.pageSub}>Bienvenida, María González — Residencia Hualpén</div>
-      <div style={styles.portalGrid}>
-        {misCapacitaciones.map((c) => (
-          <div key={c.id} style={styles.portalCard} onClick={() => onVerCapacitacion(c)}>
-            <div style={styles.portalCardTop}>
-              <span style={styles.badge(c.estado === "En progreso" ? "purple" : "yellow")}>{c.estado}</span>
-              <span style={{ fontSize: 12, color: COLORS.textMuted }}>Límite: {c.fechaLimite}</span>
+    <div style={S.pageContent}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 16 }}>
+        {misc.map(c => (
+          <div key={c.id} style={S.courseCard} onClick={() => onVerCap(c)}>
+            <div style={{ height: 100, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, background: c.color }}>{c.emoji}</div>
+            <div style={{ padding: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                <span style={S.badge(c.estado === "En progreso" ? "teal" : "gold")}>{c.estado}</span>
+                <span style={{ fontSize: 12, color: C.muted }}>Límite: {c.fechaLimite}</span>
+              </div>
+              <h4 style={{ fontFamily: "Georgia,serif", fontSize: 14, marginBottom: 6 }}>{c.titulo}</h4>
+              <p style={{ fontSize: 12, color: C.muted, marginBottom: 12 }}>{c.area}</p>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: C.muted, marginBottom: 4 }}>
+                <span>Progreso</span><span>{c.progreso}%</span>
+              </div>
+              <div style={S.progressWrap}><div style={S.progressFill(c.progreso, `linear-gradient(90deg,${C.teal},#55b5d4)`)} /></div>
             </div>
-            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>{c.titulo}</div>
-            <div style={{ fontSize: 13, color: COLORS.textMuted, marginBottom: 16 }}>{c.area}</div>
-            <div style={{ ...styles.progressBar(), marginBottom: 8 }}>
-              <div style={styles.progressFill(c.progreso)} />
-            </div>
-            <div style={{ fontSize: 12, color: COLORS.textMuted }}>{c.progreso}% completado</div>
           </div>
         ))}
       </div>
@@ -611,7 +412,27 @@ function PortalHome({ onVerCapacitacion }: { onVerCapacitacion: (c: Cap) => void
   );
 }
 
-// ─── APP ───
+function HistorialPage() {
+  return (
+    <div style={S.pageContent}>
+      <div style={S.card}>
+        <div style={S.cardHeader}><span style={{ fontFamily: "Georgia,serif", fontSize: 15 }}>Capacitaciones completadas</span></div>
+        <table style={S.table}>
+          <thead><tr>{["Capacitación", "Fecha", "Nota", "Certificado"].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead>
+          <tbody>
+            <tr>
+              <td style={{ ...S.td, fontWeight: 500 }}>Inducción general — Bienvenida ONG</td>
+              <td style={S.td}><span style={{ color: C.muted }}>Ene 2026</span></td>
+              <td style={S.td}><span style={{ color: C.forestMid, fontWeight: 600 }}>85%</span></td>
+              <td style={S.td}><button style={{ ...S.btnSecondary, padding: "6px 14px", fontSize: 12 }}>📄 Descargar</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [screen, setScreen] = useState("login");
   const [rol, setRol] = useState<string | null>(null);
@@ -619,77 +440,56 @@ export default function App() {
   const [selectedCap, setSelectedCap] = useState<Cap | null>(null);
   const [quizScore, setQuizScore] = useState<number | null>(null);
 
-  const handleLogin = (r: string) => {
-    setRol(r);
-    setActiveNav(r === "admin" ? "dashboard" : "portal");
-    setScreen("app");
-  };
-
+  const handleLogin = (r: string) => { setRol(r); setActiveNav(r === "admin" ? "dashboard" : "portal"); setScreen("app"); };
   const handleLogout = () => { setRol(null); setScreen("login"); setSelectedCap(null); setQuizScore(null); };
   const handleNav = (id: string) => { setActiveNav(id); setSelectedCap(null); setQuizScore(null); };
-  const handleVerCapacitacion = (cap: Cap) => { setSelectedCap(cap); setActiveNav("training"); setQuizScore(null); };
-  const handleStartQuiz = () => setActiveNav("quiz");
-  const handleFinishQuiz = (score: number) => { setQuizScore(score); setActiveNav("result"); };
+  const handleVerCap = (cap: Cap) => { setSelectedCap(cap); setActiveNav("training"); setQuizScore(null); };
 
-  if (screen === "login") return <div style={styles.app}><LoginPage onLogin={handleLogin} /></div>;
+  if (screen === "login") return <div style={S.app}><LoginPage onLogin={handleLogin} /></div>;
+
+  const isAdmin = rol === "admin";
+  const tbMap: Record<string, { title: string; sub: string; action?: string }> = {
+    dashboard: { title: "Dashboard", sub: "Vista general del sistema" },
+    capacitaciones: { title: "Capacitaciones", sub: "Catálogo de módulos formativos", action: "+ Nueva capacitación" },
+    colaboradores: { title: "Colaboradores", sub: "Gestión del personal", action: "+ Nuevo usuario" },
+    portal: { title: "Mis capacitaciones", sub: "Bienvenida, María González" },
+    miscursos: { title: "Mis capacitaciones", sub: "Módulos asignados" },
+    historial: { title: "Mi historial", sub: "Capacitaciones completadas" },
+    training: { title: selectedCap?.titulo ?? "Capacitación", sub: selectedCap?.area ?? "" },
+    quiz: { title: "Evaluación", sub: selectedCap?.titulo ?? "" },
+    result: { title: "Resultado", sub: "Evaluación finalizada" },
+  };
+  const tb = tbMap[activeNav] || { title: activeNav, sub: "" };
 
   let content;
-  if (activeNav === "training" && selectedCap) {
-    content = <TrainingView cap={selectedCap} onStartQuiz={handleStartQuiz} onBack={() => handleNav(rol === "admin" ? "capacitaciones" : "portal")} />;
-  } else if (activeNav === "quiz") {
-    content = <QuizPage onFinish={handleFinishQuiz} />;
-  } else if (activeNav === "result" && quizScore !== null) {
-    content = <ResultPage score={quizScore} onBack={() => handleNav(rol === "admin" ? "capacitaciones" : "portal")} />;
-  } else if (rol === "admin") {
+  if (activeNav === "training" && selectedCap) content = <TrainingView cap={selectedCap} onStartQuiz={() => setActiveNav("quiz")} onBack={() => handleNav(isAdmin ? "capacitaciones" : "portal")} />;
+  else if (activeNav === "quiz") content = <QuizPage onFinish={(s) => { setQuizScore(s); setActiveNav("result"); }} />;
+  else if (activeNav === "result" && quizScore !== null) content = <ResultPage score={quizScore} onBack={() => handleNav(isAdmin ? "capacitaciones" : "portal")} />;
+  else if (isAdmin) {
     if (activeNav === "dashboard") content = <Dashboard onNav={handleNav} />;
-    else if (activeNav === "capacitaciones") content = <CapacitacionesPage onVerCapacitacion={handleVerCapacitacion} />;
-    else content = (
-      <div style={styles.main}>
-        <div style={styles.pageTitle}>Colaboradores</div>
-        <div style={styles.pageSub}>18 colaboradores registrados en el sistema</div>
-        <div style={styles.card}>
-          <table style={styles.table}>
-            <thead><tr>{["Nombre", "Área", "Estado", "Última nota"].map(h => <th key={h} style={styles.th}>{h}</th>)}</tr></thead>
-            <tbody>{colaboradores.map(c => (
-              <tr key={c.nombre}>
-                <td style={{ ...styles.td, fontWeight: 500 }}>{c.nombre}</td>
-                <td style={styles.td}><span style={{ color: COLORS.textMuted }}>{c.area}</span></td>
-                <td style={styles.td}><span style={styles.badge(c.estado === "Completado" ? "green" : c.estado === "En progreso" ? "purple" : "yellow")}>{c.estado}</span></td>
-                <td style={styles.td}>{c.nota ? <span style={{ color: c.nota >= 60 ? COLORS.success : COLORS.danger, fontWeight: 600 }}>{c.nota}%</span> : <span style={{ color: COLORS.textDim }}>—</span>}</td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-      </div>
-    );
+    else if (activeNav === "capacitaciones") content = <CapacitacionesPage onVerCap={handleVerCap} />;
+    else content = <ColaboradoresPage />;
   } else {
-    if (activeNav === "portal") content = <PortalHome onVerCapacitacion={handleVerCapacitacion} />;
-    else content = (
-      <div style={styles.main}>
-        <div style={styles.pageTitle}>Mi historial</div>
-        <div style={styles.pageSub}>Capacitaciones completadas</div>
-        <div style={styles.card}>
-          <table style={styles.table}>
-            <thead><tr>{["Capacitación", "Fecha", "Nota", "Certificado"].map(h => <th key={h} style={styles.th}>{h}</th>)}</tr></thead>
-            <tbody>
-              <tr>
-                <td style={styles.td}>Inducción general — Bienvenida ONG</td>
-                <td style={styles.td}><span style={{ color: COLORS.textMuted }}>Ene 2026</span></td>
-                <td style={styles.td}><span style={{ color: COLORS.success, fontWeight: 600 }}>85%</span></td>
-                <td style={styles.td}><button style={styles.btnSmall}>📄 Descargar</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
+    if (activeNav === "portal" || activeNav === "miscursos") content = <PortalHome onVerCap={handleVerCap} />;
+    else content = <HistorialPage />;
   }
 
   return (
-    <div style={styles.app}>
-      <div style={styles.layout}>
+    <div style={S.app}>
+      <div style={S.layout}>
         <Sidebar rol={rol} active={activeNav} onNav={handleNav} onLogout={handleLogout} />
-        {content}
+        <div style={S.main}>
+          <div style={S.topbar}>
+            <div>
+              <h3 style={{ fontFamily: "Georgia,serif", fontSize: 17, color: C.ink }}>{tb.title}</h3>
+              <p style={{ fontSize: 12, color: C.muted }}>{tb.sub}</p>
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              {tb.action && <button style={S.btnPrimary}>{tb.action}</button>}
+            </div>
+          </div>
+          {content}
+        </div>
       </div>
     </div>
   );
