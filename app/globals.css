@@ -1,26 +1,155 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─────────────────────────────────────
+   MOBILE RESPONSIVE
+   Aplicado a los elementos del page.tsx
+───────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Ocultar sidebar */
+  .sidebar-desktop {
+    display: none !important;
+  }
+
+  /* Main ocupa todo */
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding-bottom: 72px;
+  }
+
+  /* Topbar compacto */
+  .topbar {
+    padding: 0 16px !important;
+    height: 52px !important;
+  }
+  .topbar h3 {
+    font-size: 15px !important;
+  }
+  .topbar p {
+    display: none;
+  }
+  .topbar button {
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Page content con menos padding */
+  .page-content {
+    padding: 16px !important;
+  }
+
+  /* Stats: 2 columnas */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .stats-grid .stat-value {
+    font-size: 24px !important;
+  }
+
+  /* Course grid: 1 columna */
+  .course-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Grid 2 cols → 1 col */
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Training grid → 1 col */
+  .training-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Login */
+  .login-card {
+    width: calc(100% - 32px) !important;
+    max-width: 400px !important;
+    padding: 32px 20px !important;
+    margin: 0 16px !important;
+  }
+
+  /* Tablas con scroll horizontal */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Quiz max-width full */
+  .quiz-wrap {
+    max-width: 100% !important;
+    padding: 16px !important;
+  }
+
+  /* Result max-width full */
+  .result-wrap {
+    max-width: 100% !important;
+  }
+
+  /* Botones en columna */
+  .btn-row {
+    flex-direction: column !important;
+  }
+  .btn-row button {
+    width: 100% !important;
+    flex: none !important;
+  }
+
+  /* Ocultar botón de acción del topbar si hay poco espacio */
+  .topbar-action {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────
+   BARRA DE NAV INFERIOR (solo móvil)
+───────────────────────────────────── */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: #121d1a;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    z-index: 200;
+    align-items: stretch;
+  }
+  .mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    color: rgba(255,255,255,0.45);
+    font-size: 10px;
+    font-family: 'DM Sans', sans-serif;
+    border: none;
+    background: transparent;
+    transition: color 0.15s;
+  }
+  .mobile-nav-item.active {
+    color: #4aa87f;
+  }
+  .mobile-nav-item .nav-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
 }
