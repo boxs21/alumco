@@ -1,3 +1,27 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────
+   ALUMCO — Custom Theme (Tailwind v4)
+───────────────────────────────────── */
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-serif: Georgia, serif;
+
+  --color-forest: #1a5c4a;
+  --color-forest-mid: #2d7a62;
+  --color-forest-light: #4aa87f;
+  --color-teal: #0f7ea3;
+  --color-teal-light: #e0f2f9;
+  --color-gold: #c8943a;
+  --color-ink: #121d1a;
+  --color-surface: #f5f9f7;
+  --color-border: #d4e2dc;
+  --color-muted: #8fa49e;
+}
+
+/* ─────────────────────────────────────
+   BASE STYLES
+───────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -6,6 +30,11 @@
 
 body {
   -webkit-font-smoothing: antialiased;
+  font-family: "DM Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #121d1a;
+  background: #f5f9f7;
 }
 
 /* ─────────────────────────────────────
