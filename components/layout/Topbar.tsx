@@ -35,7 +35,7 @@ export default function Topbar({
           {title}
         </h3>
         {subtitle && (
-          <p className="text-sm text-muted mt-0.5">{subtitle}</p>
+          <p className="text-base text-muted mt-0.5">{subtitle}</p>
         )}
       </div>
 

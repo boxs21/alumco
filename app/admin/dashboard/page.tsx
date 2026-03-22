@@ -23,11 +23,11 @@ const STAT_CARDS = [
 ] as const;
 
 const ACTIVIDAD = [
-  { dot: C.forestLight, accion: "María González completó",        curso: "Protocolo de Higiene Personal",  tiempo: "hace 10 min", sede: SEDES.CONCEPCION },
-  { dot: C.teal,        accion: "Ana Torres obtuvo certificado",  curso: "Protocolo de Higiene Personal",  tiempo: "hace 1 hr",   sede: SEDES.COYHAIQUE },
-  { dot: C.gold,        accion: "Juan Pérez inició",              curso: "Manejo de Emergencias Médicas",  tiempo: "hace 2 hr",   sede: SEDES.CONCEPCION },
-  { dot: C.forestLight, accion: "Carlos Ruiz completó",           curso: "Protocolo de Invierno",          tiempo: "hace 3 hr",   sede: SEDES.COYHAIQUE },
-  { dot: C.teal,        accion: "María González rindió evaluación",curso: "Protocolo de Higiene Personal", tiempo: "ayer",        sede: SEDES.CONCEPCION },
+  { dot: C.forestLight, accion: "María González completó",         curso: "Protocolo de Higiene Personal",  tiempo: "hace 10 min", sede: SEDES.CONCEPCION },
+  { dot: C.teal,        accion: "Ana Torres obtuvo certificado",   curso: "Protocolo de Higiene Personal",  tiempo: "hace 1 hr",   sede: SEDES.COYHAIQUE },
+  { dot: C.gold,        accion: "Juan Pérez inició",               curso: "Manejo de Emergencias Médicas",  tiempo: "hace 2 hr",   sede: SEDES.CONCEPCION },
+  { dot: C.forestLight, accion: "Carlos Ruiz completó",            curso: "Protocolo de Invierno",          tiempo: "hace 3 hr",   sede: SEDES.COYHAIQUE },
+  { dot: C.teal,        accion: "María González rindió evaluación",curso: "Protocolo de Higiene Personal",  tiempo: "ayer",        sede: SEDES.CONCEPCION },
 ];
 
 const AREAS: Record<SedeFilter, { label: string; pct: number }[]> = {
@@ -46,13 +46,20 @@ const cardHeader: React.CSSProperties = {
 };
 const cardBody: React.CSSProperties = { padding: 22 };
 
-function Bar({ pct, color }: { pct: number; color?: string }) {
+function Bar({ pct, color, label }: { pct: number; color?: string; label?: string }) {
   return (
-    <div style={{ height: 6, background: C.sagePale, borderRadius: 10, overflow: "hidden" }}>
+    <div
+      role="progressbar"
+      aria-valuenow={pct}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={label ? `${label}: ${pct}%` : `${pct}%`}
+      style={{ height: 6, background: C.sagePale, borderRadius: 10, overflow: "hidden" }}
+    >
       <div style={{
         height: "100%", borderRadius: 10, width: `${pct}%`,
         background: color ?? `linear-gradient(90deg,${C.forestMid},${C.forestLight})`,
-        transition: "width 0.4s ease",
+        transition: "width 0.4s ease-out",
       }} />
     </div>
   );
@@ -88,7 +95,7 @@ export default function DashboardPage() {
                 <div className="stat-value" style={{ fontFamily: "Georgia,serif", fontSize: 30, fontWeight: 700, color: C.ink, lineHeight: 1 }}>
                   {stats[key as keyof typeof stats]}{suffix ?? ""}
                 </div>
-                <div style={{ fontSize: 13, color: C.muted, marginTop: 5 }}>{label}</div>
+                <div style={{ fontSize: 16, color: C.muted, marginTop: 5 }}>{label}</div>
               </div>
             </div>
           ))}
@@ -100,7 +107,7 @@ export default function DashboardPage() {
           {/* Comparativa sedes */}
           <div style={card}>
             <div style={cardHeader}>
-              <span style={{ fontFamily: "Georgia,serif", fontSize: 15, color: C.ink }}>Comparativa entre sedes</span>
+              <span style={{ fontFamily: "Georgia,serif", fontSize: 16, color: C.ink }}>Comparativa entre sedes</span>
             </div>
             <div style={cardBody}>
               {[
@@ -112,8 +119,8 @@ export default function DashboardPage() {
                     <SedeBadge sede={sede} />
                     <span style={{ fontFamily: "Georgia,serif", fontSize: 22, fontWeight: 700, color: C.ink }}>{s.cumplimiento}%</span>
                   </div>
-                  <Bar pct={s.cumplimiento} color={barColor} />
-                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 12, color: C.muted }}>
+                  <Bar pct={s.cumplimiento} color={barColor} label={sede.name} />
+                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 16, color: C.muted }}>
                     <span>{s.colaboradores} colaboradores</span>
                     <span>{s.certificados} certificados emitidos</span>
                   </div>
@@ -125,7 +132,7 @@ export default function DashboardPage() {
           {/* Actividad reciente */}
           <div style={card}>
             <div style={cardHeader}>
-              <span style={{ fontFamily: "Georgia,serif", fontSize: 15, color: C.ink }}>Actividad reciente</span>
+              <span style={{ fontFamily: "Georgia,serif", fontSize: 16, color: C.ink }}>Actividad reciente</span>
             </div>
             <div>
               {ACTIVIDAD.map((a, i) => (
@@ -136,13 +143,13 @@ export default function DashboardPage() {
                 }}>
                   <div style={{ width: 8, height: 8, borderRadius: "50%", background: a.dot, marginTop: 6, flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 13, color: C.ink, lineHeight: 1.4 }}>
+                    <p style={{ fontSize: 16, color: C.ink, lineHeight: 1.5 }}>
                       <strong>{a.accion}</strong>{" "}
                       <span style={{ color: C.muted }}>{a.curso}</span>
                     </p>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
                       <SedeBadge sede={a.sede} />
-                      <span style={{ fontSize: 11, color: C.muted }}>{a.tiempo}</span>
+                      <span style={{ fontSize: 16, color: C.muted }}>{a.tiempo}</span>
                     </div>
                   </div>
                 </div>
@@ -154,19 +161,19 @@ export default function DashboardPage() {
         {/* ── Progreso por área ── */}
         <div style={card}>
           <div style={cardHeader}>
-            <span style={{ fontFamily: "Georgia,serif", fontSize: 15, color: C.ink }}>Progreso por área</span>
-            <span style={{ fontSize: 12, color: C.muted }}>
+            <span style={{ fontFamily: "Georgia,serif", fontSize: 16, color: C.ink }}>Progreso por área</span>
+            <span style={{ fontSize: 16, color: C.muted }}>
               {sedeFilter === "ALL" ? "Todas las sedes" : sedeFilter === "CONCEPCION" ? "Concepción" : "Coyhaique"}
             </span>
           </div>
           <div style={{ ...cardBody, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 48px" }}>
             {areas.map(({ label, pct }) => (
               <div key={label}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5, fontSize: 13, color: C.ink }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5, fontSize: 16, color: C.ink }}>
                   <span>{label}</span>
                   <span style={{ fontWeight: 600, color: C.inkSoft }}>{pct}%</span>
                 </div>
-                <Bar pct={pct} />
+                <Bar pct={pct} label={label} />
               </div>
             ))}
           </div>

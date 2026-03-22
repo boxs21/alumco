@@ -90,7 +90,7 @@ export default function AdminSidebar({
             <h1 className="font-serif text-white text-lg font-bold leading-tight">
               ALUMCO
             </h1>
-            <p className="text-white/40 text-xs">Capacitación</p>
+            <p className="text-white/40 text-base">Capacitación</p>
           </div>
         </div>
       </div>
@@ -99,15 +99,15 @@ export default function AdminSidebar({
       <div className="px-5 py-4 border-b border-white/10">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-forest-mid flex items-center justify-center shrink-0">
-            <span className="text-white text-sm font-medium">
+            <span className="text-white text-base font-medium">
               {getInitials(userName)}
             </span>
           </div>
           <div className="min-w-0">
-            <p className="text-white text-sm font-medium truncate">
+            <p className="text-white text-base font-medium truncate">
               {userName}
             </p>
-            <span className="inline-block mt-0.5 text-[11px] font-medium text-forest-light bg-forest-light/15 rounded-full px-2 py-0.5">
+            <span className="inline-block mt-0.5 text-base font-medium text-forest-light bg-forest-light/15 rounded-full px-2 py-0.5">
               Admin
             </span>
           </div>

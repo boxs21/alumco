@@ -42,7 +42,10 @@ export default function AdminLayout({
   if (!authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="text-muted text-lg">Cargando...</div>
+        <div className="flex flex-col items-center gap-3" role="status" aria-label="Cargando">
+          <div className="w-10 h-10 rounded-full border-4 border-border border-t-forest animate-spin" />
+          <span className="text-base text-muted">Cargando...</span>
+        </div>
       </div>
     );
   }
@@ -56,7 +59,7 @@ export default function AdminLayout({
         onLogout={handleLogout}
       />
 
-      <main className="main-content flex-1 flex flex-col min-w-0 ml-[240px]">
+      <main className="main-content flex-1 flex flex-col min-w-0 ml-[240px]" aria-label="Contenido principal">
         {children}
       </main>
 
