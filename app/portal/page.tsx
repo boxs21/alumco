@@ -16,11 +16,17 @@ export default function PortalPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Mis capacitaciones</h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Capacitaciones asignadas a tu sede y globales
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">Mis capacitaciones</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Capacitaciones asignadas a tu sede y globales
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <SedeBadge sedeId="s1" sedeName="Concepción" size="lg" />
+          <span className="text-base font-medium text-slate-900">María González</span>
+        </div>
       </div>
 
       {/* Training Grid */}

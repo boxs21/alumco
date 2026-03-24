@@ -14,6 +14,7 @@ interface TrainingCardProps {
   completados: number;
   asignados: number;
   href?: string;
+  delay?: number;
 }
 
 const statusConfig = {
@@ -32,19 +33,32 @@ export default function TrainingCard({
   completados,
   asignados,
   href,
+  delay = 0,
 }: TrainingCardProps) {
   const statusInfo = statusConfig[status];
   const progress = asignados > 0 ? Math.round((completados / asignados) * 100) : 0;
   const linkHref = href ?? `/admin/capacitaciones/${id}`;
 
   return (
-    <Link href={linkHref} className="block group">
-      <Card className="border-slate-200 shadow-sm transition-shadow group-hover:shadow-md h-full">
+    <Link
+      href={linkHref}
+      className="block group animate-fade-in-up"
+      style={{ animationDelay: `${delay * 0.08}s` }}
+    >
+      <Card className="border-slate-200/80 shadow-sm card-hover h-full overflow-hidden">
+        {/* Top accent line based on status */}
+        <div className={`h-[2px] ${
+          status === "PUBLISHED" ? "bg-gradient-to-r from-emerald-400 to-emerald-500" :
+          status === "DRAFT" ? "bg-gradient-to-r from-slate-300 to-slate-400" :
+          "bg-gradient-to-r from-red-300 to-red-400"
+        } opacity-70`} />
         <CardContent className="p-5 flex flex-col gap-4">
           <div className="flex items-start justify-between gap-2">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50">
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+              status === "DRAFT" ? "bg-slate-50" : "bg-indigo-50"
+            }`}>
               {status === "DRAFT" ? (
-                <FileEdit className="h-5 w-5 text-indigo-500" />
+                <FileEdit className="h-5 w-5 text-slate-400" />
               ) : (
                 <BookOpen className="h-5 w-5 text-indigo-500" />
               )}
@@ -53,10 +67,10 @@ export default function TrainingCard({
           </div>
 
           <div>
-            <h3 className="text-base font-semibold text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors">
+            <h3 className="text-base font-semibold text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors duration-200">
               {title}
             </h3>
-            <p className="text-sm text-slate-500 mt-1">Área: {area}</p>
+            <p className="text-sm text-slate-500 mt-1">&Aacute;rea: {area}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -67,11 +81,11 @@ export default function TrainingCard({
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-500">Cumplimiento</span>
-                <span className="font-medium text-slate-700">{progress}%</span>
+                <span className="font-semibold text-slate-700">{progress}%</span>
               </div>
               <div className="h-2 w-full rounded-full bg-slate-100">
                 <div
-                  className="h-2 rounded-full bg-indigo-500 transition-all"
+                  className="h-2 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-500 animate-progress"
                   style={{ width: `${progress}%` }}
                 />
               </div>

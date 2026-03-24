@@ -83,7 +83,7 @@ export default function CapacitacionesPage() {
 
           <Link
             href="/admin/capacitaciones/nueva"
-            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors"
+            className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98]"
           >
             <Plus className="h-4 w-4" />
             Nueva capacitación
@@ -93,8 +93,8 @@ export default function CapacitacionesPage() {
         {/* Training Grid */}
         {filteredTrainings.length > 0 ? (
           <div className="grid grid-cols-3 gap-4">
-            {filteredTrainings.map((training) => (
-              <TrainingCard key={training.id} {...training} />
+            {filteredTrainings.map((training, index) => (
+              <TrainingCard key={training.id} {...training} delay={index} />
             ))}
           </div>
         ) : (

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, Shield, User } from "lucide-react";
 
 type RoleTab = "admin" | "collaborator";
 
@@ -29,41 +29,48 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center login-bg px-4 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-full bg-dot-pattern opacity-40 pointer-events-none" />
+      <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-indigo-100/40 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-amber-100/30 blur-3xl pointer-events-none" />
+
+      <div className="w-full max-w-md relative z-10">
         {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500 mb-4">
-            <GraduationCap className="h-7 w-7 text-white" />
+        <div className="flex flex-col items-center mb-8 animate-fade-in-up">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 mb-4 shadow-lg shadow-indigo-500/20">
+            <GraduationCap className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">ALUMCO</h1>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">ALUMCO</h1>
           <p className="text-sm text-slate-500 mt-1">Plataforma de Capacitación</p>
         </div>
 
-        <Card className="border-slate-200 shadow-sm">
-          <CardContent className="p-6 space-y-6">
+        <Card className="border-slate-200/80 shadow-xl shadow-slate-900/[0.04] animate-fade-in-up stagger-2 backdrop-blur-sm bg-white/95">
+          <CardContent className="p-7 space-y-6">
             {/* Role Toggle */}
-            <div className="flex rounded-lg bg-slate-100 p-1">
+            <div className="flex rounded-xl bg-slate-100/80 p-1.5 gap-1">
               <button
                 type="button"
                 onClick={() => setRole("admin")}
-                className={`flex-1 rounded-md py-2.5 text-sm font-medium transition-colors ${
+                className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all duration-200 ${
                   role === "admin"
-                    ? "bg-white text-slate-900 shadow-sm"
+                    ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/60"
                     : "text-slate-500 hover:text-slate-700"
                 }`}
               >
+                <Shield className={`h-4 w-4 ${role === "admin" ? "text-indigo-500" : ""}`} />
                 Administrador
               </button>
               <button
                 type="button"
                 onClick={() => setRole("collaborator")}
-                className={`flex-1 rounded-md py-2.5 text-sm font-medium transition-colors ${
+                className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all duration-200 ${
                   role === "collaborator"
-                    ? "bg-white text-slate-900 shadow-sm"
+                    ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/60"
                     : "text-slate-500 hover:text-slate-700"
                 }`}
               >
+                <User className={`h-4 w-4 ${role === "collaborator" ? "text-indigo-500" : ""}`} />
                 Colaborador
               </button>
             </div>
@@ -72,7 +79,7 @@ export default function LoginPage() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-slate-700">
-                  Correo electrónico
+                  Correo electr&oacute;nico
                 </Label>
                 <Input
                   id="email"
@@ -80,14 +87,14 @@ export default function LoginPage() {
                   placeholder="tu@alumco.cl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-11 text-base"
+                  className="h-12 text-base rounded-xl border-slate-200 focus:border-indigo-300 focus:ring-indigo-200 transition-colors"
                   required
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium text-slate-700">
-                  Contraseña
+                  Contrase&ntilde;a
                 </Label>
                 <Input
                   id="password"
@@ -95,16 +102,16 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 text-base"
+                  className="h-12 text-base rounded-xl border-slate-200 focus:border-indigo-300 focus:ring-indigo-200 transition-colors"
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full h-11 rounded-lg bg-indigo-500 text-white font-medium text-sm hover:bg-indigo-600 transition-colors"
+                className="w-full h-12 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-medium text-base hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98]"
               >
-                Iniciar sesión
+                Iniciar sesi&oacute;n
               </button>
             </form>
 
@@ -112,10 +119,10 @@ export default function LoginPage() {
             <div className="space-y-3">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200" />
+                  <div className="w-full border-t border-slate-200/80" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-white px-3 text-slate-500">Acceso rápido de prueba</span>
+                  <span className="bg-white/95 px-3 text-slate-400 font-medium">Acceso r&aacute;pido de prueba</span>
                 </div>
               </div>
 
@@ -123,14 +130,14 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => handleDemoLogin("admin")}
-                  className="h-11 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                  className="h-11 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 active:scale-[0.98]"
                 >
                   Admin demo
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoLogin("collaborator")}
-                  className="h-11 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                  className="h-11 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 active:scale-[0.98]"
                 >
                   Colaborador demo
                 </button>
@@ -138,6 +145,10 @@ export default function LoginPage() {
             </div>
           </CardContent>
         </Card>
+
+        <p className="text-center text-xs text-slate-400 mt-6 animate-fade-in stagger-4">
+          ALUMCO &mdash; Capacitaci&oacute;n para residencias de adultos mayores
+        </p>
       </div>
     </div>
   );

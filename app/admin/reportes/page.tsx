@@ -72,7 +72,7 @@ export default function ReportesPage() {
                 <select
                   value={filterArea}
                   onChange={(e) => setFilterArea(e.target.value)}
-                  className="w-full h-9 rounded-lg border border-slate-200 px-3 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full h-11 rounded-lg border border-slate-200 px-3 text-base text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="ALL">Todas las áreas</option>
                   {AREAS.map((a) => (
@@ -86,7 +86,7 @@ export default function ReportesPage() {
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="h-9 text-sm"
+                  className="h-11 text-base"
                 />
               </div>
               <div className="space-y-1.5">
@@ -95,7 +95,7 @@ export default function ReportesPage() {
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="h-9 text-sm"
+                  className="h-11 text-base"
                 />
               </div>
             </div>
@@ -118,19 +118,19 @@ export default function ReportesPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-indigo-50">
                     <p className="text-2xl font-semibold text-slate-900">{mockStats.CONCEPCION.colaboradores}</p>
-                    <p className="text-xs text-slate-500">Colaboradores</p>
+                    <p className="text-sm text-slate-500">Colaboradores</p>
                   </div>
                   <div className="p-3 rounded-lg bg-indigo-50">
                     <p className="text-2xl font-semibold text-slate-900">{mockStats.CONCEPCION.cumplimiento}%</p>
-                    <p className="text-xs text-slate-500">Cumplimiento</p>
+                    <p className="text-sm text-slate-500">Cumplimiento</p>
                   </div>
                   <div className="p-3 rounded-lg bg-indigo-50">
                     <p className="text-2xl font-semibold text-slate-900">{mockStats.CONCEPCION.capacitaciones}</p>
-                    <p className="text-xs text-slate-500">Capacitaciones</p>
+                    <p className="text-sm text-slate-500">Capacitaciones</p>
                   </div>
                   <div className="p-3 rounded-lg bg-indigo-50">
                     <p className="text-2xl font-semibold text-slate-900">{mockStats.CONCEPCION.certificados}</p>
-                    <p className="text-xs text-slate-500">Certificados</p>
+                    <p className="text-sm text-slate-500">Certificados</p>
                   </div>
                 </div>
               </div>
@@ -143,19 +143,19 @@ export default function ReportesPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-amber-50">
                     <p className="text-2xl font-semibold text-slate-900">{mockStats.COYHAIQUE.colaboradores}</p>
-                    <p className="text-xs text-slate-500">Colaboradores</p>
+                    <p className="text-sm text-slate-500">Colaboradores</p>
                   </div>
                   <div className="p-3 rounded-lg bg-amber-50">
                     <p className="text-2xl font-semibold text-slate-900">{mockStats.COYHAIQUE.cumplimiento}%</p>
-                    <p className="text-xs text-slate-500">Cumplimiento</p>
+                    <p className="text-sm text-slate-500">Cumplimiento</p>
                   </div>
                   <div className="p-3 rounded-lg bg-amber-50">
                     <p className="text-2xl font-semibold text-slate-900">{mockStats.COYHAIQUE.capacitaciones}</p>
-                    <p className="text-xs text-slate-500">Capacitaciones</p>
+                    <p className="text-sm text-slate-500">Capacitaciones</p>
                   </div>
                   <div className="p-3 rounded-lg bg-amber-50">
                     <p className="text-2xl font-semibold text-slate-900">{mockStats.COYHAIQUE.certificados}</p>
-                    <p className="text-xs text-slate-500">Certificados</p>
+                    <p className="text-sm text-slate-500">Certificados</p>
                   </div>
                 </div>
               </div>
@@ -168,7 +168,7 @@ export default function ReportesPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-slate-900">Detalle por colaborador</h2>
-              <button className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+              <button className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
                 <Download className="h-4 w-4" />
                 Exportar Excel
               </button>
