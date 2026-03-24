@@ -35,7 +35,7 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
         {/* Header */}
         <div className="flex items-center gap-5">
           <Avatar className="h-16 w-16">
-            <AvatarFallback className="bg-indigo-100 text-indigo-700 text-xl font-semibold">
+            <AvatarFallback className="bg-[#f0f2eb] text-[#1e2d1c] text-xl font-semibold">
               {initials}
             </AvatarFallback>
           </Avatar>
@@ -78,10 +78,10 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
           </TabsList>
 
           <TabsContent value="trainings" className="mt-4">
-            <div className="rounded-xl border border-[#dde0d4] bg-white shadow-sm overflow-hidden">
+            <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-slate-50">
+                  <TableRow className="bg-[#faf9f6]">
                     <TableHead className="text-sm font-medium text-[#7d8471]">Capacitación</TableHead>
                     <TableHead className="text-sm font-medium text-[#7d8471]">Estado</TableHead>
                     <TableHead className="text-sm font-medium text-[#7d8471]">Nota</TableHead>
@@ -117,10 +117,10 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
           </TabsContent>
 
           <TabsContent value="certificates" className="mt-4">
-            <div className="rounded-xl border border-[#dde0d4] bg-white shadow-sm overflow-hidden">
+            <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-slate-50">
+                  <TableRow className="bg-[#faf9f6]">
                     <TableHead className="text-sm font-medium text-[#7d8471]">Capacitación</TableHead>
                     <TableHead className="text-sm font-medium text-[#7d8471]">Nota</TableHead>
                     <TableHead className="text-sm font-medium text-[#7d8471]">Fecha</TableHead>
@@ -134,7 +134,7 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
                       <TableCell className="text-sm text-[#1e2d1c]">{t.score}%</TableCell>
                       <TableCell className="text-sm text-[#7d8471]">{t.date}</TableCell>
                       <TableCell className="text-right">
-                        <button className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#dde0d4] bg-white text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors">
+                        <button className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors">
                           <Download className="h-4 w-4" />
                           Descargar
                         </button>

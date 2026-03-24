@@ -87,14 +87,14 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                 }}
                 className={`flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all ${
                   targetType === opt.key
-                    ? "border-indigo-300 bg-indigo-50 ring-2 ring-indigo-500"
-                    : "border-[#dde0d4] bg-white hover:bg-[#f0f2eb]/60"
+                    ? "border-[#a4ac86] bg-[#f0f2eb] ring-2 ring-[#2d4a2b]"
+                    : "border-[#dde0d4] bg-[#faf9f6] hover:bg-[#f0f2eb]/60"
                 }`}
               >
                 <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-                  targetType === opt.key ? "bg-indigo-100" : "bg-[#f0f2eb]"
+                  targetType === opt.key ? "bg-[#f0f2eb]" : "bg-[#f0f2eb]"
                 }`}>
-                  <opt.icon className={`h-5 w-5 ${targetType === opt.key ? "text-indigo-600" : "text-[#a4ac86]"}`} />
+                  <opt.icon className={`h-5 w-5 ${targetType === opt.key ? "text-[#2d4a2b]" : "text-[#a4ac86]"}`} />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[#1e2d1c]">{opt.label}</p>
@@ -118,8 +118,8 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                     onClick={() => setTargetSede(sede.id)}
                     className={`p-4 rounded-xl border-2 text-center text-sm font-medium transition-all ${
                       targetSede === sede.id
-                        ? "border-indigo-300 bg-indigo-50 ring-2 ring-indigo-500"
-                        : "border-[#dde0d4] bg-white hover:bg-[#f0f2eb]/60"
+                        ? "border-[#a4ac86] bg-[#f0f2eb] ring-2 ring-[#2d4a2b]"
+                        : "border-[#dde0d4] bg-[#faf9f6] hover:bg-[#f0f2eb]/60"
                     }`}
                   >
                     {sede.nombre}
@@ -143,8 +143,8 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                     onClick={() => setTargetArea(a)}
                     className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                       targetArea === a
-                        ? "border-indigo-300 bg-indigo-50 text-indigo-700"
-                        : "border-[#dde0d4] bg-white text-[#7d8471] hover:bg-[#f0f2eb]/60"
+                        ? "border-[#a4ac86] bg-[#f0f2eb] text-[#1e2d1c]"
+                        : "border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]/60"
                     }`}
                   >
                     {a}
@@ -172,13 +172,13 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                     type="button"
                     onClick={() => toggleUser(user.id)}
                     className={`flex items-center gap-3 w-full p-3 rounded-lg text-left transition-colors ${
-                      selectedUsers.has(user.id) ? "bg-indigo-50" : "hover:bg-[#f0f2eb]/60"
+                      selectedUsers.has(user.id) ? "bg-[#f0f2eb]" : "hover:bg-[#f0f2eb]/60"
                     }`}
                   >
                     <div
                       className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
                         selectedUsers.has(user.id)
-                          ? "border-indigo-500 bg-indigo-500"
+                          ? "border-[#2d4a2b] bg-[#2d4a2b]"
                           : "border-[#dde0d4]"
                       }`}
                     >
@@ -221,7 +221,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Summary & Submit */}
         {targetType && (
-          <Card className="border-indigo-200 bg-indigo-50/50 shadow-sm">
+          <Card className="border-[#dde0d4] bg-[#f0f2eb]/50 shadow-sm">
             <CardContent className="p-5 flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-[#1e2d1c]">Resumen de asignación</p>
@@ -234,7 +234,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                 type="button"
                 onClick={() => router.push(`/admin/capacitaciones/${id}`)}
                 disabled={affectedCount === 0}
-                className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Confirmar asignación
               </button>

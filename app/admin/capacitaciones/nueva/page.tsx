@@ -86,9 +86,9 @@ export default function NuevaCapacitacionPage() {
   }
 
   const sedeOptions = [
-    { key: "s1", label: SEDES.CONCEPCION.nombre, color: "border-indigo-300 bg-indigo-50", activeRing: "ring-indigo-500" },
+    { key: "s1", label: SEDES.CONCEPCION.nombre, color: "border-[#a4ac86] bg-[#f0f2eb]", activeRing: "ring-[#2d4a2b]" },
     { key: "s2", label: SEDES.COYHAIQUE.nombre, color: "border-amber-300 bg-amber-50", activeRing: "ring-amber-500" },
-    { key: "global", label: "Ambas sedes", color: "border-[#dde0d4] bg-slate-50", activeRing: "ring-slate-500" },
+    { key: "global", label: "Ambas sedes", color: "border-[#dde0d4] bg-[#faf9f6]", activeRing: "ring-[#7d8471]" },
   ];
 
   return (
@@ -104,9 +104,9 @@ export default function NuevaCapacitacionPage() {
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
                     currentStep > step.number
-                      ? "bg-indigo-500 text-white"
+                      ? "bg-[#2d4a2b] text-white"
                       : currentStep === step.number
-                      ? "bg-indigo-500 text-white"
+                      ? "bg-[#2d4a2b] text-white"
                       : "bg-[#f0f2eb] text-[#a4ac86]"
                   }`}
                 >
@@ -121,7 +121,7 @@ export default function NuevaCapacitacionPage() {
                 </span>
               </div>
               {i < steps.length - 1 && (
-                <div className={`w-16 h-px ${currentStep > step.number ? "bg-indigo-500" : "bg-[#dde0d4]"}`} />
+                <div className={`w-16 h-px ${currentStep > step.number ? "bg-[#2d4a2b]" : "bg-[#dde0d4]"}`} />
               )}
             </div>
           ))}
@@ -154,7 +154,7 @@ export default function NuevaCapacitacionPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
-                  className="w-full rounded-lg border border-[#dde0d4] px-3 py-2 text-base text-[#1e2d1c] placeholder:text-[#a4ac86] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full rounded-lg border border-[#dde0d4] px-3 py-2 text-base text-[#1e2d1c] placeholder:text-[#a4ac86] focus:outline-none focus:ring-2 focus:ring-[#2d4a2b] focus:border-transparent"
                 />
               </div>
 
@@ -168,8 +168,8 @@ export default function NuevaCapacitacionPage() {
                       onClick={() => setArea(a)}
                       className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                         area === a
-                          ? "border-indigo-300 bg-indigo-50 text-indigo-700"
-                          : "border-[#dde0d4] bg-white text-[#7d8471] hover:bg-[#f0f2eb]/60"
+                          ? "border-[#a4ac86] bg-[#f0f2eb] text-[#1e2d1c]"
+                          : "border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]/60"
                       }`}
                     >
                       {a}
@@ -180,8 +180,8 @@ export default function NuevaCapacitacionPage() {
                     onClick={() => setArea("Todos")}
                     className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                       area === "Todos"
-                        ? "border-indigo-300 bg-indigo-50 text-indigo-700"
-                        : "border-[#dde0d4] bg-white text-[#7d8471] hover:bg-[#f0f2eb]/60"
+                        ? "border-[#a4ac86] bg-[#f0f2eb] text-[#1e2d1c]"
+                        : "border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]/60"
                     }`}
                   >
                     Todos
@@ -200,7 +200,7 @@ export default function NuevaCapacitacionPage() {
                       className={`p-4 rounded-xl border-2 text-center text-sm font-medium transition-all ${
                         sedeSelection === opt.key
                           ? `${opt.color} ring-2 ${opt.activeRing}`
-                          : "border-[#dde0d4] bg-white text-[#7d8471] hover:bg-[#f0f2eb]/60"
+                          : "border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]/60"
                       }`}
                     >
                       {opt.label}
@@ -217,7 +217,7 @@ export default function NuevaCapacitacionPage() {
           <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-6 space-y-5">
               {/* Drop zone */}
-              <div className="border-2 border-dashed border-[#dde0d4] rounded-xl p-8 text-center hover:border-indigo-400 hover:bg-indigo-50/30 transition-colors cursor-pointer">
+              <div className="border-2 border-dashed border-[#dde0d4] rounded-xl p-8 text-center hover:border-[#7d8471] hover:bg-[#f0f2eb]/30 transition-colors cursor-pointer">
                 <Upload className="h-10 w-10 text-[#a4ac86] mx-auto mb-3" />
                 <p className="text-sm font-medium text-[#1e2d1c]">
                   Arrastra archivos aquí o haz clic para seleccionar
@@ -233,7 +233,7 @@ export default function NuevaCapacitacionPage() {
                   return (
                     <div
                       key={file.id}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-[#dde0d4] bg-white"
+                      className="flex items-center gap-3 p-3 rounded-lg border border-[#dde0d4] bg-[#faf9f6]"
                     >
                       <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f0f2eb]">
                         <FileIcon className="h-4 w-4 text-[#7d8471]" />
@@ -267,11 +267,11 @@ export default function NuevaCapacitacionPage() {
                   type="button"
                   onClick={() => setHasQuiz(!hasQuiz)}
                   className={`relative w-11 h-6 rounded-full transition-colors ${
-                    hasQuiz ? "bg-indigo-500" : "bg-[#dde0d4]"
+                    hasQuiz ? "bg-[#2d4a2b]" : "bg-[#dde0d4]"
                   }`}
                 >
                   <span
-                    className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                    className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-[#faf9f6] shadow transition-transform ${
                       hasQuiz ? "translate-x-5" : ""
                     }`}
                   />
@@ -345,7 +345,7 @@ export default function NuevaCapacitacionPage() {
                                 }
                                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                                   opt.isCorrect
-                                    ? "border-indigo-500 bg-indigo-500"
+                                    ? "border-[#2d4a2b] bg-[#2d4a2b]"
                                     : "border-[#dde0d4] hover:border-slate-400"
                                 }`}
                               >
@@ -375,7 +375,7 @@ export default function NuevaCapacitacionPage() {
                           <button
                             type="button"
                             onClick={() => addOption(q.id)}
-                            className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                            className="text-sm text-[#2d4a2b] hover:text-[#1e2d1c] font-medium"
                           >
                             + Agregar opción
                           </button>
@@ -385,7 +385,7 @@ export default function NuevaCapacitacionPage() {
                     <button
                       type="button"
                       onClick={addQuestion}
-                      className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                      className="flex items-center gap-2 text-sm text-[#2d4a2b] hover:text-[#1e2d1c] font-medium"
                     >
                       <Plus className="h-4 w-4" />
                       Agregar pregunta
@@ -402,7 +402,7 @@ export default function NuevaCapacitacionPage() {
           <button
             type="button"
             onClick={() => (currentStep > 1 ? setCurrentStep(currentStep - 1) : router.back())}
-            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#dde0d4] bg-white text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors"
+            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             {currentStep > 1 ? "Anterior" : "Cancelar"}
@@ -412,7 +412,7 @@ export default function NuevaCapacitacionPage() {
             <button
               type="button"
               onClick={() => setCurrentStep(currentStep + 1)}
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
             >
               Siguiente
               <ArrowRight className="h-4 w-4" />
@@ -421,7 +421,7 @@ export default function NuevaCapacitacionPage() {
             <button
               type="button"
               onClick={() => router.push("/admin/capacitaciones")}
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
             >
               Crear capacitación
             </button>

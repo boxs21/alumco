@@ -58,7 +58,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
           </div>
           <Link
             href={`/admin/capacitaciones/${id}/asignar`}
-            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors"
+            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
           >
             <UserPlus className="h-4 w-4" />
             Asignar colaboradores
@@ -132,7 +132,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
               {assignedUsers.map((user) => (
                 <div key={user.id} className="flex items-center justify-between p-3 rounded-lg border border-[#dde0d4]">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-sm font-medium text-indigo-700">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f0f2eb] text-sm font-medium text-[#1e2d1c]">
                       {user.name.split(" ").map((n) => n[0]).join("")}
                     </div>
                     <div>

@@ -57,7 +57,7 @@ export default function ReportesPage() {
                         onClick={() => setFilterSede(opt.key)}
                         className={`flex-1 px-2 py-1.5 rounded-md text-xs font-medium transition-colors ${
                           filterSede === opt.key
-                            ? "bg-white text-[#1e2d1c] shadow-sm"
+                            ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
                             : "text-[#7d8471] hover:text-[#1e2d1c]"
                         }`}
                       >
@@ -72,7 +72,7 @@ export default function ReportesPage() {
                 <select
                   value={filterArea}
                   onChange={(e) => setFilterArea(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-[#dde0d4] px-3 text-base text-[#1e2d1c] bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full h-11 rounded-lg border border-[#dde0d4] px-3 text-base text-[#1e2d1c] bg-[#faf9f6] focus:outline-none focus:ring-2 focus:ring-[#2d4a2b]"
                 >
                   <option value="ALL">Todas las áreas</option>
                   {AREAS.map((a) => (
@@ -112,23 +112,23 @@ export default function ReportesPage() {
               {/* Concepcion */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full bg-indigo-500" />
+                  <span className="h-3 w-3 rounded-full bg-[#2d4a2b]" />
                   <span className="text-sm font-semibold text-[#1e2d1c]">{SEDES.CONCEPCION.nombre}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg bg-indigo-50">
+                  <div className="p-3 rounded-lg bg-[#f0f2eb]">
                     <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.colaboradores}</p>
                     <p className="text-sm text-[#7d8471]">Colaboradores</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-indigo-50">
+                  <div className="p-3 rounded-lg bg-[#f0f2eb]">
                     <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.cumplimiento}%</p>
                     <p className="text-sm text-[#7d8471]">Cumplimiento</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-indigo-50">
+                  <div className="p-3 rounded-lg bg-[#f0f2eb]">
                     <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.capacitaciones}</p>
                     <p className="text-sm text-[#7d8471]">Capacitaciones</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-indigo-50">
+                  <div className="p-3 rounded-lg bg-[#f0f2eb]">
                     <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.certificados}</p>
                     <p className="text-sm text-[#7d8471]">Certificados</p>
                   </div>
@@ -168,7 +168,7 @@ export default function ReportesPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-[#1e2d1c]">Detalle por colaborador</h2>
-              <button className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#dde0d4] bg-white text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors">
+              <button className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors">
                 <Download className="h-4 w-4" />
                 Exportar Excel
               </button>
@@ -176,7 +176,7 @@ export default function ReportesPage() {
             <div className="rounded-xl border border-[#dde0d4] overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-slate-50">
+                  <TableRow className="bg-[#faf9f6]">
                     <TableHead className="text-sm font-medium text-[#7d8471]">Colaborador</TableHead>
                     <TableHead className="text-sm font-medium text-[#7d8471]">Área</TableHead>
                     <TableHead className="text-sm font-medium text-[#7d8471]">Sede</TableHead>

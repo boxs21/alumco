@@ -18,7 +18,7 @@ interface TopbarProps {
 
 export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProps) {
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[#dde0d4]/80 bg-white/95 backdrop-blur-sm px-6">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[#dde0d4]/80 bg-[#faf9f6]/95 backdrop-blur-sm px-6">
       <div className="flex items-center gap-4">
         {title && (
           <h1 className="text-xl font-semibold text-[#1e2d1c] tracking-tight animate-fade-in">{title}</h1>

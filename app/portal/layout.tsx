@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, BookOpen, History, LogOut } from "lucide-react";
+import { Leaf, BookOpen, History, LogOut } from "lucide-react";
 import SedeBadge from "@/components/shared/SedeBadge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -17,15 +17,15 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   return (
     <div className="min-h-screen bg-[#faf9f6]">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-30 border-b border-[#dde0d4] bg-white">
+      <header className="sticky top-0 z-30 border-b border-[#dde0d4] bg-[#faf9f6]/95 backdrop-blur-sm">
         <div className="mx-auto max-w-5xl flex h-16 items-center justify-between px-6">
           <div className="flex items-center gap-6">
             {/* Logo */}
             <Link href="/portal" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500">
-                <GraduationCap className="h-5 w-5 text-white" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2d4a2b] shadow-sm shadow-[#2d4a2b]/20">
+                <Leaf className="h-5 w-5 text-[#a4ac86]" />
               </div>
-              <span className="text-base font-bold text-[#1e2d1c]">ALUMCO</span>
+              <span className="text-base font-bold text-[#1e2d1c]" style={{ fontFamily: "var(--font-pt-serif)" }}>ALUMCO</span>
             </Link>
 
             {/* Nav Links */}
@@ -36,13 +36,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
                       isActive
-                        ? "bg-indigo-50 text-indigo-700"
-                        : "text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:text-[#1e2d1c]"
+                        ? "bg-[#2d4a2b] text-white"
+                        : "text-[#7d8471] hover:bg-[#f0f2eb] hover:text-[#1e2d1c]"
                     }`}
                   >
-                    <item.icon className={`h-4 w-4 ${isActive ? "text-indigo-500" : "text-[#a4ac86]"}`} />
+                    <item.icon className={`h-4 w-4 ${isActive ? "text-[#a4ac86]" : "text-[#a4ac86]"}`} />
                     {item.label}
                   </Link>
                 );
@@ -53,8 +53,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           <div className="flex items-center gap-4">
             <SedeBadge sedeId="s1" sedeName="Concepción" size="md" />
             <div className="flex items-center gap-3">
-              <Avatar className="h-9 w-9">
-                <AvatarFallback className="bg-indigo-100 text-indigo-700 text-sm font-medium">
+              <Avatar className="h-9 w-9 ring-2 ring-[#f0f2eb]">
+                <AvatarFallback className="bg-gradient-to-br from-[#f0f2eb] to-[#dde0d4] text-[#2d4a2b] text-sm font-semibold">
                   MG
                 </AvatarFallback>
               </Avatar>
@@ -62,7 +62,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
             </div>
             <Link
               href="/login"
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:text-[#1e2d1c] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb] hover:text-[#1e2d1c] transition-colors"
             >
               <LogOut className="h-4 w-4" />
               Salir

@@ -8,7 +8,7 @@ import {
   Users,
   BarChart3,
   LogOut,
-  GraduationCap,
+  Leaf,
 } from "lucide-react";
 
 const navItems = [
@@ -22,20 +22,23 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-30 flex h-full w-64 flex-col border-r border-[#dde0d4]/80 bg-white">
+    <aside className="fixed left-0 top-0 z-30 flex h-full w-64 flex-col border-r border-[#dde0d4] bg-[#faf9f6]">
+      {/* Subtle dot pattern overlay */}
+      <div className="pointer-events-none absolute inset-0 bg-dot-pattern opacity-20" />
+
       {/* Logo */}
-      <div className="flex h-16 items-center gap-3 px-6 border-b border-[#dde0d4]/80">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#2d4a2b] to-[#4a7c59] shadow-sm shadow-[#2d4a2b]/20">
-          <GraduationCap className="h-5 w-5 text-white" />
+      <div className="relative flex h-16 items-center gap-3 px-6 border-b border-[#dde0d4]">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2d4a2b] shadow-sm shadow-[#2d4a2b]/30">
+          <Leaf className="h-5 w-5 text-[#a4ac86]" />
         </div>
         <div>
-          <p className="text-base font-bold text-[#1e2d1c] leading-tight tracking-tight">ALUMCO</p>
-          <p className="text-xs text-[#7d8471] font-medium">Capacitaci&oacute;n</p>
+          <p className="text-base font-bold text-[#1e2d1c] leading-tight tracking-tight" style={{ fontFamily: "var(--font-pt-serif)" }}>ALUMCO</p>
+          <p className="text-[11px] text-[#7d8471] font-medium uppercase tracking-widest">Capacitaci&oacute;n</p>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-5 space-y-1">
+      <nav className="relative flex-1 px-3 py-5 space-y-0.5">
         {navItems.map((item, index) => {
           const isActive = pathname.startsWith(item.href);
           return (
@@ -44,12 +47,16 @@ export default function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 animate-slide-in-left ${
                 isActive
-                  ? "bg-[#f0f2eb] text-[#2d4a2b] sidebar-active-indicator shadow-sm shadow-[#2d4a2b]/[0.06]"
-                  : "text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:text-[#1e2d1c]"
+                  ? "bg-[#2d4a2b] text-white sidebar-active-indicator shadow-sm shadow-[#2d4a2b]/20"
+                  : "text-[#7d8471] hover:bg-[#f0f2eb] hover:text-[#1e2d1c]"
               }`}
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <item.icon className={`h-5 w-5 transition-colors ${isActive ? "text-[#2d4a2b]" : "text-[#a4ac86]"}`} />
+              <item.icon
+                className={`h-[18px] w-[18px] flex-shrink-0 transition-colors ${
+                  isActive ? "text-[#a4ac86]" : "text-[#a4ac86]"
+                }`}
+              />
               {item.label}
             </Link>
           );
@@ -57,15 +64,21 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-3 pb-4">
+      <div className="relative px-3 pb-5">
         <div className="h-px bg-gradient-to-r from-transparent via-[#dde0d4] to-transparent mb-3" />
         <Link
           href="/login"
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#a4ac86] hover:bg-[#f0f2eb]/60 hover:text-[#7d8471] transition-all duration-200"
+          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#a4ac86] hover:bg-[#f0f2eb] hover:text-[#7d8471] transition-all duration-200"
         >
-          <LogOut className="h-5 w-5" />
+          <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
           Cerrar sesi&oacute;n
         </Link>
+
+        {/* Forest Canopy theme badge */}
+        <div className="mt-4 mx-1 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#f0f2eb] border border-[#dde0d4]">
+          <span className="h-2 w-2 rounded-full bg-[#2d4a2b]" />
+          <span className="text-[10px] text-[#7d8471] font-medium tracking-wide uppercase">Forest Canopy</span>
+        </div>
       </div>
     </aside>
   );

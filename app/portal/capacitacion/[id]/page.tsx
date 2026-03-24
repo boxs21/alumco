@@ -60,7 +60,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
               }}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 currentStep === step.key
-                  ? "bg-indigo-50 text-indigo-700"
+                  ? "bg-[#f0f2eb] text-[#1e2d1c]"
                   : "text-[#7d8471] hover:text-[#1e2d1c]"
               }`}
             >
@@ -68,9 +68,9 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                 className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
                   (step.key === "material" && (currentStep === "quiz" || currentStep === "certificate")) ||
                   (step.key === "quiz" && currentStep === "certificate")
-                    ? "bg-indigo-500 text-white"
+                    ? "bg-[#2d4a2b] text-white"
                     : currentStep === step.key
-                    ? "bg-indigo-500 text-white"
+                    ? "bg-[#2d4a2b] text-white"
                     : "bg-[#dde0d4] text-[#7d8471]"
                 }`}
               >
@@ -98,7 +98,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                 {mockFiles.map((file) => {
                   const FileIcon = fileTypeIcons[file.type] ?? FileText;
                   return (
-                    <div key={file.id} className="flex items-center gap-3 p-4 rounded-lg border border-[#dde0d4] hover:bg-slate-50 cursor-pointer transition-colors">
+                    <div key={file.id} className="flex items-center gap-3 p-4 rounded-lg border border-[#dde0d4] hover:bg-[#faf9f6] cursor-pointer transition-colors">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#f0f2eb]">
                         <FileIcon className="h-5 w-5 text-[#7d8471]" />
                       </div>
@@ -112,7 +112,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                 })}
                 <button
                   onClick={() => setCurrentStep("quiz")}
-                  className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors mt-2"
+                  className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors mt-2"
                 >
                   Continuar a la evaluación
                   <ArrowRight className="h-4 w-4" />
@@ -138,14 +138,14 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                           onClick={() => setAnswers({ ...answers, [q.id]: opt.id })}
                           className={`flex items-center gap-3 w-full p-3 rounded-lg border text-left text-sm transition-colors ${
                             answers[q.id] === opt.id
-                              ? "border-indigo-300 bg-indigo-50 text-indigo-700"
-                              : "border-[#dde0d4] text-[#1e2d1c] hover:bg-slate-50"
+                              ? "border-[#a4ac86] bg-[#f0f2eb] text-[#1e2d1c]"
+                              : "border-[#dde0d4] text-[#1e2d1c] hover:bg-[#faf9f6]"
                           }`}
                         >
                           <div
                             className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
                               answers[q.id] === opt.id
-                                ? "border-indigo-500 bg-indigo-500"
+                                ? "border-[#2d4a2b] bg-[#2d4a2b]"
                                 : "border-[#dde0d4]"
                             }`}
                           >
@@ -160,7 +160,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                 <button
                   onClick={handleSubmitQuiz}
                   disabled={Object.keys(answers).length < mockQuestions.length}
-                  className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Enviar respuestas
                 </button>
@@ -179,7 +179,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                   Has obtenido una nota de <span className="font-semibold text-[#1e2d1c]">{score}%</span>.
                   Tu certificado está listo para descargar.
                 </p>
-                <button className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors">
+                <button className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors">
                   Descargar certificado
                 </button>
               </CardContent>
@@ -205,7 +205,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                       ) : (
                         <div
                           className={`h-4 w-4 rounded-full border-2 ${
-                            isCurrent ? "border-indigo-500" : "border-[#dde0d4]"
+                            isCurrent ? "border-[#2d4a2b]" : "border-[#dde0d4]"
                           }`}
                         />
                       )}

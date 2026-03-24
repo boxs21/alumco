@@ -44,7 +44,7 @@ export default function LoginPage() {
           <p className="text-sm text-[#7d8471] mt-1">Plataforma de Capacitaci&oacute;n</p>
         </div>
 
-        <Card className="border-[#dde0d4]/80 shadow-xl shadow-[#1e2d1c]/[0.04] animate-fade-in-up stagger-2 backdrop-blur-sm bg-white/95">
+        <Card className="border-[#dde0d4]/80 shadow-xl shadow-[#1e2d1c]/[0.04] animate-fade-in-up stagger-2 backdrop-blur-sm bg-[#faf9f6]/95">
           <CardContent className="p-7 space-y-6">
             {/* Role Toggle */}
             <div className="flex rounded-xl bg-[#f0f2eb]/80 p-1.5 gap-1">
@@ -53,7 +53,7 @@ export default function LoginPage() {
                 onClick={() => setRole("admin")}
                 className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all duration-200 ${
                   role === "admin"
-                    ? "bg-white text-[#1e2d1c] shadow-sm ring-1 ring-[#dde0d4]/60"
+                    ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm ring-1 ring-[#dde0d4]/60"
                     : "text-[#7d8471] hover:text-[#1e2d1c]"
                 }`}
               >
@@ -65,7 +65,7 @@ export default function LoginPage() {
                 onClick={() => setRole("collaborator")}
                 className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all duration-200 ${
                   role === "collaborator"
-                    ? "bg-white text-[#1e2d1c] shadow-sm ring-1 ring-[#dde0d4]/60"
+                    ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm ring-1 ring-[#dde0d4]/60"
                     : "text-[#7d8471] hover:text-[#1e2d1c]"
                 }`}
               >
@@ -121,7 +121,7 @@ export default function LoginPage() {
                   <div className="w-full border-t border-[#dde0d4]/80" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-white/95 px-3 text-[#a4ac86] font-medium">Acceso r&aacute;pido de prueba</span>
+                  <span className="bg-[#faf9f6]/95 px-3 text-[#a4ac86] font-medium">Acceso r&aacute;pido de prueba</span>
                 </div>
               </div>
 
@@ -129,14 +129,14 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => handleDemoLogin("admin")}
-                  className="h-11 rounded-xl border border-[#dde0d4] bg-white text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98]"
+                  className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98]"
                 >
                   Admin demo
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoLogin("collaborator")}
-                  className="h-11 rounded-xl border border-[#dde0d4] bg-white text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98]"
+                  className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98]"
                 >
                   Colaborador demo
                 </button>

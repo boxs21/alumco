@@ -39,8 +39,8 @@ export default function PortalPage() {
               <Card className="border-[#dde0d4] shadow-sm transition-shadow group-hover:shadow-md h-full">
                 <CardContent className="p-5 flex flex-col gap-4">
                   <div className="flex items-start justify-between">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50">
-                      <BookOpen className="h-5 w-5 text-indigo-500" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#f0f2eb]">
+                      <BookOpen className="h-5 w-5 text-[#2d4a2b]" />
                     </div>
                     <Badge className={status.className}>
                       <StatusIcon className="h-3 w-3 mr-1" />
@@ -49,7 +49,7 @@ export default function PortalPage() {
                   </div>
 
                   <div>
-                    <h3 className="text-base font-semibold text-[#1e2d1c] group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-base font-semibold text-[#1e2d1c] group-hover:text-[#2d4a2b] transition-colors">
                       {training.title}
                     </h3>
                   </div>

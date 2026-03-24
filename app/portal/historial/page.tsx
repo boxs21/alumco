@@ -51,7 +51,7 @@ export default function HistorialPage() {
                     <TableCell className="text-sm text-[#7d8471]">{training.date}</TableCell>
                     <TableCell className="text-right">
                       {training.hasCertificate ? (
-                        <button className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#dde0d4] bg-white text-sm font-medium text-[#1e2d1c] hover:bg-[#faf9f6] transition-colors">
+                        <button className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#faf9f6] transition-colors">
                           <Download className="h-4 w-4" />
                           Descargar
                         </button>

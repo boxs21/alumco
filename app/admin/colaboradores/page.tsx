@@ -47,7 +47,7 @@ export default function ColaboradoresPage() {
               onClick={() => setSedeTab(tab.key)}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 sedeTab === tab.key
-                  ? "bg-white text-[#1e2d1c] shadow-sm"
+                  ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
                   : "text-[#7d8471] hover:text-[#1e2d1c]"
               }`}
             >
@@ -57,10 +57,10 @@ export default function ColaboradoresPage() {
         </div>
 
         {/* Table */}
-        <div className="rounded-xl border border-[#dde0d4] bg-white shadow-sm overflow-hidden">
+        <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-slate-50">
+              <TableRow className="bg-[#faf9f6]">
                 <TableHead className="text-sm font-medium text-[#7d8471]">Colaborador</TableHead>
                 <TableHead className="text-sm font-medium text-[#7d8471]">Área</TableHead>
                 <TableHead className="text-sm font-medium text-[#7d8471]">Sede</TableHead>
@@ -75,7 +75,7 @@ export default function ColaboradoresPage() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-9 w-9">
-                        <AvatarFallback className="bg-indigo-100 text-indigo-700 text-xs font-medium">
+                        <AvatarFallback className="bg-[#f0f2eb] text-[#1e2d1c] text-xs font-medium">
                           {user.name.split(" ").map((n) => n[0]).join("")}
                         </AvatarFallback>
                       </Avatar>
@@ -104,7 +104,7 @@ export default function ColaboradoresPage() {
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-20 rounded-full bg-[#f0f2eb]">
                         <div
-                          className="h-2 rounded-full bg-indigo-500"
+                          className="h-2 rounded-full bg-[#2d4a2b]"
                           style={{ width: `${Math.min((user.completadas / 5) * 100, 100)}%` }}
                         />
                       </div>
@@ -114,7 +114,7 @@ export default function ColaboradoresPage() {
                   <TableCell className="text-right">
                     <Link
                       href={`/admin/colaboradores/${user.id}`}
-                      className="inline-flex items-center h-9 px-4 rounded-lg border border-[#dde0d4] bg-white text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors"
+                      className="inline-flex items-center h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors"
                     >
                       Ver perfil
                     </Link>

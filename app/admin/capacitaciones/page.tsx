@@ -54,7 +54,7 @@ export default function CapacitacionesPage() {
                   onClick={() => setSedeTab(tab.key)}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     sedeTab === tab.key
-                      ? "bg-white text-[#1e2d1c] shadow-sm"
+                      ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
                       : "text-[#7d8471] hover:text-[#1e2d1c]"
                   }`}
                 >
@@ -71,7 +71,7 @@ export default function CapacitacionesPage() {
                   onClick={() => setStatusFilter(opt.key)}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     statusFilter === opt.key
-                      ? "bg-white text-[#1e2d1c] shadow-sm"
+                      ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
                       : "text-[#7d8471] hover:text-[#1e2d1c]"
                   }`}
                 >
@@ -83,7 +83,7 @@ export default function CapacitacionesPage() {
 
           <Link
             href="/admin/capacitaciones/nueva"
-            className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98]"
+            className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-gradient-to-r from-[#2d4a2b] to-[#4a7c59] text-white text-sm font-medium hover:from-[#1e3a1c] hover:to-[#3d6b4a] transition-all duration-200 shadow-md shadow-[#2d4a2b]/20 hover:shadow-lg hover:shadow-[#2d4a2b]/30 active:scale-[0.98]"
           >
             <Plus className="h-4 w-4" />
             Nueva capacitación
