@@ -46,7 +46,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
     <div className="space-y-6">
       {/* Title */}
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">{training.title}</h1>
+        <h1 className="text-2xl font-semibold text-[#1e2d1c]">{training.title}</h1>
       </div>
 
       {/* Step indicator */}
@@ -61,7 +61,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 currentStep === step.key
                   ? "bg-indigo-50 text-indigo-700"
-                  : "text-slate-500 hover:text-slate-700"
+                  : "text-[#7d8471] hover:text-[#1e2d1c]"
               }`}
             >
               <div
@@ -71,7 +71,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                     ? "bg-indigo-500 text-white"
                     : currentStep === step.key
                     ? "bg-indigo-500 text-white"
-                    : "bg-slate-200 text-slate-500"
+                    : "bg-[#dde0d4] text-[#7d8471]"
                 }`}
               >
                 {(step.key === "material" && (currentStep === "quiz" || currentStep === "certificate")) ||
@@ -83,7 +83,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
               </div>
               {step.label}
             </button>
-            {i < steps.length - 1 && <div className="w-8 h-px bg-slate-200" />}
+            {i < steps.length - 1 && <div className="w-8 h-px bg-[#dde0d4]" />}
           </div>
         ))}
       </div>
@@ -92,21 +92,21 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
         {/* Main Content */}
         <div className="col-span-2">
           {currentStep === "material" && (
-            <Card className="border-slate-200 shadow-sm">
+            <Card className="border-[#dde0d4] shadow-sm">
               <CardContent className="p-6 space-y-4">
-                <h2 className="text-base font-semibold text-slate-900">Material de estudio</h2>
+                <h2 className="text-base font-semibold text-[#1e2d1c]">Material de estudio</h2>
                 {mockFiles.map((file) => {
                   const FileIcon = fileTypeIcons[file.type] ?? FileText;
                   return (
-                    <div key={file.id} className="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                        <FileIcon className="h-5 w-5 text-slate-500" />
+                    <div key={file.id} className="flex items-center gap-3 p-4 rounded-lg border border-[#dde0d4] hover:bg-slate-50 cursor-pointer transition-colors">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#f0f2eb]">
+                        <FileIcon className="h-5 w-5 text-[#7d8471]" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-700">{file.name}</p>
-                        <p className="text-xs text-slate-400">{file.size}</p>
+                        <p className="text-sm font-medium text-[#1e2d1c]">{file.name}</p>
+                        <p className="text-xs text-[#a4ac86]">{file.size}</p>
                       </div>
-                      <Badge className="bg-slate-100 text-slate-600 hover:bg-slate-100">{file.type}</Badge>
+                      <Badge className="bg-[#f0f2eb] text-[#7d8471] hover:bg-[#f0f2eb]">{file.type}</Badge>
                     </div>
                   );
                 })}
@@ -122,12 +122,12 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
           )}
 
           {currentStep === "quiz" && !submitted && (
-            <Card className="border-slate-200 shadow-sm">
+            <Card className="border-[#dde0d4] shadow-sm">
               <CardContent className="p-6 space-y-6">
-                <h2 className="text-base font-semibold text-slate-900">Evaluación</h2>
+                <h2 className="text-base font-semibold text-[#1e2d1c]">Evaluación</h2>
                 {mockQuestions.map((q, qi) => (
                   <div key={q.id} className="space-y-3">
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-[#1e2d1c]">
                       {qi + 1}. {q.text}
                     </p>
                     <div className="space-y-2">
@@ -139,14 +139,14 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                           className={`flex items-center gap-3 w-full p-3 rounded-lg border text-left text-sm transition-colors ${
                             answers[q.id] === opt.id
                               ? "border-indigo-300 bg-indigo-50 text-indigo-700"
-                              : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                              : "border-[#dde0d4] text-[#1e2d1c] hover:bg-slate-50"
                           }`}
                         >
                           <div
                             className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
                               answers[q.id] === opt.id
                                 ? "border-indigo-500 bg-indigo-500"
-                                : "border-slate-300"
+                                : "border-[#dde0d4]"
                             }`}
                           >
                             {answers[q.id] === opt.id && <Check className="h-3 w-3 text-white" />}
@@ -169,14 +169,14 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
           )}
 
           {currentStep === "certificate" && (
-            <Card className="border-slate-200 shadow-sm">
+            <Card className="border-[#dde0d4] shadow-sm">
               <CardContent className="p-8 text-center space-y-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 mx-auto">
                   <Award className="h-8 w-8 text-emerald-600" />
                 </div>
-                <h2 className="text-xl font-semibold text-slate-900">Capacitación completada</h2>
-                <p className="text-sm text-slate-500">
-                  Has obtenido una nota de <span className="font-semibold text-slate-900">{score}%</span>.
+                <h2 className="text-xl font-semibold text-[#1e2d1c]">Capacitación completada</h2>
+                <p className="text-sm text-[#7d8471]">
+                  Has obtenido una nota de <span className="font-semibold text-[#1e2d1c]">{score}%</span>.
                   Tu certificado está listo para descargar.
                 </p>
                 <button className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors">
@@ -189,9 +189,9 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
 
         {/* Side Panel */}
         <div className="space-y-4">
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-5 space-y-3">
-              <h3 className="text-sm font-semibold text-slate-900">Progreso</h3>
+              <h3 className="text-sm font-semibold text-[#1e2d1c]">Progreso</h3>
               <div className="space-y-2">
                 {steps.map((step) => {
                   const isDone =
@@ -205,13 +205,13 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                       ) : (
                         <div
                           className={`h-4 w-4 rounded-full border-2 ${
-                            isCurrent ? "border-indigo-500" : "border-slate-300"
+                            isCurrent ? "border-indigo-500" : "border-[#dde0d4]"
                           }`}
                         />
                       )}
                       <span
                         className={`text-sm ${
-                          isDone ? "text-emerald-600 font-medium" : isCurrent ? "text-slate-900 font-medium" : "text-slate-400"
+                          isDone ? "text-emerald-600 font-medium" : isCurrent ? "text-[#1e2d1c] font-medium" : "text-[#a4ac86]"
                         }`}
                       >
                         {step.label}
@@ -223,21 +223,21 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-slate-900">Información</h3>
+              <h3 className="text-sm font-semibold text-[#1e2d1c]">Información</h3>
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Preguntas</span>
-                  <span className="text-slate-700 font-medium">{mockQuestions.length}</span>
+                  <span className="text-[#7d8471]">Preguntas</span>
+                  <span className="text-[#1e2d1c] font-medium">{mockQuestions.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Nota mínima</span>
-                  <span className="text-slate-700 font-medium">60%</span>
+                  <span className="text-[#7d8471]">Nota mínima</span>
+                  <span className="text-[#1e2d1c] font-medium">60%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Intentos</span>
-                  <span className="text-slate-700 font-medium">3 máximo</span>
+                  <span className="text-[#7d8471]">Intentos</span>
+                  <span className="text-[#1e2d1c] font-medium">3 máximo</span>
                 </div>
               </div>
             </CardContent>

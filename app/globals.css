@@ -9,7 +9,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-inter);
+  --font-heading: var(--font-playfair);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,58 +47,61 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* ALUMCO custom colors */
-  --color-alumco-primary: #0f172a;
-  --color-alumco-accent: #6366f1;
-  --color-alumco-accent-soft: #eef2ff;
-  --color-alumco-surface: #ffffff;
-  --color-alumco-bg: #f8fafc;
-  --color-alumco-border: #e2e8f0;
-  --color-alumco-muted: #64748b;
-  --color-alumco-success: #10b981;
-  --color-alumco-warning: #f59e0b;
-  --color-alumco-danger: #ef4444;
-  --color-sede-concepcion: #6366f1;
-  --color-sede-concepcion-bg: #eef2ff;
-  --color-sede-coyhaique: #f59e0b;
-  --color-sede-coyhaique-bg: #fffbeb;
-  --color-sede-global: #64748b;
-  --color-sede-global-bg: #f1f5f9;
+  /* ─── Forest Canopy Theme ─── */
+  --color-forest: #2d4a2b;
+  --color-forest-hover: #4a7c59;
+  --color-forest-light: #f0f2eb;
+  --color-forest-olive: #a4ac86;
+  --color-forest-sage: #7d8471;
+  --color-forest-ivory: #faf9f6;
+  --color-forest-text: #1e2d1c;
+  --color-forest-border: #dde0d4;
+  --color-forest-success: #4a7c59;
+  --color-forest-warning: #f9a620;
+  --color-forest-danger: #b74729;
+
+  /* Sede colors within Forest theme */
+  --color-sede-concepcion: #2d4a2b;
+  --color-sede-concepcion-bg: #f0f2eb;
+  --color-sede-coyhaique: #f9a620;
+  --color-sede-coyhaique-bg: #fdf6e3;
+  --color-sede-global: #7d8471;
+  --color-sede-global-bg: #f0f2eb;
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #faf9f6;
+  --foreground: #1e2d1c;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #1e2d1c;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #0f172a;
+  --popover-foreground: #1e2d1c;
+  --primary: #2d4a2b;
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #eef2ff;
-  --accent-foreground: #0f172a;
-  --destructive: #ef4444;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #6366f1;
-  --chart-1: #6366f1;
-  --chart-2: #10b981;
-  --chart-3: #f59e0b;
-  --chart-4: #ef4444;
-  --chart-5: #64748b;
+  --secondary: #f0f2eb;
+  --secondary-foreground: #1e2d1c;
+  --muted: #f0f2eb;
+  --muted-foreground: #7d8471;
+  --accent: #f0f2eb;
+  --accent-foreground: #1e2d1c;
+  --destructive: #b74729;
+  --border: #dde0d4;
+  --input: #dde0d4;
+  --ring: #2d4a2b;
+  --chart-1: #2d4a2b;
+  --chart-2: #4a7c59;
+  --chart-3: #f9a620;
+  --chart-4: #b74729;
+  --chart-5: #a4ac86;
   --radius: 0.625rem;
   --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #6366f1;
+  --sidebar-foreground: #1e2d1c;
+  --sidebar-primary: #2d4a2b;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eef2ff;
-  --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #6366f1;
+  --sidebar-accent: #f0f2eb;
+  --sidebar-accent-foreground: #1e2d1c;
+  --sidebar-border: #dde0d4;
+  --sidebar-ring: #2d4a2b;
 }
 
 @layer base {
@@ -112,9 +115,13 @@
     @apply font-sans;
     font-size: 15px;
   }
+  /* Playfair Display for headings */
+  h1, h2, h3 {
+    font-family: var(--font-playfair), Georgia, serif;
+  }
 }
 
-/* ─── ALUMCO Design System: Animations ─── */
+/* ─── Forest Canopy: Animations ─── */
 
 @keyframes fade-in-up {
   from {
@@ -163,7 +170,6 @@
   from { width: 0; }
 }
 
-/* Staggered entrance for grids and lists */
 .animate-fade-in-up {
   animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -180,7 +186,6 @@
   animation: slide-in-left 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Stagger delays */
 .stagger-1 { animation-delay: 0.05s; }
 .stagger-2 { animation-delay: 0.1s; }
 .stagger-3 { animation-delay: 0.15s; }
@@ -188,23 +193,29 @@
 .stagger-5 { animation-delay: 0.25s; }
 .stagger-6 { animation-delay: 0.3s; }
 
-/* Progress bar animation */
 .animate-progress {
   animation: progress-fill 1s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: 0.3s;
 }
 
-/* ─── Subtle background pattern ─── */
+/* ─── Forest Canopy: Background patterns ─── */
 .bg-dot-pattern {
-  background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
+  background-image: radial-gradient(circle, #dde0d4 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .bg-grid-pattern {
   background-image:
-    linear-gradient(to right, #e2e8f020 1px, transparent 1px),
-    linear-gradient(to bottom, #e2e8f020 1px, transparent 1px);
+    linear-gradient(to right, #dde0d420 1px, transparent 1px),
+    linear-gradient(to bottom, #dde0d420 1px, transparent 1px);
   background-size: 32px 32px;
+}
+
+/* Organic leaf-like pattern */
+.bg-leaf-pattern {
+  background-image:
+    radial-gradient(ellipse at 20% 50%, #f0f2eb 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, #f0f2eb 0%, transparent 40%);
 }
 
 /* ─── Card hover refinements ─── */
@@ -216,17 +227,18 @@
 .card-hover:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 0.06),
-    0 10px 15px -3px rgb(0 0 0 / 0.06),
-    0 0 0 1px rgb(99 102 241 / 0.08);
+    0 4px 6px -1px rgb(0 0 0 / 0.05),
+    0 10px 15px -3px rgb(0 0 0 / 0.05),
+    0 0 0 1px rgb(45 74 43 / 0.08);
 }
 
 /* ─── Login background ─── */
 .login-bg {
-  background-color: #f8fafc;
+  background-color: #faf9f6;
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, #eef2ff 0%, transparent 70%),
-    radial-gradient(circle at 80% 80%, #fffbeb40 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% -20%, #f0f2eb 0%, transparent 70%),
+    radial-gradient(circle at 80% 80%, #f0f2eb60 0%, transparent 50%),
+    radial-gradient(circle at 20% 70%, #dde0d430 0%, transparent 40%);
 }
 
 /* ─── Sidebar active indicator ─── */
@@ -243,7 +255,7 @@
   width: 3px;
   height: 60%;
   border-radius: 0 4px 4px 0;
-  background: #6366f1;
+  background: #2d4a2b;
 }
 
 /* ─── Smooth scrollbar ─── */
@@ -257,17 +269,17 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #a4ac86;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #7d8471;
 }
 
-/* ─── Focus ring refinement ─── */
+/* ─── Focus ring ─── */
 :focus-visible {
-  outline: 2px solid #6366f1;
+  outline: 2px solid #2d4a2b;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -278,5 +290,5 @@
 }
 
 .table-row-hover:hover {
-  background-color: #f8fafc;
+  background-color: #faf9f6;
 }

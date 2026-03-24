@@ -47,15 +47,15 @@ export default function CapacitacionesPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Sede Tabs */}
-            <div className="flex rounded-lg bg-slate-100 p-1">
+            <div className="flex rounded-lg bg-[#f0f2eb] p-1">
               {sedeTabs.map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setSedeTab(tab.key)}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     sedeTab === tab.key
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-500 hover:text-slate-700"
+                      ? "bg-white text-[#1e2d1c] shadow-sm"
+                      : "text-[#7d8471] hover:text-[#1e2d1c]"
                   }`}
                 >
                   {tab.label}
@@ -64,15 +64,15 @@ export default function CapacitacionesPage() {
             </div>
 
             {/* Status Filter */}
-            <div className="flex rounded-lg bg-slate-100 p-1">
+            <div className="flex rounded-lg bg-[#f0f2eb] p-1">
               {statusOptions.map((opt) => (
                 <button
                   key={opt.key}
                   onClick={() => setStatusFilter(opt.key)}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     statusFilter === opt.key
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-500 hover:text-slate-700"
+                      ? "bg-white text-[#1e2d1c] shadow-sm"
+                      : "text-[#7d8471] hover:text-[#1e2d1c]"
                   }`}
                 >
                   {opt.label}

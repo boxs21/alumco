@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(git branch:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(ls C:/Users/AndyV/alumcotest/node_modules/.bin/next.*)",
+      "Bash(npx next:*)",
+      "Read(//c/Users/AndyV/.claude/skills/**)",
+      "Read(//c/Users/AndyV/alumcotest/$USERPROFILE/.claude/**)"
+    ]
+  }
+}

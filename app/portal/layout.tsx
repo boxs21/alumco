@@ -15,9 +15,9 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#faf9f6]">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
+      <header className="sticky top-0 z-30 border-b border-[#dde0d4] bg-white">
         <div className="mx-auto max-w-5xl flex h-16 items-center justify-between px-6">
           <div className="flex items-center gap-6">
             {/* Logo */}
@@ -25,7 +25,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500">
                 <GraduationCap className="h-5 w-5 text-white" />
               </div>
-              <span className="text-base font-bold text-slate-900">ALUMCO</span>
+              <span className="text-base font-bold text-[#1e2d1c]">ALUMCO</span>
             </Link>
 
             {/* Nav Links */}
@@ -39,10 +39,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
                         ? "bg-indigo-50 text-indigo-700"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        : "text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:text-[#1e2d1c]"
                     }`}
                   >
-                    <item.icon className={`h-4 w-4 ${isActive ? "text-indigo-500" : "text-slate-400"}`} />
+                    <item.icon className={`h-4 w-4 ${isActive ? "text-indigo-500" : "text-[#a4ac86]"}`} />
                     {item.label}
                   </Link>
                 );
@@ -58,11 +58,11 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                   MG
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium text-slate-900">María González</span>
+              <span className="text-sm font-medium text-[#1e2d1c]">María González</span>
             </div>
             <Link
               href="/login"
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:text-[#1e2d1c] transition-colors"
             >
               <LogOut className="h-4 w-4" />
               Salir

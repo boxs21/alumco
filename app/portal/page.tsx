@@ -18,14 +18,14 @@ export default function PortalPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Mis capacitaciones</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl font-semibold text-[#1e2d1c]">Mis capacitaciones</h1>
+          <p className="text-sm text-[#7d8471] mt-1">
             Capacitaciones asignadas a tu sede y globales
           </p>
         </div>
         <div className="flex items-center gap-3">
           <SedeBadge sedeId="s1" sedeName="Concepción" size="lg" />
-          <span className="text-base font-medium text-slate-900">María González</span>
+          <span className="text-base font-medium text-[#1e2d1c]">María González</span>
         </div>
       </div>
 
@@ -36,7 +36,7 @@ export default function PortalPage() {
           const StatusIcon = status.icon;
           return (
             <Link key={training.id} href={`/portal/capacitacion/${training.trainingId}`} className="block group">
-              <Card className="border-slate-200 shadow-sm transition-shadow group-hover:shadow-md h-full">
+              <Card className="border-[#dde0d4] shadow-sm transition-shadow group-hover:shadow-md h-full">
                 <CardContent className="p-5 flex flex-col gap-4">
                   <div className="flex items-start justify-between">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50">
@@ -49,7 +49,7 @@ export default function PortalPage() {
                   </div>
 
                   <div>
-                    <h3 className="text-base font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-base font-semibold text-[#1e2d1c] group-hover:text-indigo-600 transition-colors">
                       {training.title}
                     </h3>
                   </div>
@@ -57,7 +57,7 @@ export default function PortalPage() {
                   <div className="flex items-center gap-2 mt-auto">
                     <SedeBadge sedeId="s1" sedeName="Concepción" size="sm" />
                     {training.score && (
-                      <span className="text-sm text-slate-500">Nota: {training.score}%</span>
+                      <span className="text-sm text-[#7d8471]">Nota: {training.score}%</span>
                     )}
                   </div>
                 </CardContent>

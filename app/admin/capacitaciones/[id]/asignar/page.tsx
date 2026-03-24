@@ -73,7 +73,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
       <div className="p-6 max-w-3xl mx-auto space-y-6">
         {/* Target Type Selection */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium text-slate-700">Tipo de asignación</Label>
+          <Label className="text-sm font-medium text-[#1e2d1c]">Tipo de asignación</Label>
           <div className="grid grid-cols-2 gap-3">
             {targetOptions.map((opt) => (
               <button
@@ -88,17 +88,17 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                 className={`flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all ${
                   targetType === opt.key
                     ? "border-indigo-300 bg-indigo-50 ring-2 ring-indigo-500"
-                    : "border-slate-200 bg-white hover:bg-slate-50"
+                    : "border-[#dde0d4] bg-white hover:bg-[#f0f2eb]/60"
                 }`}
               >
                 <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-                  targetType === opt.key ? "bg-indigo-100" : "bg-slate-100"
+                  targetType === opt.key ? "bg-indigo-100" : "bg-[#f0f2eb]"
                 }`}>
-                  <opt.icon className={`h-5 w-5 ${targetType === opt.key ? "text-indigo-600" : "text-slate-400"}`} />
+                  <opt.icon className={`h-5 w-5 ${targetType === opt.key ? "text-indigo-600" : "text-[#a4ac86]"}`} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">{opt.label}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{opt.description}</p>
+                  <p className="text-sm font-semibold text-[#1e2d1c]">{opt.label}</p>
+                  <p className="text-xs text-[#7d8471] mt-0.5">{opt.description}</p>
                 </div>
               </button>
             ))}
@@ -107,9 +107,9 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Sede selector */}
         {targetType === "SEDE" && (
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-5 space-y-3">
-              <Label className="text-sm font-medium text-slate-700">Seleccionar sede</Label>
+              <Label className="text-sm font-medium text-[#1e2d1c]">Seleccionar sede</Label>
               <div className="grid grid-cols-2 gap-3">
                 {Object.values(SEDES).map((sede) => (
                   <button
@@ -119,7 +119,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                     className={`p-4 rounded-xl border-2 text-center text-sm font-medium transition-all ${
                       targetSede === sede.id
                         ? "border-indigo-300 bg-indigo-50 ring-2 ring-indigo-500"
-                        : "border-slate-200 bg-white hover:bg-slate-50"
+                        : "border-[#dde0d4] bg-white hover:bg-[#f0f2eb]/60"
                     }`}
                   >
                     {sede.nombre}
@@ -132,9 +132,9 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Area selector */}
         {targetType === "AREA" && (
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-5 space-y-3">
-              <Label className="text-sm font-medium text-slate-700">Seleccionar área</Label>
+              <Label className="text-sm font-medium text-[#1e2d1c]">Seleccionar área</Label>
               <div className="flex gap-2">
                 {AREAS.map((a) => (
                   <button
@@ -144,7 +144,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                     className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                       targetArea === a
                         ? "border-indigo-300 bg-indigo-50 text-indigo-700"
-                        : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                        : "border-[#dde0d4] bg-white text-[#7d8471] hover:bg-[#f0f2eb]/60"
                     }`}
                   >
                     {a}
@@ -157,7 +157,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Individual selector */}
         {targetType === "INDIVIDUAL" && (
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-5 space-y-3">
               <Input
                 placeholder="Buscar colaborador por nombre o email..."
@@ -172,21 +172,21 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                     type="button"
                     onClick={() => toggleUser(user.id)}
                     className={`flex items-center gap-3 w-full p-3 rounded-lg text-left transition-colors ${
-                      selectedUsers.has(user.id) ? "bg-indigo-50" : "hover:bg-slate-50"
+                      selectedUsers.has(user.id) ? "bg-indigo-50" : "hover:bg-[#f0f2eb]/60"
                     }`}
                   >
                     <div
                       className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
                         selectedUsers.has(user.id)
                           ? "border-indigo-500 bg-indigo-500"
-                          : "border-slate-300"
+                          : "border-[#dde0d4]"
                       }`}
                     >
                       {selectedUsers.has(user.id) && <Check className="h-3 w-3 text-white" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-700">{user.name}</p>
-                      <p className="text-xs text-slate-500">{user.area}</p>
+                      <p className="text-sm font-medium text-[#1e2d1c]">{user.name}</p>
+                      <p className="text-xs text-[#7d8471]">{user.area}</p>
                     </div>
                     <SedeBadge sedeId={user.sedeId} sedeName={user.sedeName} size="sm" />
                   </button>
@@ -198,12 +198,12 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Due date */}
         {targetType && (
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-5">
               <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-slate-400" />
+                <Calendar className="h-5 w-5 text-[#a4ac86]" />
                 <div className="flex-1">
-                  <Label htmlFor="dueDate" className="text-sm font-medium text-slate-700">
+                  <Label htmlFor="dueDate" className="text-sm font-medium text-[#1e2d1c]">
                     Fecha límite (opcional)
                   </Label>
                   <Input
@@ -224,8 +224,8 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
           <Card className="border-indigo-200 bg-indigo-50/50 shadow-sm">
             <CardContent className="p-5 flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-slate-900">Resumen de asignación</p>
-                <p className="text-sm text-slate-600 mt-0.5">
+                <p className="text-sm font-semibold text-[#1e2d1c]">Resumen de asignación</p>
+                <p className="text-sm text-[#7d8471] mt-0.5">
                   {affectedCount} {affectedCount === 1 ? "persona recibirá" : "personas recibirán"} esta capacitación
                   {dueDate && ` · Fecha límite: ${dueDate}`}
                 </p>
@@ -246,7 +246,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[#7d8471] hover:text-[#1e2d1c] transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Volver

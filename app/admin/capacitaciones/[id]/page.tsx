@@ -25,7 +25,7 @@ const fileTypeIcons: Record<string, typeof FileText> = {
 };
 
 const statusConfig = {
-  DRAFT: { label: "Borrador", className: "bg-slate-100 text-slate-600" },
+  DRAFT: { label: "Borrador", className: "bg-[#f0f2eb] text-[#7d8471]" },
   PUBLISHED: { label: "Publicado", className: "bg-emerald-50 text-emerald-700" },
   ARCHIVED: { label: "Archivado", className: "bg-red-50 text-red-600" },
 };
@@ -48,12 +48,12 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold text-slate-900">{training.title}</h1>
+              <h1 className="text-2xl font-semibold text-[#1e2d1c]">{training.title}</h1>
               <Badge className={statusInfo.className}>{statusInfo.label}</Badge>
             </div>
             <div className="flex items-center gap-3">
               <SedeBadge sedeId={training.sedeId} sedeName={training.sedeName} />
-              <span className="text-sm text-slate-500">Área: {training.area}</span>
+              <span className="text-sm text-[#7d8471]">Área: {training.area}</span>
             </div>
           </div>
           <Link
@@ -74,23 +74,23 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
 
         <div className="grid grid-cols-2 gap-6">
           {/* Material */}
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-6">
-              <h2 className="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <FileText className="h-5 w-5 text-slate-400" />
+              <h2 className="text-base font-semibold text-[#1e2d1c] mb-4 flex items-center gap-2">
+                <FileText className="h-5 w-5 text-[#a4ac86]" />
                 Material formativo
               </h2>
               <div className="space-y-2">
                 {mockFiles.map((file) => {
                   const FileIcon = fileTypeIcons[file.type] ?? FileText;
                   return (
-                    <div key={file.id} className="flex items-center gap-3 p-3 rounded-lg border border-slate-200">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100">
-                        <FileIcon className="h-4 w-4 text-slate-500" />
+                    <div key={file.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#dde0d4]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f0f2eb]">
+                        <FileIcon className="h-4 w-4 text-[#7d8471]" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-700">{file.name}</p>
-                        <p className="text-xs text-slate-400">{file.size}</p>
+                        <p className="text-sm font-medium text-[#1e2d1c]">{file.name}</p>
+                        <p className="text-xs text-[#a4ac86]">{file.size}</p>
                       </div>
                     </div>
                   );
@@ -100,24 +100,24 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
           </Card>
 
           {/* Quiz summary */}
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-6">
-              <h2 className="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <ClipboardList className="h-5 w-5 text-slate-400" />
+              <h2 className="text-base font-semibold text-[#1e2d1c] mb-4 flex items-center gap-2">
+                <ClipboardList className="h-5 w-5 text-[#a4ac86]" />
                 Evaluación
               </h2>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500">Preguntas</span>
-                  <span className="font-medium text-slate-700">{mockQuestions.length}</span>
+                  <span className="text-[#7d8471]">Preguntas</span>
+                  <span className="font-medium text-[#1e2d1c]">{mockQuestions.length}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500">Nota mínima</span>
-                  <span className="font-medium text-slate-700">60%</span>
+                  <span className="text-[#7d8471]">Nota mínima</span>
+                  <span className="font-medium text-[#1e2d1c]">60%</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500">Intentos máximos</span>
-                  <span className="font-medium text-slate-700">3</span>
+                  <span className="text-[#7d8471]">Intentos máximos</span>
+                  <span className="font-medium text-[#1e2d1c]">3</span>
                 </div>
               </div>
             </CardContent>
@@ -125,19 +125,19 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
         </div>
 
         {/* Assigned Users */}
-        <Card className="border-slate-200 shadow-sm">
+        <Card className="border-[#dde0d4] shadow-sm">
           <CardContent className="p-6">
-            <h2 className="text-base font-semibold text-slate-900 mb-4">Colaboradores asignados</h2>
+            <h2 className="text-base font-semibold text-[#1e2d1c] mb-4">Colaboradores asignados</h2>
             <div className="space-y-2">
               {assignedUsers.map((user) => (
-                <div key={user.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
+                <div key={user.id} className="flex items-center justify-between p-3 rounded-lg border border-[#dde0d4]">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-sm font-medium text-indigo-700">
                       {user.name.split(" ").map((n) => n[0]).join("")}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-slate-700">{user.name}</p>
-                      <p className="text-xs text-slate-500">{user.area}</p>
+                      <p className="text-sm font-medium text-[#1e2d1c]">{user.name}</p>
+                      <p className="text-xs text-[#7d8471]">{user.area}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">

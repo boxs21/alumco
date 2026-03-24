@@ -18,9 +18,9 @@ interface TrainingCardProps {
 }
 
 const statusConfig = {
-  DRAFT:     { label: "Borrador",  className: "bg-slate-100 text-slate-600 hover:bg-slate-100" },
-  PUBLISHED: { label: "Publicado", className: "bg-emerald-50 text-emerald-700 hover:bg-emerald-50" },
-  ARCHIVED:  { label: "Archivado", className: "bg-red-50 text-red-600 hover:bg-red-50" },
+  DRAFT:     { label: "Borrador",  className: "bg-[#f0f2eb] text-[#7d8471] hover:bg-[#f0f2eb]" },
+  PUBLISHED: { label: "Publicado", className: "bg-[#f0f2eb] text-[#4a7c59] hover:bg-[#f0f2eb]" },
+  ARCHIVED:  { label: "Archivado", className: "bg-[#fdf0ec] text-[#b74729] hover:bg-[#fdf0ec]" },
 };
 
 export default function TrainingCard({
@@ -45,32 +45,31 @@ export default function TrainingCard({
       className="block group animate-fade-in-up"
       style={{ animationDelay: `${delay * 0.08}s` }}
     >
-      <Card className="border-slate-200/80 shadow-sm card-hover h-full overflow-hidden">
-        {/* Top accent line based on status */}
+      <Card className="border-[#dde0d4]/80 shadow-sm card-hover h-full overflow-hidden">
         <div className={`h-[2px] ${
-          status === "PUBLISHED" ? "bg-gradient-to-r from-emerald-400 to-emerald-500" :
-          status === "DRAFT" ? "bg-gradient-to-r from-slate-300 to-slate-400" :
-          "bg-gradient-to-r from-red-300 to-red-400"
+          status === "PUBLISHED" ? "bg-gradient-to-r from-[#4a7c59] to-[#a4ac86]" :
+          status === "DRAFT" ? "bg-gradient-to-r from-[#dde0d4] to-[#a4ac86]" :
+          "bg-gradient-to-r from-[#b74729] to-[#d4826a]"
         } opacity-70`} />
         <CardContent className="p-5 flex flex-col gap-4">
           <div className="flex items-start justify-between gap-2">
             <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-              status === "DRAFT" ? "bg-slate-50" : "bg-indigo-50"
+              status === "DRAFT" ? "bg-[#f0f2eb]" : "bg-[#f0f2eb]"
             }`}>
               {status === "DRAFT" ? (
-                <FileEdit className="h-5 w-5 text-slate-400" />
+                <FileEdit className="h-5 w-5 text-[#a4ac86]" />
               ) : (
-                <BookOpen className="h-5 w-5 text-indigo-500" />
+                <BookOpen className="h-5 w-5 text-[#2d4a2b]" />
               )}
             </div>
             <Badge className={statusInfo.className}>{statusInfo.label}</Badge>
           </div>
 
           <div>
-            <h3 className="text-base font-semibold text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors duration-200">
+            <h3 className="text-base font-semibold text-[#1e2d1c] leading-tight group-hover:text-[#4a7c59] transition-colors duration-200">
               {title}
             </h3>
-            <p className="text-sm text-slate-500 mt-1">&Aacute;rea: {area}</p>
+            <p className="text-sm text-[#7d8471] mt-1">&Aacute;rea: {area}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -80,16 +79,16 @@ export default function TrainingCard({
           {asignados > 0 && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-500">Cumplimiento</span>
-                <span className="font-semibold text-slate-700">{progress}%</span>
+                <span className="text-[#7d8471]">Cumplimiento</span>
+                <span className="font-semibold text-[#1e2d1c]">{progress}%</span>
               </div>
-              <div className="h-2 w-full rounded-full bg-slate-100">
+              <div className="h-2 w-full rounded-full bg-[#f0f2eb]">
                 <div
-                  className="h-2 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-500 animate-progress"
+                  className="h-2 rounded-full bg-gradient-to-r from-[#2d4a2b] to-[#4a7c59] animate-progress"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#a4ac86]">
                 {completados} de {asignados} completados
               </p>
             </div>
