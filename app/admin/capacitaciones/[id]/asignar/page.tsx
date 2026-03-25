@@ -70,11 +70,11 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
     <div>
       <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title={`Asignar: ${training.title}`} />
 
-      <div className="p-6 max-w-3xl mx-auto space-y-6">
+      <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-4 lg:space-y-6">
         {/* Target Type Selection */}
         <div className="space-y-3">
           <Label className="text-sm font-medium text-[#1e2d1c]">Tipo de asignación</Label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {targetOptions.map((opt) => (
               <button
                 key={opt.key}
@@ -110,7 +110,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
           <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-5 space-y-3">
               <Label className="text-sm font-medium text-[#1e2d1c]">Seleccionar sede</Label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {Object.values(SEDES).map((sede) => (
                   <button
                     key={sede.id}

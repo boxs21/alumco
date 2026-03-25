@@ -17,22 +17,23 @@ export default function DashboardPage() {
     <div>
       <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Dashboard" />
 
-      <div className="p-6 space-y-6">
-        {/* Stat Cards */}
-        <div className="grid grid-cols-4 gap-4">
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+        {/* Stat Cards — 2 cols mobile, 4 cols desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
           <StatCard title="Colaboradores activos" value={stats.colaboradores} icon={Users} delay={0} />
           <StatCard title="Capacitaciones publicadas" value={stats.capacitaciones} icon={BookOpen} delay={1} />
           <StatCard title="Cumplimiento" value={`${stats.cumplimiento}%`} icon={TrendingUp} delay={2} />
           <StatCard title="Certificados emitidos" value={stats.certificados} icon={Award} delay={3} />
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        {/* Bottom row — 1 col mobile, 3 cols desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Comparativa de sedes */}
-          <Card className="border-[#dde0d4]/80 shadow-sm col-span-1 animate-fade-in-up stagger-4">
-            <CardContent className="p-6">
-              <h2 className="text-base font-semibold text-[#1e2d1c] mb-5">Comparativa por sede</h2>
-              <div className="space-y-6">
-                <div className="space-y-2.5">
+          <Card className="border-[#dde0d4]/80 shadow-sm animate-fade-in-up stagger-4">
+            <CardContent className="p-4 lg:p-6">
+              <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-4 lg:mb-5">Comparativa por sede</h2>
+              <div className="space-y-5 lg:space-y-6">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="h-3 w-3 rounded-full bg-gradient-to-br from-[#2d4a2b] to-[#4a7c59]" />
@@ -51,7 +52,7 @@ export default function DashboardPage() {
                   </p>
                 </div>
 
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="h-3 w-3 rounded-full bg-gradient-to-br from-[#f9a620] to-[#daa520]" />
@@ -74,10 +75,10 @@ export default function DashboardPage() {
           </Card>
 
           {/* Actividad reciente */}
-          <Card className="border-[#dde0d4]/80 shadow-sm col-span-1 animate-fade-in-up stagger-5">
-            <CardContent className="p-6">
-              <h2 className="text-base font-semibold text-[#1e2d1c] mb-5">Actividad reciente</h2>
-              <div className="space-y-4">
+          <Card className="border-[#dde0d4]/80 shadow-sm animate-fade-in-up stagger-5">
+            <CardContent className="p-4 lg:p-6">
+              <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-4 lg:mb-5">Actividad reciente</h2>
+              <div className="space-y-3 lg:space-y-4">
                 {mockRecentActivity.map((activity, index) => (
                   <div
                     key={activity.id}
@@ -98,12 +99,12 @@ export default function DashboardPage() {
           </Card>
 
           {/* Progreso por area */}
-          <Card className="border-[#dde0d4]/80 shadow-sm col-span-1 animate-fade-in-up stagger-6">
-            <CardContent className="p-6">
-              <h2 className="text-base font-semibold text-[#1e2d1c] mb-5">Progreso por &aacute;rea</h2>
-              <div className="space-y-6">
+          <Card className="border-[#dde0d4]/80 shadow-sm animate-fade-in-up stagger-6">
+            <CardContent className="p-4 lg:p-6">
+              <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-4 lg:mb-5">Progreso por &aacute;rea</h2>
+              <div className="space-y-4 lg:space-y-6">
                 {mockAreaProgress.map((item) => (
-                  <div key={item.area} className="space-y-2.5">
+                  <div key={item.area} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-[#1e2d1c]">{item.area}</span>
                       <span className="text-sm font-bold text-[#1e2d1c]">{item.progreso}%</span>

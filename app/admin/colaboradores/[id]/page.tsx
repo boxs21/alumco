@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { mockUsers, mockCollaboratorTrainings } from "@/lib/mock-data";
 import { BookOpen, CheckCircle, Star, Award, Download } from "lucide-react";
+
 export default function ColaboradorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [selectedSede, setSelectedSede] = useState("global");
@@ -31,17 +32,17 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
     <div>
       <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-5">
-          <Avatar className="h-16 w-16">
-            <AvatarFallback className="bg-[#f0f2eb] text-[#1e2d1c] text-xl font-semibold">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <Avatar className="h-14 w-14 lg:h-16 lg:w-16">
+            <AvatarFallback className="bg-[#f0f2eb] text-[#1e2d1c] text-lg lg:text-xl font-semibold">
               {initials}
             </AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold text-[#1e2d1c]">{user.name}</h1>
+            <div className="flex flex-wrap items-center gap-2 lg:gap-3">
+              <h1 className="text-xl lg:text-2xl font-semibold text-[#1e2d1c]">{user.name}</h1>
               <Badge
                 className={
                   user.active
@@ -52,18 +53,18 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
                 {user.active ? "Activo" : "Inactivo"}
               </Badge>
             </div>
-            <div className="flex items-center gap-3 text-sm text-[#7d8471]">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-[#7d8471]">
               <span>{user.area}</span>
-              <span>·</span>
-              <span>{user.email}</span>
-              <span>·</span>
+              <span className="hidden sm:inline">·</span>
+              <span className="hidden sm:inline">{user.email}</span>
               <SedeBadge sedeId={user.sedeId} sedeName={user.sedeName} size="sm" />
             </div>
+            <p className="sm:hidden text-xs text-[#7d8471]">{user.email}</p>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-4">
+        {/* Stats — 2 cols mobile, 4 cols desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
           <StatCard title="Asignadas" value={mockCollaboratorTrainings.length} icon={BookOpen} />
           <StatCard title="Completadas" value={completed.length} icon={CheckCircle} />
           <StatCard title="Nota promedio" value={user.nota ? `${user.nota}%` : "—"} icon={Star} />
@@ -78,14 +79,14 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
           </TabsList>
 
           <TabsContent value="trainings" className="mt-4">
-            <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-hidden">
+            <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-[#faf9f6]">
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Capacitación</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Estado</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Nota</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Fecha</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Capacitación</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Estado</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Nota</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Fecha</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -106,7 +107,7 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
                       <TableCell className="text-sm text-[#1e2d1c]">
                         {t.score ? `${t.score}%` : "—"}
                       </TableCell>
-                      <TableCell className="text-sm text-[#7d8471]">
+                      <TableCell className="text-sm text-[#7d8471] whitespace-nowrap">
                         {t.date ?? "—"}
                       </TableCell>
                     </TableRow>
@@ -117,14 +118,14 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
           </TabsContent>
 
           <TabsContent value="certificates" className="mt-4">
-            <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-hidden">
+            <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-[#faf9f6]">
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Capacitación</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Nota</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Fecha</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471] text-right">Acción</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Capacitación</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Nota</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Fecha</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] text-right whitespace-nowrap">Acción</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -132,11 +133,11 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
                     <TableRow key={t.id}>
                       <TableCell className="text-sm font-medium text-[#1e2d1c]">{t.title}</TableCell>
                       <TableCell className="text-sm text-[#1e2d1c]">{t.score}%</TableCell>
-                      <TableCell className="text-sm text-[#7d8471]">{t.date}</TableCell>
+                      <TableCell className="text-sm text-[#7d8471] whitespace-nowrap">{t.date}</TableCell>
                       <TableCell className="text-right">
                         <button className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors">
                           <Download className="h-4 w-4" />
-                          Descargar
+                          <span className="hidden sm:inline">Descargar</span>
                         </button>
                       </TableCell>
                     </TableRow>

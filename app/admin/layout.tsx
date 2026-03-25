@@ -1,4 +1,5 @@
 import Sidebar from "@/components/layout/Sidebar";
+import BottomNav from "@/components/layout/BottomNav";
 
 export default function AdminLayout({
   children,
@@ -8,7 +9,8 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-[#faf9f6]">
       <Sidebar />
-      <main className="ml-64">{children}</main>
+      <main className="lg:ml-64 pb-16 lg:pb-0">{children}</main>
+      <BottomNav />
     </div>
   );
 }

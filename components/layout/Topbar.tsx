@@ -18,40 +18,45 @@ interface TopbarProps {
 
 export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProps) {
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[#dde0d4]/80 bg-[#faf9f6]/95 backdrop-blur-sm px-6">
+    <header className="sticky top-0 z-20 flex h-14 lg:h-16 items-center justify-between border-b border-[#dde0d4]/80 bg-[#faf9f6]/95 backdrop-blur-sm px-4 lg:px-6">
       <div className="flex items-center gap-4">
         {title && (
-          <h1 className="text-xl font-semibold text-[#1e2d1c] tracking-tight animate-fade-in">{title}</h1>
+          <h1 className="text-lg lg:text-xl font-semibold text-[#1e2d1c] tracking-tight animate-fade-in">
+            {title}
+          </h1>
         )}
       </div>
 
-      <div className="flex items-center gap-4">
-        <Select value={selectedSede} onValueChange={onSedeChange}>
-          <SelectTrigger className="w-48 h-10 text-sm rounded-xl border-[#dde0d4]">
-            <SelectValue placeholder="Seleccionar sede" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl">
-            <SelectItem value="global">Todas las sedes</SelectItem>
-            <SelectItem value="CONCEPCION">
-              <span className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#2d4a2b]" />
-                {SEDES.CONCEPCION.nombre}
-              </span>
-            </SelectItem>
-            <SelectItem value="COYHAIQUE">
-              <span className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#f9a620]" />
-                {SEDES.COYHAIQUE.nombre}
-              </span>
-            </SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex items-center gap-2 lg:gap-4">
+        {/* Sede selector — hidden on very small screens, shown from sm */}
+        <div className="hidden sm:block">
+          <Select value={selectedSede} onValueChange={onSedeChange}>
+            <SelectTrigger className="w-36 lg:w-48 h-9 lg:h-10 text-sm rounded-xl border-[#dde0d4]">
+              <SelectValue placeholder="Sede" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="global">Todas las sedes</SelectItem>
+              <SelectItem value="CONCEPCION">
+                <span className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#2d4a2b]" />
+                  {SEDES.CONCEPCION.nombre}
+                </span>
+              </SelectItem>
+              <SelectItem value="COYHAIQUE">
+                <span className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#f9a620]" />
+                  {SEDES.COYHAIQUE.nombre}
+                </span>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-        <div className="h-6 w-px bg-[#dde0d4]" />
+        <div className="hidden sm:block h-6 w-px bg-[#dde0d4]" />
 
-        <div className="flex items-center gap-3">
-          <Avatar className="h-9 w-9 ring-2 ring-[#f0f2eb]">
-            <AvatarFallback className="bg-gradient-to-br from-[#f0f2eb] to-[#dde0d4] text-[#2d4a2b] text-sm font-semibold">
+        <div className="flex items-center gap-2 lg:gap-3">
+          <Avatar className="h-8 w-8 lg:h-9 lg:w-9 ring-2 ring-[#f0f2eb]">
+            <AvatarFallback className="bg-gradient-to-br from-[#f0f2eb] to-[#dde0d4] text-[#2d4a2b] text-xs lg:text-sm font-semibold">
               VL
             </AvatarFallback>
           </Avatar>

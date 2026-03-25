@@ -38,15 +38,15 @@ export default function ReportesPage() {
     <div>
       <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Reportes" />
 
-      <div className="p-6 space-y-6">
-        {/* Filters */}
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+        {/* Filters — 2 cols mobile, 4 cols desktop */}
         <Card className="border-[#dde0d4] shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 mb-4">
+          <CardContent className="p-4 lg:p-5">
+            <div className="flex items-center gap-2 mb-3 lg:mb-4">
               <Filter className="h-4 w-4 text-[#a4ac86]" />
               <span className="text-sm font-semibold text-[#1e2d1c]">Filtros</span>
             </div>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
               <div className="space-y-1.5">
                 <Label className="text-sm font-medium text-[#1e2d1c]">Sede</Label>
                 <div className="flex rounded-lg bg-[#f0f2eb] p-1">
@@ -55,7 +55,7 @@ export default function ReportesPage() {
                       <button
                         key={opt.key}
                         onClick={() => setFilterSede(opt.key)}
-                        className={`flex-1 px-2 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                        className={`flex-1 px-1.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                           filterSede === opt.key
                             ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
                             : "text-[#7d8471] hover:text-[#1e2d1c]"
@@ -72,7 +72,7 @@ export default function ReportesPage() {
                 <select
                   value={filterArea}
                   onChange={(e) => setFilterArea(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-[#dde0d4] px-3 text-base text-[#1e2d1c] bg-[#faf9f6] focus:outline-none focus:ring-2 focus:ring-[#2d4a2b]"
+                  className="w-full h-10 rounded-lg border border-[#dde0d4] px-2 text-sm text-[#1e2d1c] bg-[#faf9f6] focus:outline-none focus:ring-2 focus:ring-[#2d4a2b]"
                 >
                   <option value="ALL">Todas las áreas</option>
                   {AREAS.map((a) => (
@@ -86,7 +86,7 @@ export default function ReportesPage() {
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="h-11 text-base"
+                  className="h-10 text-sm"
                 />
               </div>
               <div className="space-y-1.5">
@@ -95,20 +95,20 @@ export default function ReportesPage() {
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="h-11 text-base"
+                  className="h-10 text-sm"
                 />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Sede Comparison */}
+        {/* Sede Comparison — 1 col mobile, 2 cols desktop */}
         <Card className="border-[#dde0d4] shadow-sm">
-          <CardContent className="p-6">
-            <h2 className="text-base font-semibold text-[#1e2d1c] mb-5">
+          <CardContent className="p-4 lg:p-6">
+            <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-4 lg:mb-5">
               Comparativa: {SEDES.CONCEPCION.nombre} vs {SEDES.COYHAIQUE.nombre}
             </h2>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               {/* Concepcion */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
@@ -117,20 +117,20 @@ export default function ReportesPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-[#f0f2eb]">
-                    <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.colaboradores}</p>
-                    <p className="text-sm text-[#7d8471]">Colaboradores</p>
+                    <p className="text-xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.colaboradores}</p>
+                    <p className="text-xs text-[#7d8471]">Colaboradores</p>
                   </div>
                   <div className="p-3 rounded-lg bg-[#f0f2eb]">
-                    <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.cumplimiento}%</p>
-                    <p className="text-sm text-[#7d8471]">Cumplimiento</p>
+                    <p className="text-xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.cumplimiento}%</p>
+                    <p className="text-xs text-[#7d8471]">Cumplimiento</p>
                   </div>
                   <div className="p-3 rounded-lg bg-[#f0f2eb]">
-                    <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.capacitaciones}</p>
-                    <p className="text-sm text-[#7d8471]">Capacitaciones</p>
+                    <p className="text-xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.capacitaciones}</p>
+                    <p className="text-xs text-[#7d8471]">Capacitaciones</p>
                   </div>
                   <div className="p-3 rounded-lg bg-[#f0f2eb]">
-                    <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.certificados}</p>
-                    <p className="text-sm text-[#7d8471]">Certificados</p>
+                    <p className="text-xl font-semibold text-[#1e2d1c]">{mockStats.CONCEPCION.certificados}</p>
+                    <p className="text-xs text-[#7d8471]">Certificados</p>
                   </div>
                 </div>
               </div>
@@ -142,20 +142,20 @@ export default function ReportesPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-amber-50">
-                    <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.COYHAIQUE.colaboradores}</p>
-                    <p className="text-sm text-[#7d8471]">Colaboradores</p>
+                    <p className="text-xl font-semibold text-[#1e2d1c]">{mockStats.COYHAIQUE.colaboradores}</p>
+                    <p className="text-xs text-[#7d8471]">Colaboradores</p>
                   </div>
                   <div className="p-3 rounded-lg bg-amber-50">
-                    <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.COYHAIQUE.cumplimiento}%</p>
-                    <p className="text-sm text-[#7d8471]">Cumplimiento</p>
+                    <p className="text-xl font-semibold text-[#1e2d1c]">{mockStats.COYHAIQUE.cumplimiento}%</p>
+                    <p className="text-xs text-[#7d8471]">Cumplimiento</p>
                   </div>
                   <div className="p-3 rounded-lg bg-amber-50">
-                    <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.COYHAIQUE.capacitaciones}</p>
-                    <p className="text-sm text-[#7d8471]">Capacitaciones</p>
+                    <p className="text-xl font-semibold text-[#1e2d1c]">{mockStats.COYHAIQUE.capacitaciones}</p>
+                    <p className="text-xs text-[#7d8471]">Capacitaciones</p>
                   </div>
                   <div className="p-3 rounded-lg bg-amber-50">
-                    <p className="text-2xl font-semibold text-[#1e2d1c]">{mockStats.COYHAIQUE.certificados}</p>
-                    <p className="text-sm text-[#7d8471]">Certificados</p>
+                    <p className="text-xl font-semibold text-[#1e2d1c]">{mockStats.COYHAIQUE.certificados}</p>
+                    <p className="text-xs text-[#7d8471]">Certificados</p>
                   </div>
                 </div>
               </div>
@@ -163,33 +163,33 @@ export default function ReportesPage() {
           </CardContent>
         </Card>
 
-        {/* Detailed Table */}
+        {/* Detailed Table — scrollable on mobile */}
         <Card className="border-[#dde0d4] shadow-sm">
-          <CardContent className="p-6">
+          <CardContent className="p-4 lg:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-[#1e2d1c]">Detalle por colaborador</h2>
-              <button className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors">
+              <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c]">Detalle por colaborador</h2>
+              <button className="inline-flex items-center gap-2 h-9 lg:h-11 px-3 lg:px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb]/60 transition-colors">
                 <Download className="h-4 w-4" />
-                Exportar Excel
+                <span className="hidden sm:inline">Exportar Excel</span>
               </button>
             </div>
-            <div className="rounded-xl border border-[#dde0d4] overflow-hidden">
+            <div className="rounded-xl border border-[#dde0d4] overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-[#faf9f6]">
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Colaborador</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Área</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Sede</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Completadas</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Nota promedio</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Estado</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Colaborador</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Área</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Sede</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Completadas</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Nota prom.</TableHead>
+                    <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Estado</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredUsers.map((user) => (
                     <TableRow key={user.id}>
-                      <TableCell className="text-sm font-medium text-[#1e2d1c]">{user.name}</TableCell>
-                      <TableCell className="text-sm text-[#1e2d1c]">{user.area}</TableCell>
+                      <TableCell className="text-sm font-medium text-[#1e2d1c] whitespace-nowrap">{user.name}</TableCell>
+                      <TableCell className="text-sm text-[#1e2d1c] whitespace-nowrap">{user.area}</TableCell>
                       <TableCell>
                         <SedeBadge sedeId={user.sedeId} sedeName={user.sedeName} size="sm" />
                       </TableCell>

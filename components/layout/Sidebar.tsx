@@ -22,7 +22,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-30 flex h-full w-64 flex-col border-r border-[#dde0d4] bg-[#faf9f6]">
+    <aside className="fixed left-0 top-0 z-30 hidden lg:flex h-full w-64 flex-col border-r border-[#dde0d4] bg-[#faf9f6]">
       {/* Subtle dot pattern overlay */}
       <div className="pointer-events-none absolute inset-0 bg-dot-pattern opacity-20" />
 

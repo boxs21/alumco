@@ -38,14 +38,14 @@ export default function ColaboradoresPage() {
     <div>
       <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Colaboradores" />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Sede Tabs */}
         <div className="flex rounded-lg bg-[#f0f2eb] p-1 w-fit">
           {sedeTabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setSedeTab(tab.key)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-3 lg:px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 sedeTab === tab.key
                   ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
                   : "text-[#7d8471] hover:text-[#1e2d1c]"
@@ -56,8 +56,8 @@ export default function ColaboradoresPage() {
           ))}
         </div>
 
-        {/* Table */}
-        <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-hidden">
+        {/* Desktop Table */}
+        <div className="hidden md:block rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="bg-[#faf9f6]">
@@ -123,6 +123,62 @@ export default function ColaboradoresPage() {
               ))}
             </TableBody>
           </Table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden space-y-3">
+          {filteredUsers.map((user) => (
+            <div
+              key={user.id}
+              className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] p-4 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-[#f0f2eb] text-[#1e2d1c] text-sm font-medium">
+                      {user.name.split(" ").map((n) => n[0]).join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-semibold text-[#1e2d1c]">{user.name}</p>
+                    <p className="text-xs text-[#7d8471]">{user.email}</p>
+                  </div>
+                </div>
+                <Badge
+                  className={
+                    user.active
+                      ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-50 shrink-0"
+                      : "bg-[#f0f2eb] text-[#7d8471] hover:bg-[#f0f2eb] shrink-0"
+                  }
+                >
+                  {user.active ? "Activo" : "Inactivo"}
+                </Badge>
+              </div>
+
+              <div className="mt-3 flex items-center gap-3 flex-wrap">
+                <span className="text-xs text-[#7d8471] bg-[#f0f2eb] px-2 py-1 rounded-md">{user.area}</span>
+                <SedeBadge sedeId={user.sedeId} sedeName={user.sedeName} size="sm" />
+              </div>
+
+              <div className="mt-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 flex-1">
+                  <div className="h-2 flex-1 max-w-[120px] rounded-full bg-[#f0f2eb]">
+                    <div
+                      className="h-2 rounded-full bg-[#2d4a2b]"
+                      style={{ width: `${Math.min((user.completadas / 5) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <span className="text-xs text-[#7d8471]">{user.completadas}/5 cursos</span>
+                </div>
+                <Link
+                  href={`/admin/colaboradores/${user.id}`}
+                  className="text-xs font-medium text-[#2d4a2b] hover:text-[#1e2d1c] transition-colors"
+                >
+                  Ver perfil →
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

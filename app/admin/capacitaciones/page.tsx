@@ -36,23 +36,19 @@ export default function CapacitacionesPage() {
 
   return (
     <div>
-      <Topbar
-        selectedSede={selectedSede}
-        onSedeChange={setSelectedSede}
-        title="Capacitaciones"
-      />
+      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Capacitaciones" />
 
-      <div className="p-6 space-y-6">
-        {/* Header with action */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+        {/* Header with filters + action */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 flex-1">
             {/* Sede Tabs */}
             <div className="flex rounded-lg bg-[#f0f2eb] p-1">
               {sedeTabs.map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setSedeTab(tab.key)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     sedeTab === tab.key
                       ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
                       : "text-[#7d8471] hover:text-[#1e2d1c]"
@@ -69,7 +65,7 @@ export default function CapacitacionesPage() {
                 <button
                   key={opt.key}
                   onClick={() => setStatusFilter(opt.key)}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     statusFilter === opt.key
                       ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
                       : "text-[#7d8471] hover:text-[#1e2d1c]"
@@ -83,16 +79,16 @@ export default function CapacitacionesPage() {
 
           <Link
             href="/admin/capacitaciones/nueva"
-            className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-gradient-to-r from-[#2d4a2b] to-[#4a7c59] text-white text-sm font-medium hover:from-[#1e3a1c] hover:to-[#3d6b4a] transition-all duration-200 shadow-md shadow-[#2d4a2b]/20 hover:shadow-lg hover:shadow-[#2d4a2b]/30 active:scale-[0.98]"
+            className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-[#2d4a2b] to-[#4a7c59] text-white text-sm font-medium hover:from-[#1e3a1c] hover:to-[#3d6b4a] transition-all duration-200 shadow-md shadow-[#2d4a2b]/20 active:scale-[0.98] shrink-0"
           >
             <Plus className="h-4 w-4" />
-            Nueva capacitación
+            Nueva capacitaci&oacute;n
           </Link>
         </div>
 
-        {/* Training Grid */}
+        {/* Training Grid — 1 col mobile, 2 cols sm, 3 cols lg */}
         {filteredTrainings.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
             {filteredTrainings.map((training, index) => (
               <TrainingCard key={training.id} {...training} delay={index} />
             ))}

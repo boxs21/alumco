@@ -95,14 +95,14 @@ export default function NuevaCapacitacionPage() {
     <div>
       <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Nueva capacitación" />
 
-      <div className="p-6 max-w-3xl mx-auto space-y-6">
-        {/* Stepper */}
-        <div className="flex items-center justify-center gap-2">
+      <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-4 lg:space-y-6">
+        {/* Stepper — compact on mobile */}
+        <div className="flex items-center justify-center gap-1 sm:gap-2">
           {steps.map((step, i) => (
-            <div key={step.number} className="flex items-center gap-2">
-              <div className="flex items-center gap-2">
+            <div key={step.number} className="flex items-center gap-1 sm:gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
+                  className={`flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-sm font-medium transition-colors shrink-0 ${
                     currentStep > step.number
                       ? "bg-[#2d4a2b] text-white"
                       : currentStep === step.number
@@ -110,10 +110,10 @@ export default function NuevaCapacitacionPage() {
                       : "bg-[#f0f2eb] text-[#a4ac86]"
                   }`}
                 >
-                  {currentStep > step.number ? <Check className="h-4 w-4" /> : step.number}
+                  {currentStep > step.number ? <Check className="h-3.5 w-3.5" /> : step.number}
                 </div>
                 <span
-                  className={`text-sm font-medium ${
+                  className={`hidden sm:inline text-sm font-medium ${
                     currentStep >= step.number ? "text-[#1e2d1c]" : "text-[#a4ac86]"
                   }`}
                 >
@@ -121,11 +121,15 @@ export default function NuevaCapacitacionPage() {
                 </span>
               </div>
               {i < steps.length - 1 && (
-                <div className={`w-16 h-px ${currentStep > step.number ? "bg-[#2d4a2b]" : "bg-[#dde0d4]"}`} />
+                <div className={`w-8 sm:w-16 h-px ${currentStep > step.number ? "bg-[#2d4a2b]" : "bg-[#dde0d4]"}`} />
               )}
             </div>
           ))}
         </div>
+        {/* Current step label on mobile */}
+        <p className="sm:hidden text-center text-sm font-medium text-[#1e2d1c]">
+          Paso {currentStep}: {steps[currentStep - 1].label}
+        </p>
 
         {/* Step 1: Basic Info */}
         {currentStep === 1 && (
@@ -160,7 +164,7 @@ export default function NuevaCapacitacionPage() {
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-[#1e2d1c]">Área</Label>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {AREAS.map((a) => (
                     <button
                       key={a}
