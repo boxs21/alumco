@@ -15,7 +15,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden border-t border-[#dde0d4] bg-[#faf9f6]/95 backdrop-blur-sm">
+    <nav aria-label="Navegación principal móvil" className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden border-t border-[#dde0d4] bg-[#faf9f6]/95 backdrop-blur-sm">
       {navItems.map((item) => {
         const isActive = pathname.startsWith(item.href);
         return (

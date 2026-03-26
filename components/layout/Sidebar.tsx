@@ -38,7 +38,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="relative flex-1 px-3 py-5 space-y-0.5">
+      <nav aria-label="Navegación principal" className="relative flex-1 px-3 py-5 space-y-0.5">
         {navItems.map((item, index) => {
           const isActive = pathname.startsWith(item.href);
           return (

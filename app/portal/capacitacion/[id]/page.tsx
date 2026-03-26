@@ -13,6 +13,7 @@ import {
   Award,
   ArrowRight,
 } from "lucide-react";
+
 const fileTypeIcons: Record<string, typeof FileText> = {
   PDF: FileText,
   VIDEO: Video,
@@ -29,10 +30,10 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
 
   const training = mockCollaboratorTrainings.find((t) => t.trainingId === id) ?? mockCollaboratorTrainings[0];
 
-  const steps: { key: Step; label: string }[] = [
-    { key: "material", label: "Revisar material" },
-    { key: "quiz", label: "Rendir evaluación" },
-    { key: "certificate", label: "Obtener certificado" },
+  const steps: { key: Step; label: string; shortLabel: string }[] = [
+    { key: "material", label: "Revisar material", shortLabel: "Material" },
+    { key: "quiz", label: "Rendir evaluación", shortLabel: "Evaluación" },
+    { key: "certificate", label: "Obtener certificado", shortLabel: "Certificado" },
   ];
 
   function handleSubmitQuiz() {
@@ -43,35 +44,36 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
   const score = submitted ? 85 : null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
       {/* Title */}
       <div>
-        <h1 className="text-2xl font-semibold text-[#1e2d1c]">{training.title}</h1>
+        <h1 className="text-xl lg:text-2xl font-semibold text-[#1e2d1c]">{training.title}</h1>
       </div>
 
-      {/* Step indicator */}
-      <div className="flex items-center gap-2">
+      {/* Step indicator — horizontal on sm+, compact on mobile */}
+      <div className="flex flex-wrap items-center gap-1 sm:gap-2">
         {steps.map((step, i) => (
-          <div key={step.key} className="flex items-center gap-2">
+          <div key={step.key} className="flex items-center gap-1 sm:gap-2">
             <button
               onClick={() => {
                 if (step.key === "certificate" && !submitted) return;
                 setCurrentStep(step.key);
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              aria-label={`Ir a paso ${i + 1}: ${step.label}`}
+              className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 currentStep === step.key
                   ? "bg-[#f0f2eb] text-[#1e2d1c]"
-                  : "text-[#7d8471] hover:text-[#1e2d1c]"
+                  : "text-[#6b7260] hover:text-[#1e2d1c]"
               }`}
             >
               <div
-                className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
+                className={`flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full text-xs font-semibold shrink-0 ${
                   (step.key === "material" && (currentStep === "quiz" || currentStep === "certificate")) ||
                   (step.key === "quiz" && currentStep === "certificate")
                     ? "bg-[#2d4a2b] text-white"
                     : currentStep === step.key
                     ? "bg-[#2d4a2b] text-white"
-                    : "bg-[#dde0d4] text-[#7d8471]"
+                    : "bg-[#dde0d4] text-[#6b7260]"
                 }`}
               >
                 {(step.key === "material" && (currentStep === "quiz" || currentStep === "certificate")) ||
@@ -81,40 +83,42 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                   i + 1
                 )}
               </div>
-              {step.label}
+              <span className="hidden sm:inline">{step.label}</span>
+              <span className="sm:hidden">{step.shortLabel}</span>
             </button>
-            {i < steps.length - 1 && <div className="w-8 h-px bg-[#dde0d4]" />}
+            {i < steps.length - 1 && <div className="w-4 sm:w-8 h-px bg-[#dde0d4]" />}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      {/* Content: 1 col mobile, 3 cols lg (2+1) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {/* Main Content */}
-        <div className="col-span-2">
+        <div className="lg:col-span-2">
           {currentStep === "material" && (
             <Card className="border-[#dde0d4] shadow-sm">
-              <CardContent className="p-6 space-y-4">
-                <h2 className="text-base font-semibold text-[#1e2d1c]">Material de estudio</h2>
+              <CardContent className="p-4 lg:p-6 space-y-4">
+                <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c]">Material de estudio</h2>
                 {mockFiles.map((file) => {
                   const FileIcon = fileTypeIcons[file.type] ?? FileText;
                   return (
-                    <div key={file.id} className="flex items-center gap-3 p-4 rounded-lg border border-[#dde0d4] hover:bg-[#faf9f6] cursor-pointer transition-colors">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#f0f2eb]">
-                        <FileIcon className="h-5 w-5 text-[#7d8471]" />
+                    <div key={file.id} className="flex items-center gap-3 p-3 lg:p-4 rounded-lg border border-[#dde0d4] hover:bg-[#faf9f6] cursor-pointer transition-colors">
+                      <div className="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-lg bg-[#f0f2eb]">
+                        <FileIcon className="h-4 w-4 lg:h-5 lg:w-5 text-[#6b7260]" aria-hidden="true" />
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-[#1e2d1c]">{file.name}</p>
-                        <p className="text-xs text-[#a4ac86]">{file.size}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
+                        <p className="text-xs text-[#6b7260]">{file.size}</p>
                       </div>
-                      <Badge className="bg-[#f0f2eb] text-[#7d8471] hover:bg-[#f0f2eb]">{file.type}</Badge>
+                      <Badge className="bg-[#f0f2eb] text-[#6b7260] hover:bg-[#f0f2eb] hidden sm:inline-flex">{file.type}</Badge>
                     </div>
                   );
                 })}
                 <button
                   onClick={() => setCurrentStep("quiz")}
-                  className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors mt-2"
+                  className="inline-flex items-center gap-2 h-10 lg:h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors mt-2"
                 >
-                  Continuar a la evaluación
+                  Continuar a la evaluaci&oacute;n
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </CardContent>
@@ -123,18 +127,20 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
 
           {currentStep === "quiz" && !submitted && (
             <Card className="border-[#dde0d4] shadow-sm">
-              <CardContent className="p-6 space-y-6">
-                <h2 className="text-base font-semibold text-[#1e2d1c]">Evaluación</h2>
+              <CardContent className="p-4 lg:p-6 space-y-5 lg:space-y-6">
+                <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c]">Evaluaci&oacute;n</h2>
                 {mockQuestions.map((q, qi) => (
                   <div key={q.id} className="space-y-3">
                     <p className="text-sm font-semibold text-[#1e2d1c]">
                       {qi + 1}. {q.text}
                     </p>
-                    <div className="space-y-2">
+                    <div className="space-y-2" role="radiogroup" aria-label={`Pregunta ${qi + 1}`}>
                       {q.options.map((opt) => (
                         <button
                           key={opt.id}
                           type="button"
+                          role="radio"
+                          aria-checked={answers[q.id] === opt.id}
                           onClick={() => setAnswers({ ...answers, [q.id]: opt.id })}
                           className={`flex items-center gap-3 w-full p-3 rounded-lg border text-left text-sm transition-colors ${
                             answers[q.id] === opt.id
@@ -160,7 +166,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                 <button
                   onClick={handleSubmitQuiz}
                   disabled={Object.keys(answers).length < mockQuestions.length}
-                  className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 h-10 lg:h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Enviar respuestas
                 </button>
@@ -170,16 +176,16 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
 
           {currentStep === "certificate" && (
             <Card className="border-[#dde0d4] shadow-sm">
-              <CardContent className="p-8 text-center space-y-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 mx-auto">
-                  <Award className="h-8 w-8 text-emerald-600" />
+              <CardContent className="p-6 lg:p-8 text-center space-y-4">
+                <div className="flex h-14 w-14 lg:h-16 lg:w-16 items-center justify-center rounded-full bg-emerald-100 mx-auto">
+                  <Award className="h-7 w-7 lg:h-8 lg:w-8 text-emerald-600" />
                 </div>
-                <h2 className="text-xl font-semibold text-[#1e2d1c]">Capacitación completada</h2>
-                <p className="text-sm text-[#7d8471]">
+                <h2 className="text-lg lg:text-xl font-semibold text-[#1e2d1c]">Capacitaci&oacute;n completada</h2>
+                <p className="text-sm text-[#6b7260]">
                   Has obtenido una nota de <span className="font-semibold text-[#1e2d1c]">{score}%</span>.
-                  Tu certificado está listo para descargar.
+                  Tu certificado est&aacute; listo para descargar.
                 </p>
-                <button className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors">
+                <button className="inline-flex items-center gap-2 h-10 lg:h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors">
                   Descargar certificado
                 </button>
               </CardContent>
@@ -190,7 +196,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
         {/* Side Panel */}
         <div className="space-y-4">
           <Card className="border-[#dde0d4] shadow-sm">
-            <CardContent className="p-5 space-y-3">
+            <CardContent className="p-4 lg:p-5 space-y-3">
               <h3 className="text-sm font-semibold text-[#1e2d1c]">Progreso</h3>
               <div className="space-y-2">
                 {steps.map((step) => {
@@ -201,17 +207,18 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                   return (
                     <div key={step.key} className="flex items-center gap-2">
                       {isDone ? (
-                        <CheckCircle className="h-4 w-4 text-emerald-500" />
+                        <CheckCircle className="h-4 w-4 text-emerald-500" aria-label="Completado" />
                       ) : (
                         <div
                           className={`h-4 w-4 rounded-full border-2 ${
                             isCurrent ? "border-[#2d4a2b]" : "border-[#dde0d4]"
                           }`}
+                          aria-hidden="true"
                         />
                       )}
                       <span
                         className={`text-sm ${
-                          isDone ? "text-emerald-600 font-medium" : isCurrent ? "text-[#1e2d1c] font-medium" : "text-[#a4ac86]"
+                          isDone ? "text-emerald-600 font-medium" : isCurrent ? "text-[#1e2d1c] font-medium" : "text-[#6b7260]"
                         }`}
                       >
                         {step.label}
@@ -224,20 +231,20 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
           </Card>
 
           <Card className="border-[#dde0d4] shadow-sm">
-            <CardContent className="p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-[#1e2d1c]">Información</h3>
+            <CardContent className="p-4 lg:p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-[#1e2d1c]">Informaci&oacute;n</h3>
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-[#7d8471]">Preguntas</span>
+                  <span className="text-[#6b7260]">Preguntas</span>
                   <span className="text-[#1e2d1c] font-medium">{mockQuestions.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#7d8471]">Nota mínima</span>
+                  <span className="text-[#6b7260]">Nota m&iacute;nima</span>
                   <span className="text-[#1e2d1c] font-medium">60%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#7d8471]">Intentos</span>
-                  <span className="text-[#1e2d1c] font-medium">3 máximo</span>
+                  <span className="text-[#6b7260]">Intentos</span>
+                  <span className="text-[#1e2d1c] font-medium">3 m&aacute;ximo</span>
                 </div>
               </div>
             </CardContent>

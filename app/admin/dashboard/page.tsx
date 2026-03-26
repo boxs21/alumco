@@ -47,7 +47,7 @@ export default function DashboardPage() {
                       style={{ width: `${mockStats.CONCEPCION.cumplimiento}%` }}
                     />
                   </div>
-                  <p className="text-xs text-[#a4ac86]">
+                  <p className="text-xs text-[#6b7260]">
                     {mockStats.CONCEPCION.colaboradores} colaboradores &middot; {mockStats.CONCEPCION.certificados} certificados
                   </p>
                 </div>
@@ -66,7 +66,7 @@ export default function DashboardPage() {
                       style={{ width: `${mockStats.COYHAIQUE.cumplimiento}%` }}
                     />
                   </div>
-                  <p className="text-xs text-[#a4ac86]">
+                  <p className="text-xs text-[#6b7260]">
                     {mockStats.COYHAIQUE.colaboradores} colaboradores &middot; {mockStats.COYHAIQUE.certificados} certificados
                   </p>
                 </div>
@@ -90,7 +90,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-[#1e2d1c] leading-snug">{activity.text}</p>
-                      <p className="text-xs text-[#a4ac86] mt-0.5">{activity.time}</p>
+                      <p className="text-xs text-[#6b7260] mt-0.5">{activity.time}</p>
                     </div>
                   </div>
                 ))}

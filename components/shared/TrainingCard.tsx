@@ -57,7 +57,7 @@ export default function TrainingCard({
               status === "DRAFT" ? "bg-[#f0f2eb]" : "bg-[#f0f2eb]"
             }`}>
               {status === "DRAFT" ? (
-                <FileEdit className="h-5 w-5 text-[#a4ac86]" />
+                <FileEdit className="h-5 w-5 text-[#6b7260]" />
               ) : (
                 <BookOpen className="h-5 w-5 text-[#2d4a2b]" />
               )}
@@ -88,7 +88,7 @@ export default function TrainingCard({
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="text-xs text-[#a4ac86]">
+              <p className="text-xs text-[#6b7260]">
                 {completados} de {asignados} completados
               </p>
             </div>

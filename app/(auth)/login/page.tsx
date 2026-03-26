@@ -121,7 +121,7 @@ export default function LoginPage() {
                   <div className="w-full border-t border-[#dde0d4]/80" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-[#faf9f6]/95 px-3 text-[#a4ac86] font-medium">Acceso r&aacute;pido de prueba</span>
+                  <span className="bg-[#faf9f6]/95 px-3 text-[#6b7260] font-medium">Acceso r&aacute;pido de prueba</span>
                 </div>
               </div>
 
@@ -145,7 +145,7 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-[#a4ac86] mt-6 animate-fade-in stagger-4">
+        <p className="text-center text-xs text-[#6b7260] mt-6 animate-fade-in stagger-4">
           ALUMCO &mdash; Capacitaci&oacute;n para residencias de adultos mayores
         </p>
       </div>
