@@ -159,6 +159,12 @@
 [data-theme] .bg-\[\#faf9f6\]  { background-color: var(--background) !important; }
 [data-theme] .text-\[\#faf9f6\] { color: var(--background) !important; }
 
+/* --- Background opacity variants (critical for sticky headers / bottom navs with backdrop-blur) --- */
+[data-theme] .bg-\[\#faf9f6\]\/95 { background-color: color-mix(in srgb, var(--background) 95%, transparent) !important; }
+[data-theme] .bg-\[\#faf9f6\]\/80 { background-color: color-mix(in srgb, var(--background) 80%, transparent) !important; }
+[data-theme] .bg-\[\#faf9f6\]\/60 { background-color: color-mix(in srgb, var(--background) 60%, transparent) !important; }
+[data-theme] .bg-\[\#faf9f6\]\/50 { background-color: color-mix(in srgb, var(--background) 50%, transparent) !important; }
+
 /* --- Secondary / Light --- */
 [data-theme] .bg-\[\#f0f2eb\]  { background-color: var(--secondary) !important; }
 [data-theme] .text-\[\#f0f2eb\] { color: var(--secondary) !important; }
@@ -277,6 +283,62 @@
 /* Dark mode gradient buttons text stays white */
 [data-dark] .bg-gradient-to-r.text-white {
   color: #ffffff !important;
+}
+
+/* ─── Dark mode: inputs get elevated bg so they're visible on dark background ─── */
+[data-dark] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="range"]),
+[data-dark] textarea,
+[data-dark] select {
+  background-color: var(--secondary) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+
+/* ─── Dark mode: card shadows use dark overlay (no light glow) ─── */
+[data-dark] .shadow-xl {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 10px 30px -5px rgb(0 0 0 / 0.5) !important;
+}
+[data-dark] .shadow-2xl {
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.5), 0 25px 50px -12px rgb(0 0 0 / 0.6) !important;
+}
+[data-dark] .shadow-sm {
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.3) !important;
+}
+
+/* ─── Dark mode: table row hover and active ─── */
+[data-dark] .hover\:bg-muted\/50:hover {
+  background-color: color-mix(in srgb, var(--secondary) 60%, transparent) !important;
+}
+
+/* ─── Dark mode: avatar and ring colors ─── */
+[data-dark] .ring-\[\#f0f2eb\] {
+  --tw-ring-color: var(--border) !important;
+}
+[data-dark] .from-\[\#f0f2eb\] {
+  --tw-gradient-from: var(--secondary) !important;
+}
+[data-dark] .to-\[\#dde0d4\] {
+  --tw-gradient-to: var(--border) !important;
+}
+
+/* ─── Dark mode: card-hover shadow ─── */
+[data-dark] .card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 4px 12px rgb(0 0 0 / 0.35),
+    0 8px 24px rgb(0 0 0 / 0.25) !important;
+}
+
+/* ─── Dark mode: toggle/tab active state ─── */
+[data-dark] .bg-\[\#faf9f6\].text-\[\#1e2d1c\] {
+  background-color: var(--secondary) !important;
+  color: var(--foreground) !important;
+}
+
+/* ─── Dark mode: toggle switch thumb ─── */
+[data-dark] .bg-\[\#faf9f6\].shadow {
+  background-color: var(--foreground) !important;
 }
 
 /* ─── Animations ─── */
