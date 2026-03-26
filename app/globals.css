@@ -47,7 +47,7 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* ─── Forest Canopy Theme ─── */
+  /* ─── Semantic Theme Variables ─── */
   --color-forest: #2d4a2b;
   --color-forest-hover: #4a7c59;
   --color-forest-light: #f0f2eb;
@@ -60,7 +60,7 @@
   --color-forest-warning: #f9a620;
   --color-forest-danger: #b74729;
 
-  /* Sede colors within Forest theme */
+  /* Sede colors */
   --color-sede-concepcion: #2d4a2b;
   --color-sede-concepcion-bg: #f0f2eb;
   --color-sede-coyhaique: #f9a620;
@@ -115,14 +115,124 @@
     @apply font-sans;
     font-size: 15px;
   }
-  /* PT Serif for headings (FreeSerif Bold equivalent) */
   h1, h2, h3 {
     font-family: var(--font-pt-serif), "Times New Roman", serif;
     font-weight: 700;
   }
 }
 
-/* ─── Forest Canopy: Animations ─── */
+/* ══════════════════════════════════════════════════════
+   DYNAMIC THEME OVERRIDES
+   Maps hardcoded Tailwind hex classes to CSS variables.
+   When data-theme is set, all colors respond dynamically.
+   ══════════════════════════════════════════════════════ */
+
+/* --- Primary (Forest Green → dynamic) --- */
+[data-theme] .bg-\[\#2d4a2b\]  { background-color: var(--primary) !important; }
+[data-theme] .text-\[\#2d4a2b\] { color: var(--primary) !important; }
+[data-theme] .border-\[\#2d4a2b\] { border-color: var(--primary) !important; }
+[data-theme] .ring-\[\#2d4a2b\] { --tw-ring-color: var(--primary) !important; }
+[data-theme] .from-\[\#2d4a2b\] { --tw-gradient-from: var(--primary) !important; }
+[data-theme] .to-\[\#2d4a2b\] { --tw-gradient-to: var(--primary) !important; }
+[data-theme] .shadow-\[\#2d4a2b\]\/20 { --tw-shadow-color: color-mix(in srgb, var(--primary) 20%, transparent) !important; }
+[data-theme] .shadow-\[\#2d4a2b\]\/30 { --tw-shadow-color: color-mix(in srgb, var(--primary) 30%, transparent) !important; }
+
+/* --- Primary Hover --- */
+[data-theme] .bg-\[\#4a7c59\]  { background-color: var(--color-forest-hover) !important; }
+[data-theme] .text-\[\#4a7c59\] { color: var(--color-forest-hover) !important; }
+[data-theme] .from-\[\#4a7c59\] { --tw-gradient-from: var(--color-forest-hover) !important; }
+[data-theme] .to-\[\#4a7c59\] { --tw-gradient-to: var(--color-forest-hover) !important; }
+
+/* --- Dark primary (hover of primary) --- */
+[data-theme] .bg-\[\#1e3a1c\]  { background-color: color-mix(in srgb, var(--primary) 80%, black) !important; }
+[data-theme] .hover\:bg-\[\#1e3a1c\]:hover { background-color: color-mix(in srgb, var(--primary) 80%, black) !important; }
+[data-theme] .from-\[\#1e3a1c\] { --tw-gradient-from: color-mix(in srgb, var(--primary) 80%, black) !important; }
+[data-theme] .hover\:from-\[\#1e3a1c\]:hover { --tw-gradient-from: color-mix(in srgb, var(--primary) 80%, black) !important; }
+[data-theme] .to-\[\#3d6b4a\] { --tw-gradient-to: color-mix(in srgb, var(--color-forest-hover) 85%, black) !important; }
+[data-theme] .hover\:to-\[\#3d6b4a\]:hover { --tw-gradient-to: color-mix(in srgb, var(--color-forest-hover) 85%, black) !important; }
+
+/* --- Foreground / Text --- */
+[data-theme] .text-\[\#1e2d1c\] { color: var(--foreground) !important; }
+[data-theme] .bg-\[\#1e2d1c\]  { background-color: var(--foreground) !important; }
+
+/* --- Background / Ivory --- */
+[data-theme] .bg-\[\#faf9f6\]  { background-color: var(--background) !important; }
+[data-theme] .text-\[\#faf9f6\] { color: var(--background) !important; }
+
+/* --- Secondary / Light --- */
+[data-theme] .bg-\[\#f0f2eb\]  { background-color: var(--secondary) !important; }
+[data-theme] .text-\[\#f0f2eb\] { color: var(--secondary) !important; }
+[data-theme] .bg-\[\#f0f2eb\]\/60 { background-color: color-mix(in srgb, var(--secondary) 60%, transparent) !important; }
+[data-theme] .bg-\[\#f0f2eb\]\/80 { background-color: color-mix(in srgb, var(--secondary) 80%, transparent) !important; }
+[data-theme] .bg-\[\#f0f2eb\]\/30 { background-color: color-mix(in srgb, var(--secondary) 30%, transparent) !important; }
+[data-theme] .bg-\[\#f0f2eb\]\/50 { background-color: color-mix(in srgb, var(--secondary) 50%, transparent) !important; }
+[data-theme] .hover\:bg-\[\#f0f2eb\]\/60:hover { background-color: color-mix(in srgb, var(--secondary) 60%, transparent) !important; }
+
+/* --- Muted / Sage --- */
+[data-theme] .text-\[\#7d8471\] { color: var(--muted-foreground) !important; }
+[data-theme] .bg-\[\#7d8471\]  { background-color: var(--muted-foreground) !important; }
+
+/* --- Muted improved contrast --- */
+[data-theme] .text-\[\#6b7260\] { color: var(--muted-foreground) !important; }
+
+/* --- Accent / Olive --- */
+[data-theme] .text-\[\#a4ac86\] { color: var(--color-forest-olive) !important; }
+[data-theme] .bg-\[\#a4ac86\]  { background-color: var(--color-forest-olive) !important; }
+
+/* --- Border --- */
+[data-theme] .border-\[\#dde0d4\] { border-color: var(--border) !important; }
+[data-theme] .border-\[\#dde0d4\]\/80 { border-color: color-mix(in srgb, var(--border) 80%, transparent) !important; }
+[data-theme] .border-\[\#a4ac86\] { border-color: var(--color-forest-olive) !important; }
+[data-theme] .hover\:border-\[\#a4ac86\]:hover { border-color: var(--color-forest-olive) !important; }
+[data-theme] .via-\[\#dde0d4\] { --tw-gradient-via: var(--border) !important; }
+
+/* --- Sede Concepcion gradient --- */
+[data-theme] .bg-gradient-to-r.from-\[\#2d4a2b\].to-\[\#4a7c59\] {
+  --tw-gradient-from: var(--primary) !important;
+  --tw-gradient-to: var(--color-forest-hover) !important;
+}
+
+/* --- Focus ring --- */
+[data-theme] :focus-visible {
+  outline-color: var(--primary) !important;
+}
+
+/* --- Scrollbar --- */
+[data-theme] ::-webkit-scrollbar-thumb {
+  background: var(--color-forest-olive) !important;
+}
+[data-theme] ::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground) !important;
+}
+
+/* --- Login bg --- */
+[data-theme] .login-bg {
+  background-color: var(--background) !important;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--secondary) 0%, transparent 70%),
+    radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--secondary) 60%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 20% 70%, color-mix(in srgb, var(--border) 30%, transparent) 0%, transparent 40%) !important;
+}
+
+/* --- Dot pattern --- */
+[data-theme] .bg-dot-pattern {
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px) !important;
+}
+
+/* --- Sidebar active indicator --- */
+[data-theme] .sidebar-active-indicator::before {
+  background: var(--color-forest-olive) !important;
+}
+
+/* --- Card hover shadow --- */
+[data-theme] .card-hover:hover {
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.05),
+    0 10px 15px -3px rgb(0 0 0 / 0.05),
+    0 0 0 1px color-mix(in srgb, var(--primary) 8%, transparent) !important;
+}
+
+/* ─── Animations ─── */
 
 @keyframes fade-in-up {
   from {
@@ -199,7 +309,7 @@
   animation-delay: 0.3s;
 }
 
-/* ─── Forest Canopy: Background patterns ─── */
+/* ─── Background patterns ─── */
 .bg-dot-pattern {
   background-image: radial-gradient(circle, #dde0d4 1px, transparent 1px);
   background-size: 24px 24px;
@@ -212,14 +322,13 @@
   background-size: 32px 32px;
 }
 
-/* Organic leaf-like pattern */
 .bg-leaf-pattern {
   background-image:
     radial-gradient(ellipse at 20% 50%, #f0f2eb 0%, transparent 50%),
     radial-gradient(ellipse at 80% 20%, #f0f2eb 0%, transparent 40%);
 }
 
-/* ─── Card hover refinements ─── */
+/* ─── Card hover ─── */
 .card-hover {
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);

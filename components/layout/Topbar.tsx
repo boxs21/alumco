@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 
 interface TopbarProps {
   selectedSede: string;
@@ -28,6 +29,11 @@ export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProp
       </div>
 
       <div className="flex items-center gap-2 lg:gap-4">
+        {/* Theme switcher — compact on mobile, hidden on lg (it's in sidebar) */}
+        <div className="lg:hidden">
+          <ThemeSwitcher compact />
+        </div>
+
         {/* Sede selector — hidden on very small screens, shown from sm */}
         <div className="hidden sm:block">
           <Select value={selectedSede} onValueChange={onSedeChange}>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PT_Sans, PT_Serif } from "next/font/google";
 import "./globals.css";
+import ThemeProvider from "@/components/providers/ThemeProvider";
 
 // FreeSans equivalent — clean humanist sans-serif
 const ptSans = PT_Sans({
@@ -28,7 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${ptSans.variable} ${ptSerif.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

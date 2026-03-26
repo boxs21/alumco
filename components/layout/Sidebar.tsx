@@ -10,6 +10,7 @@ import {
   LogOut,
   Leaf,
 } from "lucide-react";
+import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 
 const navItems = [
   { label: "Dashboard",       href: "/admin/dashboard",       icon: LayoutDashboard },
@@ -66,6 +67,12 @@ export default function Sidebar() {
       {/* Footer */}
       <div className="relative px-3 pb-5">
         <div className="h-px bg-gradient-to-r from-transparent via-[#dde0d4] to-transparent mb-3" />
+
+        {/* Theme Switcher */}
+        <ThemeSwitcher />
+
+        <div className="mt-1" />
+
         <Link
           href="/login"
           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#a4ac86] hover:bg-[#f0f2eb] hover:text-[#7d8471] transition-all duration-200"
@@ -73,12 +80,6 @@ export default function Sidebar() {
           <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
           Cerrar sesi&oacute;n
         </Link>
-
-        {/* Forest Canopy theme badge */}
-        <div className="mt-4 mx-1 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#f0f2eb] border border-[#dde0d4]">
-          <span className="h-2 w-2 rounded-full bg-[#2d4a2b]" />
-          <span className="text-[10px] text-[#7d8471] font-medium tracking-wide uppercase">Forest Canopy</span>
-        </div>
       </div>
     </aside>
   );
