@@ -434,6 +434,33 @@
   background: #7d8471;
 }
 
+/* ══════════════════════════════════════════════════════
+   FONT SIZE SCALING
+   data-fontsize on <html> controls the base rem.
+   These overrides keep fixed-pixel elements from breaking.
+   ══════════════════════════════════════════════════════ */
+
+/* Prevent sidebar width from scaling with rem */
+[data-fontsize="large"] aside.fixed,
+[data-fontsize="xlarge"] aside.fixed {
+  width: 256px !important; /* keep sidebar at 16rem = 256px fixed */
+}
+
+/* Keep bottom nav icon sizes consistent */
+[data-fontsize="large"] nav.fixed button svg,
+[data-fontsize="xlarge"] nav.fixed button svg,
+[data-fontsize="large"] nav.fixed a svg,
+[data-fontsize="xlarge"] nav.fixed a svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* Sidebar margin stays pixel-based */
+[data-fontsize="large"] .lg\:ml-64,
+[data-fontsize="xlarge"] .lg\:ml-64 {
+  margin-left: 256px !important;
+}
+
 /* ─── Reduced motion ─── */
 @media (prefers-reduced-motion: reduce) {
   *,

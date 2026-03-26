@@ -11,6 +11,7 @@ import {
   Leaf,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
+import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 
 const navItems = [
   { label: "Dashboard",       href: "/admin/dashboard",       icon: LayoutDashboard },
@@ -67,6 +68,11 @@ export default function Sidebar() {
       {/* Footer */}
       <div className="relative px-3 pb-5">
         <div className="h-px bg-gradient-to-r from-transparent via-[#dde0d4] to-transparent mb-3" />
+
+        {/* Font Size Switcher */}
+        <FontSizeSwitcher />
+
+        <div className="mt-2" />
 
         {/* Theme Switcher */}
         <ThemeSwitcher />
