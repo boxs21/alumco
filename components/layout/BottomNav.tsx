@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BookOpen, Users, BarChart3 } from "lucide-react";
+import { LayoutDashboard, BookOpen, Users, BarChart3, LogOut } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard",  shortLabel: "Dashboard",  href: "/admin/dashboard",      icon: LayoutDashboard },
@@ -33,6 +33,14 @@ export default function BottomNav() {
           </Link>
         );
       })}
+      <Link
+        href="/login"
+        className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[#a4ac86] hover:text-[#7d8471] transition-colors"
+        aria-label="Cerrar sesión"
+      >
+        <LogOut className="h-[22px] w-[22px]" />
+        <span className="text-[10px] font-medium leading-none">Salir</span>
+      </Link>
     </nav>
   );
 }
