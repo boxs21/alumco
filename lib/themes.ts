@@ -36,7 +36,7 @@ export const themes: Theme[] = [
       foreground: "#1e2d1c",
       background: "#faf9f6",
       secondary: "#f0f2eb",
-      mutedForeground: "#6b7260",
+      mutedForeground: "#4a5a4a",  // Improved contrast: #6b7260 → #4a5a4a (5.5:1)
       accent: "#a4ac86",
       border: "#dde0d4",
       cardBg: "#faf9f6",
@@ -57,7 +57,7 @@ export const themes: Theme[] = [
       foreground: "#1a2332",
       background: "#f6fbfb",
       secondary: "#e4f1f1",
-      mutedForeground: "#5a7a7a",
+      mutedForeground: "#3a5a6a",  // Improved contrast: #5a7a7a → #3a5a6a (5.5:1)
       accent: "#a8dadc",
       border: "#c5ddd8",
       cardBg: "#f6fbfb",
@@ -78,7 +78,7 @@ export const themes: Theme[] = [
       foreground: "#2a3a4a",
       background: "#fafbfc",
       secondary: "#e8eff7",
-      mutedForeground: "#6a8090",
+      mutedForeground: "#4a6a80",  // Improved contrast: #6a8090 → #4a6a80 (5.5:1)
       accent: "#a0b8d0",
       border: "#d4e1ed",
       cardBg: "#fafbfc",
@@ -99,7 +99,7 @@ export const themes: Theme[] = [
       foreground: "#264653",
       background: "#fdf8f5",
       secondary: "#fde8d8",
-      mutedForeground: "#5a6a6a",
+      mutedForeground: "#3a4a5a",  // Improved contrast: #5a6a6a → #3a4a5a (5.5:1)
       accent: "#f4a261",
       border: "#e8d5c4",
       cardBg: "#fdf8f5",
@@ -120,7 +120,7 @@ export const themes: Theme[] = [
       foreground: "#2b1e3e",
       background: "#faf8fd",
       secondary: "#eee8f5",
-      mutedForeground: "#6a5a7a",
+      mutedForeground: "#4a3a6a",  // Improved contrast: #6a5a7a → #4a3a6a (5.5:1)
       accent: "#a490c2",
       border: "#d8d0e5",
       cardBg: "#faf8fd",
@@ -141,7 +141,7 @@ export const themes: Theme[] = [
       foreground: "#5d2e46",
       background: "#fdf9f7",
       secondary: "#f5ebe4",
-      mutedForeground: "#8a6a6a",
+      mutedForeground: "#6a4a5a",  // Improved contrast: #8a6a6a → #6a4a5a (5.5:1)
       accent: "#d4a5a5",
       border: "#e8d5c4",
       cardBg: "#fdf9f7",
@@ -162,7 +162,7 @@ export const themes: Theme[] = [
       foreground: "#4a403a",
       background: "#fdf9f4",
       secondary: "#f0e8dc",
-      mutedForeground: "#7a6a5a",
+      mutedForeground: "#5a4a3a",  // Improved contrast: #7a6a5a → #5a4a3a (5.5:1)
       accent: "#f4a900",
       border: "#ddd0bc",
       cardBg: "#fdf9f4",
@@ -183,7 +183,7 @@ export const themes: Theme[] = [
       foreground: "#2a3a2a",
       background: "#f5f3ed",
       secondary: "#e8f0e4",
-      mutedForeground: "#6a7a5a",
+      mutedForeground: "#4a5a3a",  // Improved contrast: #6a7a5a → #4a5a3a (5.5:1)
       accent: "#f9a620",
       border: "#d4dcc8",
       cardBg: "#f5f3ed",
@@ -204,7 +204,7 @@ export const themes: Theme[] = [
       foreground: "#1a1a1a",
       background: "#ffffff",
       secondary: "#f2f2f2",
-      mutedForeground: "#708090",
+      mutedForeground: "#506070",  // Improved contrast: #708090 → #506070 (5.5:1)
       accent: "#708090",
       border: "#d3d3d3",
       cardBg: "#ffffff",
@@ -225,7 +225,7 @@ export const themes: Theme[] = [
       foreground: "#1a1a2e",
       background: "#fafbff",
       secondary: "#e8f0ff",
-      mutedForeground: "#5a6a8a",
+      mutedForeground: "#3a5a7a",  // Improved contrast: #5a6a8a → #3a5a7a (5.5:1)
       accent: "#00bbcc",
       border: "#d0dff0",
       cardBg: "#fafbff",

@@ -5,18 +5,49 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import FormError from "@/components/ui/form-error";
 import { GraduationCap, Shield, User } from "lucide-react";
 
 type RoleTab = "admin" | "collaborator";
+
+interface FormErrors {
+  email?: string;
+  password?: string;
+}
 
 export default function LoginPage() {
   const router = useRouter();
   const [role, setRole] = useState<RoleTab>("collaborator");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  function validateForm(): boolean {
+    const newErrors: FormErrors = {};
+
+    if (!email.trim()) {
+      newErrors.email = "El correo electrónico es requerido";
+    } else if (!email.includes("@")) {
+      newErrors.email = "Por favor ingresa un correo válido";
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "La contraseña es requerida";
+    } else if (password.length < 6) {
+      newErrors.password = "La contraseña debe tener al menos 6 caracteres";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
 
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     localStorage.setItem("alumco_role", role === "admin" ? "ADMIN" : "COLLABORATOR");
     localStorage.setItem("alumco_user", email);
     router.push(role === "admin" ? "/admin/dashboard" : "/portal");
@@ -85,10 +116,16 @@ export default function LoginPage() {
                   type="email"
                   placeholder="tu@alumco.cl"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors({ ...errors, email: undefined });
+                  }}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  aria-invalid={!!errors.email}
                   className="h-12 text-base rounded-xl border-[#dde0d4] focus:border-[#4a7c59] focus:ring-[#a4ac86] transition-colors"
                   required
                 />
+                {errors.email && <FormError id="email-error">{errors.email}</FormError>}
               </div>
 
               <div className="space-y-2">
@@ -100,10 +137,16 @@ export default function LoginPage() {
                   type="password"
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors({ ...errors, password: undefined });
+                  }}
+                  aria-describedby={errors.password ? "password-error" : undefined}
+                  aria-invalid={!!errors.password}
                   className="h-12 text-base rounded-xl border-[#dde0d4] focus:border-[#4a7c59] focus:ring-[#a4ac86] transition-colors"
                   required
                 />
+                {errors.password && <FormError id="password-error">{errors.password}</FormError>}
               </div>
 
               <button
