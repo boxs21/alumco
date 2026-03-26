@@ -72,6 +72,24 @@ function applyThemeToDOM(theme: Theme) {
   root.style.setProperty("--chart-1", c.primary);
   root.style.setProperty("--chart-2", c.primaryHover);
   root.style.setProperty("--chart-5", c.accent);
+
+  // Dark mode: toggle data-dark for CSS overrides
+  if (theme.dark) {
+    root.setAttribute("data-dark", "true");
+    // Dark themes need white text on primary buttons
+    root.style.setProperty("--primary-foreground", "#ffffff");
+    // Emerald badges need darker bg in dark mode
+    root.style.setProperty("--color-emerald-bg", "#0f2a1a");
+    root.style.setProperty("--color-emerald-text", "#6ee7b7");
+    root.style.setProperty("--color-amber-bg", "#2a2010");
+    root.style.setProperty("--color-amber-text", "#fcd34d");
+  } else {
+    root.removeAttribute("data-dark");
+    root.style.removeProperty("--color-emerald-bg");
+    root.style.removeProperty("--color-emerald-text");
+    root.style.removeProperty("--color-amber-bg");
+    root.style.removeProperty("--color-amber-text");
+  }
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {

@@ -232,6 +232,53 @@
     0 0 0 1px color-mix(in srgb, var(--primary) 8%, transparent) !important;
 }
 
+/* ══════════════════════════════════════════════════════
+   DARK THEME OVERRIDES
+   When data-dark is set, override colors that don't use
+   CSS variables (hardcoded emerald, amber, white bgs)
+   ══════════════════════════════════════════════════════ */
+
+/* White/card backgrounds → dark card bg */
+[data-dark] .bg-white,
+[data-dark] .bg-\[\#ffffff\] {
+  background-color: var(--card) !important;
+}
+
+/* Emerald badges in dark mode */
+[data-dark] .bg-emerald-50 {
+  background-color: var(--color-emerald-bg, #0f2a1a) !important;
+}
+[data-dark] .text-emerald-700,
+[data-dark] .text-emerald-600 {
+  color: var(--color-emerald-text, #6ee7b7) !important;
+}
+[data-dark] .bg-emerald-100 {
+  background-color: #0f3a22 !important;
+}
+
+/* Amber badges in dark mode */
+[data-dark] .bg-amber-50 {
+  background-color: var(--color-amber-bg, #2a2010) !important;
+}
+[data-dark] .text-amber-700,
+[data-dark] .text-amber-500 {
+  color: var(--color-amber-text, #fcd34d) !important;
+}
+
+/* Red/destructive badges in dark mode */
+[data-dark] .bg-red-50,
+[data-dark] .bg-\[\#fdf0ec\] {
+  background-color: #2a1010 !important;
+}
+[data-dark] .text-red-600 {
+  color: #fca5a5 !important;
+}
+
+/* Dark mode gradient buttons text stays white */
+[data-dark] .bg-gradient-to-r.text-white {
+  color: #ffffff !important;
+}
+
 /* ─── Animations ─── */
 
 @keyframes fade-in-up {

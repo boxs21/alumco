@@ -20,6 +20,7 @@ export interface Theme {
   id: string;
   name: string;
   description: string;
+  dark?: boolean;
   colors: ThemeColors;
   preview: [string, string, string, string]; // 4 swatch colors for preview
 }
@@ -234,6 +235,98 @@ export const themes: Theme[] = [
       sedeCoyhaiqueBg: "#fff3e0",
     },
     preview: ["#1a1a2e", "#0066ff", "#00bbcc", "#fafbff"],
+  },
+
+  /* ══════════════════════════════
+     DARK THEMES
+     ══════════════════════════════ */
+  {
+    id: "midnight-dark",
+    name: "Midnight Dark",
+    description: "Modo oscuro elegante, ideal para la noche",
+    dark: true,
+    colors: {
+      primary: "#7c9aff",
+      primaryHover: "#a0b8ff",
+      foreground: "#e4e6eb",
+      background: "#0f1117",
+      secondary: "#1a1d27",
+      mutedForeground: "#8b90a0",
+      accent: "#7c9aff",
+      border: "#2a2d3a",
+      cardBg: "#161821",
+      sedeConcepcion: "#7c9aff",
+      sedeConcepcionBg: "#1c2035",
+      sedeCoyhaique: "#ffb347",
+      sedeCoyhaiqueBg: "#2a2215",
+    },
+    preview: ["#0f1117", "#7c9aff", "#1a1d27", "#e4e6eb"],
+  },
+  {
+    id: "forest-night",
+    name: "Forest Night",
+    description: "Bosque nocturno, verde oscuro profundo",
+    dark: true,
+    colors: {
+      primary: "#6dbf7b",
+      primaryHover: "#8fd49a",
+      foreground: "#d8ddd2",
+      background: "#0e1410",
+      secondary: "#1a241c",
+      mutedForeground: "#8a9a85",
+      accent: "#6dbf7b",
+      border: "#2a3a2c",
+      cardBg: "#141e16",
+      sedeConcepcion: "#6dbf7b",
+      sedeConcepcionBg: "#1a2e1e",
+      sedeCoyhaique: "#e8b84d",
+      sedeCoyhaiqueBg: "#2a2515",
+    },
+    preview: ["#0e1410", "#6dbf7b", "#1a241c", "#d8ddd2"],
+  },
+  {
+    id: "deep-ocean",
+    name: "Deep Ocean",
+    description: "Oc\u00e9ano profundo, azules oscuros relajantes",
+    dark: true,
+    colors: {
+      primary: "#4dd0e1",
+      primaryHover: "#80deea",
+      foreground: "#d4e6eb",
+      background: "#0a1118",
+      secondary: "#12202a",
+      mutedForeground: "#7a98a8",
+      accent: "#4dd0e1",
+      border: "#1e3040",
+      cardBg: "#0f1a24",
+      sedeConcepcion: "#4dd0e1",
+      sedeConcepcionBg: "#122830",
+      sedeCoyhaique: "#ffab40",
+      sedeCoyhaiqueBg: "#2a2010",
+    },
+    preview: ["#0a1118", "#4dd0e1", "#12202a", "#d4e6eb"],
+  },
+  {
+    id: "galaxy-purple",
+    name: "Galaxy Purple",
+    description: "Galaxia p\u00farpura, modo noche c\u00f3smico",
+    dark: true,
+    colors: {
+      primary: "#b388ff",
+      primaryHover: "#ce9cff",
+      foreground: "#e0d8ef",
+      background: "#110e1a",
+      secondary: "#1c1730",
+      mutedForeground: "#9488aa",
+      accent: "#b388ff",
+      border: "#2e2648",
+      cardBg: "#171224",
+      sedeConcepcion: "#b388ff",
+      sedeConcepcionBg: "#221a3a",
+      sedeCoyhaique: "#ffd54f",
+      sedeCoyhaiqueBg: "#2a2515",
+    },
+    preview: ["#110e1a", "#b388ff", "#1c1730", "#e0d8ef"],
   },
 ];
 

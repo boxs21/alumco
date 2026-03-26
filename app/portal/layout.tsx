@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Leaf, BookOpen, History, LogOut } from "lucide-react";
 import SedeBadge from "@/components/shared/SedeBadge";
+import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const navItems = [
@@ -51,6 +52,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           </div>
 
           <div className="flex items-center gap-2 lg:gap-4">
+            <ThemeSwitcher compact />
             <div className="hidden sm:block">
               <SedeBadge sedeId="s1" sedeName="Concepción" size="md" />
             </div>
