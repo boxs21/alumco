@@ -1,7 +1,13 @@
+/** Props del bloque Skeleton base */
 interface SkeletonProps {
   className?: string;
 }
 
+/**
+ * Bloque animado de carga (skeleton) genérico.
+ * Se usa para indicar que el contenido está cargando.
+ * aria-hidden evita que los lectores de pantalla lo anuncien.
+ */
 export function Skeleton({ className = "" }: SkeletonProps) {
   return (
     <div
@@ -11,6 +17,7 @@ export function Skeleton({ className = "" }: SkeletonProps) {
   );
 }
 
+/** Skeleton con la forma de una tarjeta de capacitación */
 export function SkeletonCard() {
   return (
     <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] p-5 space-y-4" aria-hidden="true">
@@ -27,6 +34,7 @@ export function SkeletonCard() {
   );
 }
 
+/** Skeleton con la forma de una tarjeta de estadística (StatCard) */
 export function SkeletonStatCard() {
   return (
     <div className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] p-6 space-y-3" aria-hidden="true">
@@ -41,6 +49,7 @@ export function SkeletonStatCard() {
   );
 }
 
+/** Skeleton con la forma de una fila de tabla */
 export function SkeletonTableRow() {
   return (
     <div className="flex items-center gap-4 p-4 border-b border-[#dde0d4]" aria-hidden="true">

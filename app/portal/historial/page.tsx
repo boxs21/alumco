@@ -13,7 +13,12 @@ import {
 import { mockCollaboratorTrainings } from "@/lib/mock-data";
 import { Download, History } from "lucide-react";
 
+/**
+ * Página de historial de capacitaciones del colaborador.
+ * Muestra las capacitaciones completadas con nota y opción de descargar el certificado.
+ */
 export default function HistorialPage() {
+  // Filtra solo las capacitaciones que el colaborador ya completó
   const completed = mockCollaboratorTrainings.filter((t) => t.status === "COMPLETED");
 
   return (

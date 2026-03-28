@@ -1,15 +1,20 @@
 import { Card, CardContent } from "@/components/ui/card";
 import type { LucideIcon } from "lucide-react";
 
+/** Props de la tarjeta de estadística */
 interface StatCardProps {
-  title: string;
-  value: string | number;
-  icon: LucideIcon;
-  description?: string;
-  trend?: { value: number; positive: boolean };
-  delay?: number;
+  title: string;                                    // nombre del indicador
+  value: string | number;                           // valor a mostrar (número o texto)
+  icon: LucideIcon;                                 // ícono representativo
+  description?: string;                             // texto descriptivo opcional
+  trend?: { value: number; positive: boolean };     // tendencia respecto al mes anterior
+  delay?: number;                                   // retraso de animación de entrada
 }
 
+/**
+ * Tarjeta de estadística para el dashboard.
+ * Muestra un indicador clave con ícono, valor y tendencia opcional.
+ */
 export default function StatCard({ title, value, icon: Icon, description, trend, delay = 0 }: StatCardProps) {
   return (
     <Card

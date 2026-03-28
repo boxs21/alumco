@@ -19,32 +19,38 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+/** Pasos del formulario de creación de capacitación (stepper) */
 const steps = [
   { number: 1, label: "Información básica" },
   { number: 2, label: "Material formativo" },
   { number: 3, label: "Evaluación" },
 ];
 
+/** Íconos según el tipo de archivo adjunto */
 const fileTypeIcons: Record<string, typeof FileText> = {
   PDF: FileText,
   VIDEO: Video,
   PRESENTATION: Presentation,
 };
 
+/**
+ * Página de creación de nueva capacitación.
+ * Usa un formulario de 3 pasos: información básica, material y evaluación.
+ */
 export default function NuevaCapacitacionPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(1); // paso actual del stepper
   const [selectedSede, setSelectedSede] = useState("global");
 
-  // Step 1 state
+  // Estado del paso 1: información básica
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [area, setArea] = useState("");
   const [sedeSelection, setSedeSelection] = useState<string | null>(null);
 
-  // Step 3 state
-  const [hasQuiz, setHasQuiz] = useState(false);
-  const [passingScore, setPassingScore] = useState(60);
+  // Estado del paso 3: evaluación
+  const [hasQuiz, setHasQuiz] = useState(false);      // si la capacitación tiene evaluación
+  const [passingScore, setPassingScore] = useState(60); // nota mínima de aprobación
   const [questions, setQuestions] = useState([
     {
       id: "new-1",
@@ -56,6 +62,7 @@ export default function NuevaCapacitacionPage() {
     },
   ]);
 
+  /** Agrega una nueva pregunta vacía al formulario de evaluación */
   function addQuestion() {
     const qId = `new-${Date.now()}`;
     setQuestions([
@@ -71,10 +78,12 @@ export default function NuevaCapacitacionPage() {
     ]);
   }
 
+  /** Elimina una pregunta del formulario por su ID */
   function removeQuestion(qId: string) {
     setQuestions(questions.filter((q) => q.id !== qId));
   }
 
+  /** Agrega una nueva opción vacía a una pregunta específica */
   function addOption(qId: string) {
     setQuestions(
       questions.map((q) =>
@@ -85,6 +94,7 @@ export default function NuevaCapacitacionPage() {
     );
   }
 
+  /** Opciones de sede disponibles para asignar la capacitación */
   const sedeOptions = [
     { key: "s1", label: SEDES.CONCEPCION.nombre, color: "border-[#a4ac86] bg-[#f0f2eb]", activeRing: "ring-[#2d4a2b]" },
     { key: "s2", label: SEDES.COYHAIQUE.nombre, color: "border-amber-300 bg-amber-50", activeRing: "ring-amber-500" },

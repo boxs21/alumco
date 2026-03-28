@@ -16,18 +16,27 @@ import {
 } from "@/components/ui/table";
 import { mockUsers } from "@/lib/mock-data";
 
+/**
+ * Página de lista de colaboradores del panel de administración.
+ * Muestra una tabla en escritorio y tarjetas en móvil,
+ * con filtro por sede y acceso al perfil individual de cada colaborador.
+ */
 export default function ColaboradoresPage() {
   const [selectedSede, setSelectedSede] = useState("global");
+  // Pestaña de sede activa para filtrar la tabla
   const [sedeTab, setSedeTab] = useState("ALL");
 
+  // Excluye administradores de la lista
   const collaborators = mockUsers.filter((u) => u.role === "COLLABORATOR");
 
+  /** Filtra los colaboradores según la sede seleccionada */
   const filteredUsers = collaborators.filter((u) => {
     if (sedeTab === "CONCEPCION") return u.sedeId === "s1";
     if (sedeTab === "COYHAIQUE") return u.sedeId === "s2";
     return true;
   });
 
+  /** Opciones de las pestañas de filtro por sede */
   const sedeTabs = [
     { key: "ALL", label: "Todas" },
     { key: "CONCEPCION", label: "Concepción" },

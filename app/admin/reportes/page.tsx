@@ -18,15 +18,22 @@ import {
 import { mockUsers, mockStats, SEDES, AREAS } from "@/lib/mock-data";
 import { Download, Filter } from "lucide-react";
 
+/**
+ * Página de reportes del panel de administración.
+ * Permite filtrar colaboradores por sede, área y rango de fechas,
+ * comparar estadísticas entre sedes y exportar los resultados.
+ */
 export default function ReportesPage() {
   const [selectedSede, setSelectedSede] = useState("global");
-  const [filterSede, setFilterSede] = useState("ALL");
-  const [filterArea, setFilterArea] = useState("ALL");
+  const [filterSede, setFilterSede] = useState("ALL");    // filtro de sede activo
+  const [filterArea, setFilterArea] = useState("ALL");    // filtro de área activo
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
+  // Solo se muestran colaboradores (no administradores) en los reportes
   const collaborators = mockUsers.filter((u) => u.role === "COLLABORATOR");
 
+  /** Aplica los filtros de sede y área a la lista de colaboradores */
   const filteredUsers = collaborators.filter((u) => {
     if (filterSede === "CONCEPCION" && u.sedeId !== "s1") return false;
     if (filterSede === "COYHAIQUE" && u.sedeId !== "s2") return false;

@@ -19,13 +19,22 @@ import {
 import { mockUsers, mockCollaboratorTrainings } from "@/lib/mock-data";
 import { BookOpen, CheckCircle, Star, Award, Download } from "lucide-react";
 
+/**
+ * Página de detalle de un colaborador.
+ * Muestra su perfil, estadísticas de capacitación y
+ * dos pestañas: historial de capacitaciones y certificados obtenidos.
+ */
 export default function ColaboradorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [selectedSede, setSelectedSede] = useState("global");
 
+  // Busca el colaborador por ID; usa el primero como fallback si no existe
   const user = mockUsers.find((u) => u.id === id) ?? mockUsers[0];
+  // Genera las iniciales del nombre para el avatar
   const initials = user.name.split(" ").map((n) => n[0]).join("");
+  // Capacitaciones completadas (para el conteo de estadísticas)
   const completed = mockCollaboratorTrainings.filter((t) => t.status === "COMPLETED");
+  // Solo las completadas que tienen certificado disponible
   const certificates = completed.filter((t) => t.hasCertificate);
 
   return (

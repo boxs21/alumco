@@ -8,12 +8,18 @@ import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
+/** Ítems de navegación del portal del colaborador */
 const navItems = [
   { label: "Mis capacitaciones", shortLabel: "Capac.", href: "/portal", icon: BookOpen },
   { label: "Historial", shortLabel: "Historial", href: "/portal/historial", icon: History },
 ];
 
+/**
+ * Layout del portal del colaborador.
+ * Incluye la barra de navegación superior y la navegación inferior para móvil.
+ */
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
+  // Para resaltar el ítem activo en la navegación
   const pathname = usePathname();
 
   return (

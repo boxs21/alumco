@@ -4,22 +4,23 @@ import { useFontSize, type FontSizeLevel } from "@/components/providers/FontSize
 import { Type } from "lucide-react";
 
 /**
- * Accessible font-size toggle with 3 preset levels.
- * - `compact` = icon-only button that cycles through sizes (for mobile / topbar)
- * - default  = full inline group with labeled buttons (for sidebar / settings)
+ * Control de tamaño de fuente accesible con 3 niveles predefinidos.
+ * - `compact`: botón de ícono que cicla los tamaños (para móvil / barra superior)
+ * - por defecto: grupo de botones etiquetados (para el sidebar)
  */
 export default function FontSizeSwitcher({ compact = false }: { compact?: boolean }) {
   const { fontSize, setFontSize, options } = useFontSize();
 
+  // Índice del nivel de fuente actualmente activo
   const currentIndex = options.findIndex((o) => o.id === fontSize);
 
-  // Compact mode: cycle through sizes on click
+  /** Cicla al siguiente nivel de tamaño (modo compacto) */
   function handleCycle() {
     const nextIndex = (currentIndex + 1) % options.length;
     setFontSize(options[nextIndex].id);
   }
 
-  // Compact: single icon button that cycles
+  // Modo compacto: un solo botón que cicla entre los tamaños
   if (compact) {
     return (
       <button

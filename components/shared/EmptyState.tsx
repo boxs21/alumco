@@ -1,12 +1,17 @@
 import type { LucideIcon } from "lucide-react";
 
+/** Props del componente de estado vacío */
 interface EmptyStateProps {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  action?: React.ReactNode;
+  icon: LucideIcon;          // ícono representativo de la sección vacía
+  title: string;             // título del mensaje
+  description: string;       // descripción breve
+  action?: React.ReactNode;  // acción opcional (ej: botón para crear)
 }
 
+/**
+ * Componente de estado vacío genérico.
+ * Se muestra cuando una lista o sección no tiene datos que mostrar.
+ */
 export default function EmptyState({ icon: Icon, title, description, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">

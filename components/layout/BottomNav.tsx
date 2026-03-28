@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, BookOpen, Users, BarChart3, LogOut } from "lucide-react";
 
+/** Ítems de navegación del menú inferior móvil del panel de administración */
 const navItems = [
   { label: "Dashboard",  shortLabel: "Dashboard",  href: "/admin/dashboard",      icon: LayoutDashboard },
   { label: "Capacitaciones", shortLabel: "Capac.",  href: "/admin/capacitaciones", icon: BookOpen },
@@ -11,7 +12,12 @@ const navItems = [
   { label: "Reportes",       shortLabel: "Reportes", href: "/admin/reportes",      icon: BarChart3 },
 ];
 
+/**
+ * Barra de navegación inferior para dispositivos móviles (panel de administración).
+ * Se oculta en pantallas grandes (lg+) donde se usa el Sidebar.
+ */
 export default function BottomNav() {
+  // Detecta la ruta activa para resaltar el ítem correspondiente
   const pathname = usePathname();
 
   return (

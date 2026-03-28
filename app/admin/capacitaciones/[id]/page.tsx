@@ -20,25 +20,35 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+/** Íconos según el tipo de archivo adjunto */
 const fileTypeIcons: Record<string, typeof FileText> = {
   PDF: FileText,
   VIDEO: Video,
   PRESENTATION: Presentation,
 };
 
+/** Estilos visuales del badge según el estado de la capacitación */
 const statusConfig = {
   DRAFT: { label: "Borrador", className: "bg-[#f0f2eb] text-[#7d8471]" },
   PUBLISHED: { label: "Publicado", className: "bg-emerald-50 text-emerald-700" },
   ARCHIVED: { label: "Archivado", className: "bg-red-50 text-red-600" },
 };
 
+/**
+ * Página de detalle de una capacitación.
+ * Muestra estadísticas, material adjunto, resumen de evaluación
+ * y la lista de colaboradores asignados.
+ */
 export default function CapacitacionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [selectedSede, setSelectedSede] = useState("global");
 
+  // Busca la capacitación por ID; usa la primera como fallback
   const training = mockTrainings.find((t) => t.id === id) ?? mockTrainings[0];
   const statusInfo = statusConfig[training.status];
+  // Calcula el porcentaje de cumplimiento
   const progress = training.asignados > 0 ? Math.round((training.completados / training.asignados) * 100) : 0;
+  // Muestra hasta 4 colaboradores asignados en la vista previa
   const assignedUsers = mockUsers.filter((u) => u.role === "COLLABORATOR").slice(0, 4);
 
   return (

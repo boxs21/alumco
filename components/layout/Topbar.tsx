@@ -12,12 +12,18 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 
+/** Props de la barra superior del panel de administración */
 interface TopbarProps {
-  selectedSede: string;
-  onSedeChange: (sede: string) => void;
-  title?: string;
+  selectedSede: string;                   // sede actualmente seleccionada
+  onSedeChange: (sede: string) => void;   // función para cambiar la sede
+  title?: string;                         // título de la página actual (opcional)
 }
 
+/**
+ * Barra superior fija del panel de administración.
+ * Muestra el título de la página, selector de sede y controles de accesibilidad.
+ * En móvil incluye los controles de tema y fuente (en escritorio están en el Sidebar).
+ */
 export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProps) {
   return (
     <header className="sticky top-0 z-20 flex h-14 lg:h-16 items-center justify-between border-b border-[#dde0d4]/80 bg-[#faf9f6]/95 backdrop-blur-sm px-4 lg:px-6">

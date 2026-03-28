@@ -14,33 +14,43 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+/** Íconos por tipo de archivo del material de estudio */
 const fileTypeIcons: Record<string, typeof FileText> = {
   PDF: FileText,
   VIDEO: Video,
   PRESENTATION: Presentation,
 };
 
+/** Pasos del flujo de una capacitación en el portal */
 type Step = "material" | "quiz" | "certificate";
 
+/**
+ * Página de realización de una capacitación en el portal del colaborador.
+ * Flujo de 3 pasos: revisar material → rendir evaluación → obtener certificado.
+ */
 export default function CapacitacionPortalPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [currentStep, setCurrentStep] = useState<Step>("material");
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [currentStep, setCurrentStep] = useState<Step>("material"); // paso activo
+  const [answers, setAnswers] = useState<Record<string, string>>({}); // respuestas del quiz (qId → optId)
+  const [submitted, setSubmitted] = useState(false); // true cuando el quiz ya fue enviado
 
+  // Busca la capacitación asignada; usa la primera como fallback
   const training = mockCollaboratorTrainings.find((t) => t.trainingId === id) ?? mockCollaboratorTrainings[0];
 
+  /** Definición de los pasos con etiquetas completas y cortas para móvil */
   const steps: { key: Step; label: string; shortLabel: string }[] = [
     { key: "material", label: "Revisar material", shortLabel: "Material" },
     { key: "quiz", label: "Rendir evaluación", shortLabel: "Evaluación" },
     { key: "certificate", label: "Obtener certificado", shortLabel: "Certificado" },
   ];
 
+  /** Marca el quiz como enviado y avanza al paso del certificado */
   function handleSubmitQuiz() {
     setSubmitted(true);
     setCurrentStep("certificate");
   }
 
+  // Nota simulada: 85% al completar el quiz
   const score = submitted ? 85 : null;
 
   return (

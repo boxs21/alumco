@@ -8,26 +8,36 @@ import EmptyState from "@/components/shared/EmptyState";
 import { mockTrainings } from "@/lib/mock-data";
 import { Plus, BookOpen } from "lucide-react";
 
+/**
+ * Página de lista de capacitaciones del panel de administración.
+ * Permite filtrar por sede y estado, y acceder a crear una nueva capacitación.
+ */
 export default function CapacitacionesPage() {
   const [selectedSede, setSelectedSede] = useState("global");
-  const [statusFilter, setStatusFilter] = useState("ALL");
-  const [sedeTab, setSedeTab] = useState("ALL");
+  const [statusFilter, setStatusFilter] = useState("ALL"); // filtro de estado activo
+  const [sedeTab, setSedeTab] = useState("ALL");           // filtro de sede activo
 
+  /**
+   * Filtra las capacitaciones según la sede y estado seleccionados.
+   * Las capacitaciones globales (sedeId === null) se muestran en cualquier sede.
+   */
   const filteredTrainings = mockTrainings.filter((t) => {
     if (sedeTab === "CONCEPCION" && t.sedeId !== "s1" && t.sedeId !== null) return false;
     if (sedeTab === "COYHAIQUE" && t.sedeId !== "s2" && t.sedeId !== null) return false;
-    if (sedeTab === "CONCEPCION" && t.sedeId === null) return true;
-    if (sedeTab === "COYHAIQUE" && t.sedeId === null) return true;
+    if (sedeTab === "CONCEPCION" && t.sedeId === null) return true;  // globales se muestran en Concepción
+    if (sedeTab === "COYHAIQUE" && t.sedeId === null) return true;   // globales se muestran en Coyhaique
     if (statusFilter !== "ALL" && t.status !== statusFilter) return false;
     return true;
   });
 
+  /** Opciones para el filtro por sede */
   const sedeTabs = [
     { key: "ALL", label: "Todas" },
     { key: "CONCEPCION", label: "Concepción" },
     { key: "COYHAIQUE", label: "Coyhaique" },
   ];
 
+  /** Opciones para el filtro por estado de la capacitación */
   const statusOptions = [
     { key: "ALL", label: "Todos" },
     { key: "PUBLISHED", label: "Publicado" },

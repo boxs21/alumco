@@ -5,15 +5,21 @@ import { createPortal } from "react-dom";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { Palette, Check, X } from "lucide-react";
 
+/**
+ * Selector de tema de colores de la aplicación.
+ * - `compact`: solo muestra el ícono (para la barra superior en móvil)
+ * - por defecto: botón con etiqueta (para el sidebar)
+ * El modal se renderiza via createPortal para evitar problemas con backdrop-filter.
+ */
 export default function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
   const { currentTheme, setTheme, themes } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  // Necesario para que createPortal solo se ejecute en el cliente (no en SSR)
   const [mounted, setMounted] = useState(false);
 
-  // Required so createPortal only runs on the client
   useEffect(() => { setMounted(true); }, []);
 
-  // Close on Escape key
+  // Cierra el modal al presionar la tecla Escape
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setIsOpen(false); };
@@ -21,8 +27,8 @@ export default function ThemeSwitcher({ compact = false }: { compact?: boolean }
     return () => document.removeEventListener("keydown", onKey);
   }, [isOpen]);
 
-  // ── Modal rendered via portal so it's always relative to the viewport,
-  //    regardless of any backdrop-filter / transform on the trigger's ancestor.
+  // Modal renderizado via portal para que siempre sea relativo al viewport,
+  // independientemente de cualquier backdrop-filter o transform en el ancestro.
   const modal = (
     <>
       {/* Backdrop */}
