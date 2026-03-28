@@ -1,28 +1,30 @@
+/** Paleta de colores que define la apariencia visual de un tema */
 export interface ThemeColors {
-  primary: string;
-  primaryHover: string;
-  foreground: string;
-  background: string;
-  secondary: string;
-  mutedForeground: string;
-  accent: string;
-  border: string;
-  /* Sidebar / card backgrounds */
+  primary: string;           // color principal (botones, enlaces activos)
+  primaryHover: string;      // color al pasar el cursor sobre elementos primarios
+  foreground: string;        // color del texto principal
+  background: string;        // fondo general de la página
+  secondary: string;         // fondo secundario (tarjetas, secciones)
+  mutedForeground: string;   // texto secundario (subtítulos, etiquetas)
+  accent: string;            // color de acento decorativo
+  border: string;            // color de bordes y separadores
+  /* Fondo para el sidebar y tarjetas */
   cardBg: string;
-  /* Sede colors */
+  /* Colores específicos de cada sede */
   sedeConcepcion: string;
   sedeConcepcionBg: string;
   sedeCoyhaique: string;
   sedeCoyhaiqueBg: string;
 }
 
+/** Definición completa de un tema visual */
 export interface Theme {
-  id: string;
-  name: string;
-  description: string;
-  dark?: boolean;
+  id: string;           // identificador único del tema
+  name: string;         // nombre legible
+  description: string;  // descripción breve del estilo
+  dark?: boolean;       // true si es un tema oscuro
   colors: ThemeColors;
-  preview: [string, string, string, string]; // 4 swatch colors for preview
+  preview: [string, string, string, string]; // 4 colores para la vista previa en el selector
 }
 
 export const themes: Theme[] = [
@@ -330,8 +332,13 @@ export const themes: Theme[] = [
   },
 ];
 
+/** Tema que se aplica por defecto al cargar la aplicación */
 export const DEFAULT_THEME = "forest-canopy";
 
+/**
+ * Busca y retorna un tema por su ID.
+ * Si no se encuentra el ID, retorna el primer tema de la lista como fallback.
+ */
 export function getThemeById(id: string): Theme {
   return themes.find((t) => t.id === id) ?? themes[0];
 }

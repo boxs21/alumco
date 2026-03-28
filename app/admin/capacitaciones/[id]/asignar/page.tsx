@@ -17,8 +17,10 @@ import {
   ArrowLeft,
   Check,
 } from "lucide-react";
+/** Tipos de destinatario al asignar una capacitación */
 type TargetType = "ALL" | "SEDE" | "AREA" | "INDIVIDUAL";
 
+/** Opciones de tipo de asignación con su etiqueta, descripción e ícono */
 const targetOptions: { key: TargetType; label: string; description: string; icon: typeof Users }[] = [
   { key: "ALL", label: "Todos los colaboradores", description: "Asignar a todas las sedes", icon: Users },
   { key: "SEDE", label: "Una sede completa", description: "Todos los de una sede", icon: Building2 },
@@ -26,20 +28,31 @@ const targetOptions: { key: TargetType; label: string; description: string; icon
   { key: "INDIVIDUAL", label: "Colaboradores específicos", description: "Seleccionar manualmente", icon: UserCheck },
 ];
 
+/**
+ * Página para asignar una capacitación a un grupo de colaboradores.
+ * Permite elegir entre asignación global, por sede, por área o individual.
+ */
 export default function AsignarPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const [selectedSede, setSelectedSede] = useState("global");
+  // Tipo de destinatario seleccionado (null = aún no elegido)
   const [targetType, setTargetType] = useState<TargetType | null>(null);
+  // Sede específica seleccionada (solo si targetType === 'SEDE')
   const [targetSede, setTargetSede] = useState<string | null>(null);
+  // Área específica seleccionada (solo si targetType === 'AREA')
   const [targetArea, setTargetArea] = useState<string | null>(null);
+  // IDs de colaboradores seleccionados individualmente
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [dueDate, setDueDate] = useState("");
   const [search, setSearch] = useState("");
 
+  // Busca la capacitación por ID; usa la primera como fallback si no se encuentra
   const training = mockTrainings.find((t) => t.id === id) ?? mockTrainings[0];
+  // Solo colaboradores activos pueden recibir asignaciones
   const collaborators = mockUsers.filter((u) => u.role === "COLLABORATOR" && u.active);
 
+  /** Filtra colaboradores según el texto de búsqueda (nombre o email) */
   const filteredCollaborators = useMemo(() => {
     let list = collaborators;
     if (search) {
@@ -49,6 +62,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
     return list;
   }, [search, collaborators]);
 
+  /** Calcula cuántos colaboradores recibirán la capacitación según el tipo de asignación */
   const affectedCount = useMemo(() => {
     if (targetType === "ALL") return collaborators.length;
     if (targetType === "SEDE" && targetSede) return collaborators.filter((u) => u.sedeId === targetSede).length;
@@ -57,6 +71,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
     return 0;
   }, [targetType, targetSede, targetArea, selectedUsers, collaborators]);
 
+  /** Agrega o quita un colaborador del conjunto de seleccionados */
   function toggleUser(userId: string) {
     setSelectedUsers((prev) => {
       const next = new Set(prev);

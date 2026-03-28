@@ -4,25 +4,31 @@ import SedeBadge from "./SedeBadge";
 import { BookOpen, FileEdit } from "lucide-react";
 import Link from "next/link";
 
+/** Props que recibe la tarjeta de capacitación */
 interface TrainingCardProps {
   id: string;
   title: string;
   area: string;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
-  sedeId: string | null;
+  sedeId: string | null;       // null significa que aplica a todas las sedes
   sedeName: string | null;
-  completados: number;
-  asignados: number;
-  href?: string;
-  delay?: number;
+  completados: number;         // colaboradores que ya completaron esta capacitación
+  asignados: number;           // total de colaboradores con esta capacitación asignada
+  href?: string;               // URL de destino al hacer clic (por defecto: detalle de la capacitación)
+  delay?: number;              // retraso de animación de entrada (en décimas de segundo)
 }
 
+/** Mapeo de estilos visuales según el estado de la capacitación */
 const statusConfig = {
   DRAFT:     { label: "Borrador",  className: "bg-[#f0f2eb] text-[#7d8471] hover:bg-[#f0f2eb]" },
   PUBLISHED: { label: "Publicado", className: "bg-[#f0f2eb] text-[#4a7c59] hover:bg-[#f0f2eb]" },
   ARCHIVED:  { label: "Archivado", className: "bg-[#fdf0ec] text-[#b74729] hover:bg-[#fdf0ec]" },
 };
 
+/**
+ * Tarjeta visual que muestra el resumen de una capacitación:
+ * estado, área, sede, y barra de progreso de cumplimiento.
+ */
 export default function TrainingCard({
   id,
   title,
@@ -36,7 +42,9 @@ export default function TrainingCard({
   delay = 0,
 }: TrainingCardProps) {
   const statusInfo = statusConfig[status];
+  // Calcula el porcentaje de cumplimiento (0 si no hay asignados)
   const progress = asignados > 0 ? Math.round((completados / asignados) * 100) : 0;
+  // Usa el href proporcionado o genera la URL del detalle de la capacitación
   const linkHref = href ?? `/admin/capacitaciones/${id}`;
 
   return (

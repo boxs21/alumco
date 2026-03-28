@@ -3,32 +3,42 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { themes, getThemeById, DEFAULT_THEME, type Theme } from "@/lib/themes";
 
+/** Tipo del contexto que expone el tema activo y la función para cambiarlo */
 interface ThemeContextType {
   currentTheme: Theme;
   setTheme: (id: string) => void;
   themes: Theme[];
 }
 
+// Contexto de React para compartir el tema entre todos los componentes
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
+/**
+ * Hook personalizado para acceder al tema actual desde cualquier componente.
+ * Si se usa fuera del proveedor (por ejemplo en SSR), retorna el tema por defecto.
+ */
 export function useTheme(): ThemeContextType {
   const ctx = useContext(ThemeContext);
   if (!ctx) {
-    // Fallback for SSR / static generation
+    // Fallback para SSR / generación estática (sin acceso al DOM)
     const fallback = getThemeById(DEFAULT_THEME);
     return { currentTheme: fallback, setTheme: () => {}, themes };
   }
   return ctx;
 }
 
+/**
+ * Aplica las variables CSS del tema seleccionado directamente en el elemento <html>.
+ * Esto permite que todos los componentes que usen variables CSS se actualicen automáticamente.
+ */
 function applyThemeToDOM(theme: Theme) {
   const root = document.documentElement;
   const c = theme.colors;
 
-  // Set data-theme attribute
+  // Atributo para identificar el tema activo en el CSS
   root.setAttribute("data-theme", theme.id);
 
-  // Override shadcn CSS variables
+  // Sobreescribe las variables CSS de shadcn/ui con los colores del tema
   root.style.setProperty("--primary", c.primary);
   root.style.setProperty("--primary-foreground", "#ffffff");
   root.style.setProperty("--background", c.background);
@@ -92,11 +102,17 @@ function applyThemeToDOM(theme: Theme) {
   }
 }
 
+/**
+ * Proveedor del tema para toda la aplicación.
+ * Al montarse, lee el tema guardado en localStorage y lo aplica al DOM.
+ */
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<Theme>(getThemeById(DEFAULT_THEME));
+  // Evita mostrar contenido hasta que el tema esté cargado desde localStorage
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Recupera el tema guardado por el usuario; si no existe, usa el tema por defecto
     const savedThemeId = localStorage.getItem("alumco_theme") ?? DEFAULT_THEME;
     const theme = getThemeById(savedThemeId);
     setCurrentTheme(theme);
@@ -105,13 +121,14 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   }, []);
 
   const setTheme = useCallback((id: string) => {
+    // Cambia el tema, lo guarda en localStorage y actualiza el DOM inmediatamente
     const theme = getThemeById(id);
     setCurrentTheme(theme);
     localStorage.setItem("alumco_theme", id);
     applyThemeToDOM(theme);
   }, []);
 
-  // Prevent flash of wrong theme
+  // Oculta el contenido hasta que el tema correcto esté aplicado (evita parpadeo)
   if (!mounted) {
     return <div style={{ visibility: "hidden" }}>{children}</div>;
   }

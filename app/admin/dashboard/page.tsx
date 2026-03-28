@@ -8,9 +8,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { mockStats, mockRecentActivity, mockAreaProgress, SEDES } from "@/lib/mock-data";
 import { Users, BookOpen, TrendingUp, Award } from "lucide-react";
 
+/**
+ * Página principal del panel de administración.
+ * Muestra estadísticas globales o por sede, actividad reciente y progreso por área.
+ */
 export default function DashboardPage() {
+  // Sede seleccionada en el filtro superior ('global' muestra todas las sedes)
   const [selectedSede, setSelectedSede] = useState("global");
 
+  // Obtiene las estadísticas correspondientes a la sede seleccionada
   const stats = mockStats[selectedSede] ?? mockStats.global;
 
   return (

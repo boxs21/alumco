@@ -8,20 +8,31 @@ import { Label } from "@/components/ui/label";
 import FormError from "@/components/ui/form-error";
 import { GraduationCap, Shield, User } from "lucide-react";
 
+/** Roles disponibles en el formulario de inicio de sesión */
 type RoleTab = "admin" | "collaborator";
 
+/** Errores de validación del formulario de login */
 interface FormErrors {
   email?: string;
   password?: string;
 }
 
+/**
+ * Página de inicio de sesión de la plataforma.
+ * Permite ingresar como administrador o colaborador, con acceso demo disponible.
+ */
 export default function LoginPage() {
   const router = useRouter();
+  // Rol seleccionado (por defecto: colaborador)
   const [role, setRole] = useState<RoleTab>("collaborator");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
 
+  /**
+   * Valida los campos del formulario antes de intentar el inicio de sesión.
+   * Retorna true si no hay errores.
+   */
   function validateForm(): boolean {
     const newErrors: FormErrors = {};
 
@@ -41,6 +52,10 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0;
   }
 
+  /**
+   * Maneja el envío del formulario de login.
+   * Guarda el rol y usuario en localStorage y redirige según el rol.
+   */
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
 
@@ -48,13 +63,19 @@ export default function LoginPage() {
       return;
     }
 
+    // Guarda el rol y email del usuario en localStorage para simular sesión
     localStorage.setItem("alumco_role", role === "admin" ? "ADMIN" : "COLLABORATOR");
     localStorage.setItem("alumco_user", email);
     router.push(role === "admin" ? "/admin/dashboard" : "/portal");
   }
 
+  /**
+   * Acceso rápido de demostración: usa credenciales predefinidas según el rol.
+   * Útil para mostrar la aplicación sin necesidad de registrarse.
+   */
   function handleDemoLogin(demoRole: RoleTab) {
     localStorage.setItem("alumco_role", demoRole === "admin" ? "ADMIN" : "COLLABORATOR");
+    // Usuarios de prueba predefinidos por rol
     localStorage.setItem("alumco_user", demoRole === "admin" ? "valentina@alumco.cl" : "maria@alumco.cl");
     router.push(demoRole === "admin" ? "/admin/dashboard" : "/portal");
   }

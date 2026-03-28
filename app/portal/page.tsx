@@ -7,11 +7,16 @@ import { mockCollaboratorTrainings } from "@/lib/mock-data";
 import { BookOpen, CheckCircle, Clock } from "lucide-react";
 import Link from "next/link";
 
+/** Configuración visual de los estados de capacitación para el portal del colaborador */
 const statusConfig = {
   COMPLETED: { label: "Completado", icon: CheckCircle, className: "bg-emerald-50 text-emerald-700" },
   IN_PROGRESS: { label: "En progreso", icon: Clock, className: "bg-amber-50 text-amber-700" },
 };
 
+/**
+ * Página de inicio del portal del colaborador.
+ * Muestra todas las capacitaciones asignadas al usuario con su estado actual.
+ */
 export default function PortalPage() {
   return (
     <div className="space-y-4 lg:space-y-6">

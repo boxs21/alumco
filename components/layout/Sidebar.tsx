@@ -13,6 +13,7 @@ import {
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 
+/** Ítems de navegación del menú lateral del panel de administración */
 const navItems = [
   { label: "Dashboard",       href: "/admin/dashboard",       icon: LayoutDashboard },
   { label: "Capacitaciones",  href: "/admin/capacitaciones",  icon: BookOpen },
@@ -20,7 +21,12 @@ const navItems = [
   { label: "Reportes",        href: "/admin/reportes",        icon: BarChart3 },
 ];
 
+/**
+ * Barra lateral fija del panel de administración (visible solo en pantallas grandes).
+ * Muestra el logo, la navegación principal y los controles de accesibilidad.
+ */
 export default function Sidebar() {
+  // Obtiene la ruta actual para resaltar el ítem activo del menú
   const pathname = usePathname();
 
   return (
@@ -42,6 +48,7 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav aria-label="Navegación principal" className="relative flex-1 px-3 py-5 space-y-0.5">
         {navItems.map((item, index) => {
+          // Marca como activo si la ruta actual comienza con el href del ítem
           const isActive = pathname.startsWith(item.href);
           return (
             <Link
