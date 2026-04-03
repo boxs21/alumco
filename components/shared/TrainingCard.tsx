@@ -47,9 +47,9 @@ export default function TrainingCard({
     >
       <Card className="border-[#dde0d4]/80 shadow-sm card-hover h-full overflow-hidden">
         <div className={`h-[2px] ${
-          status === "PUBLISHED" ? "bg-gradient-to-r from-[#4a7c59] to-[#a4ac86]" :
-          status === "DRAFT" ? "bg-gradient-to-r from-[#dde0d4] to-[#a4ac86]" :
-          "bg-gradient-to-r from-[#b74729] to-[#d4826a]"
+          status === "PUBLISHED" ? "bg-[#4a7c59]" :
+          status === "DRAFT" ? "bg-[#dde0d4]" :
+          "bg-[#b74729]"
         } opacity-70`} />
         <CardContent className="p-5 flex flex-col gap-4">
           <div className="flex items-start justify-between gap-2">
@@ -84,7 +84,7 @@ export default function TrainingCard({
               </div>
               <div className="h-2 w-full rounded-full bg-[#f0f2eb]">
                 <div
-                  className="h-2 rounded-full bg-gradient-to-r from-[#2d4a2b] to-[#4a7c59] animate-progress"
+                  className="h-2 rounded-full bg-[#2d4a2b] animate-progress"
                   style={{ width: `${progress}%` }}
                 />
               </div>

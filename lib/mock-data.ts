@@ -80,9 +80,9 @@ export const mockAreaProgress = [
 ];
 
 export const mockCollaboratorTrainings = [
-  { id: 'ct1', trainingId: 't1', title: 'Protocolo de Higiene Personal', status: 'COMPLETED' as const, score: 85, date: '2025-03-10', hasCertificate: true },
-  { id: 'ct2', trainingId: 't5', title: 'Primeros Auxilios Básicos',     status: 'COMPLETED' as const, score: 90, date: '2025-03-15', hasCertificate: true },
-  { id: 'ct3', trainingId: 't2', title: 'Manejo de Emergencias Médicas', status: 'IN_PROGRESS' as const, score: null, date: null, hasCertificate: false },
+  { id: 'ct1', trainingId: 't1', title: 'Protocolo de Higiene Personal', status: 'COMPLETED' as const,   score: 85,   date: '2025-03-10', hasCertificate: true,  progress: 100 },
+  { id: 'ct2', trainingId: 't5', title: 'Primeros Auxilios Básicos',     status: 'COMPLETED' as const,   score: 90,   date: '2025-03-15', hasCertificate: true,  progress: 100 },
+  { id: 'ct3', trainingId: 't2', title: 'Manejo de Emergencias Médicas', status: 'IN_PROGRESS' as const, score: null, date: null,         hasCertificate: false, progress: 45  },
 ];
 
 export const mockFiles = [

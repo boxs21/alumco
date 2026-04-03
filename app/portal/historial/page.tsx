@@ -47,7 +47,7 @@ export default function HistorialPage() {
                           {training.title}
                         </TableCell>
                         <TableCell>
-                          <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50">
+                          <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb]">
                             {training.score}%
                           </Badge>
                         </TableCell>
@@ -77,7 +77,7 @@ export default function HistorialPage() {
                   <div key={training.id} className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-semibold text-[#1e2d1c]">{training.title}</p>
-                      <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 shrink-0">
+                      <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb] shrink-0">
                         {training.score}%
                       </Badge>
                     </div>

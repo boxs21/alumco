@@ -18,7 +18,7 @@ export default function StatCard({ title, value, icon: Icon, description, trend,
     >
       <CardContent className="p-6 relative">
         {/* Forest green accent stripe */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#2d4a2b] via-[#4a7c59] to-[#a4ac86] opacity-60" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#2d4a2b] opacity-60" />
 
         <div className="flex items-center justify-between">
           <div className="space-y-1.5">
@@ -33,7 +33,7 @@ export default function StatCard({ title, value, icon: Icon, description, trend,
               </p>
             )}
           </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#f0f2eb] to-[#dde0d4]/60">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#f0f2eb]">
             <Icon className="h-6 w-6 text-[#2d4a2b]" />
           </div>
         </div>
