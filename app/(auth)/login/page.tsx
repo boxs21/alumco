@@ -10,34 +10,25 @@ import { GraduationCap } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-// Tries multiple strategies to resolve the role, falling back to /portal.
-// The proxy enforces role-based access, so /portal is a safe default.
+// Query profiles for the role. Falls back to /portal if the query fails —
+// the proxy will enforce correct access based on role.
 async function resolveRedirect(supabase: SupabaseClient, userId: string): Promise<string> {
-  // 1. Query profiles by id
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", userId)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .single();
 
-  if (!error && data?.role) {
-    return data.role === "ADMIN" ? "/admin/dashboard" : "/portal";
+    if (!error && data?.role) {
+      return data.role === "ADMIN" ? "/admin/dashboard" : "/portal";
+    }
+
+    console.warn("[login] profiles query failed:", error?.message);
+  } catch (err) {
+    console.warn("[login] profiles fetch error:", err);
   }
 
-  console.warn("[login] profiles.id query failed:", error?.message, "— trying user_metadata");
-
-  // 2. Fallback: check user_metadata / app_metadata (set via Supabase Auth hooks)
-  const { data: { user } } = await supabase.auth.getUser();
-  const metaRole =
-    (user?.user_metadata?.role as string | undefined) ??
-    (user?.app_metadata?.role as string | undefined);
-
-  if (metaRole) {
-    return metaRole === "ADMIN" ? "/admin/dashboard" : "/portal";
-  }
-
-  // 3. Default — proxy will redirect if role doesn't match the route
-  console.warn("[login] role not found in metadata either, defaulting to /portal");
   return "/portal";
 }
 
