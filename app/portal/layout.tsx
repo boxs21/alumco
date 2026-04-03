@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase";
 import { Leaf, BookOpen, History, LogOut } from "lucide-react";
 import SedeBadge from "@/components/shared/SedeBadge";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
@@ -15,6 +16,13 @@ const navItems = [
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
 
   return (
     <div className="min-h-screen bg-[#faf9f6]">
@@ -66,13 +74,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
               </Avatar>
               <span className="hidden md:block text-sm font-medium text-[#1e2d1c]">María González</span>
             </div>
-            <Link
-              href="/login"
+            <button
+              onClick={handleSignOut}
               className="hidden sm:flex items-center gap-2 px-2 lg:px-3 py-2 rounded-xl text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb] hover:text-[#1e2d1c] transition-colors"
             >
               <LogOut className="h-4 w-4" />
               <span className="hidden lg:inline">Salir</span>
-            </Link>
+            </button>
           </div>
         </div>
       </header>
@@ -96,13 +104,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
             </Link>
           );
         })}
-        <Link
-          href="/login"
+        <button
+          onClick={handleSignOut}
           className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[#a4ac86]"
         >
           <LogOut className="h-[22px] w-[22px]" />
           <span className="text-[10px] font-medium leading-none">Salir</span>
-        </Link>
+        </button>
       </nav>
     </div>
   );

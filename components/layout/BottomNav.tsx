@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, BookOpen, Users, BarChart3, LogOut } from "lucide-react";
+import { createClient } from "@/lib/supabase";
 
 const navItems = [
   { label: "Dashboard",  shortLabel: "Dashboard",  href: "/admin/dashboard",      icon: LayoutDashboard },
@@ -13,6 +14,13 @@ const navItems = [
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
 
   return (
     <nav aria-label="Navegación principal móvil" className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden border-t border-[#dde0d4] bg-[#faf9f6]/95 backdrop-blur-sm">
@@ -33,14 +41,14 @@ export default function BottomNav() {
           </Link>
         );
       })}
-      <Link
-        href="/login"
+      <button
+        onClick={handleSignOut}
         className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[#a4ac86] hover:text-[#7d8471] transition-colors"
         aria-label="Cerrar sesión"
       >
         <LogOut className="h-[22px] w-[22px]" />
         <span className="text-[10px] font-medium leading-none">Salir</span>
-      </Link>
+      </button>
     </nav>
   );
 }

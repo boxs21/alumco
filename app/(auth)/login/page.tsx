@@ -7,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import FormError from "@/components/ui/form-error";
 import { GraduationCap, Shield, User } from "lucide-react";
+import { createClient } from "@/lib/supabase";
 
 type RoleTab = "admin" | "collaborator";
 
 interface FormErrors {
   email?: string;
   password?: string;
+  general?: string;
 }
 
 export default function LoginPage() {
@@ -21,6 +23,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
 
   function validateForm(): boolean {
     const newErrors: FormErrors = {};
@@ -41,22 +44,60 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!validateForm()) return;
+
+    setLoading(true);
+    setErrors({});
+
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error || !data.user) {
+      setErrors({ general: "Correo o contraseña incorrectos" });
+      setLoading(false);
       return;
     }
 
-    localStorage.setItem("alumco_role", role === "admin" ? "ADMIN" : "COLLABORATOR");
-    localStorage.setItem("alumco_user", email);
-    router.push(role === "admin" ? "/admin/dashboard" : "/portal");
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
+
+    const userRole = profile?.role ?? "COLLABORATOR";
+    router.push(userRole === "ADMIN" ? "/admin/dashboard" : "/portal");
   }
 
-  function handleDemoLogin(demoRole: RoleTab) {
-    localStorage.setItem("alumco_role", demoRole === "admin" ? "ADMIN" : "COLLABORATOR");
-    localStorage.setItem("alumco_user", demoRole === "admin" ? "valentina@alumco.cl" : "maria@alumco.cl");
-    router.push(demoRole === "admin" ? "/admin/dashboard" : "/portal");
+  async function handleDemoLogin(demoRole: RoleTab) {
+    setLoading(true);
+    setErrors({});
+
+    const demoEmail = demoRole === "admin" ? "valentina@alumco.cl" : "maria@alumco.cl";
+    const demoPassword = demoRole === "admin" ? "demo123456" : "demo123456";
+
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: demoEmail,
+      password: demoPassword,
+    });
+
+    if (error || !data.user) {
+      setErrors({ general: "Cuenta demo no disponible" });
+      setLoading(false);
+      return;
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
+
+    const userRole = profile?.role ?? "COLLABORATOR";
+    router.push(userRole === "ADMIN" ? "/admin/dashboard" : "/portal");
   }
 
   return (
@@ -107,6 +148,10 @@ export default function LoginPage() {
 
             {/* Form */}
             <form onSubmit={handleLogin} className="space-y-4">
+              {errors.general && (
+                <FormError id="general-error">{errors.general}</FormError>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-[#1e2d1c]">
                   Correo electr&oacute;nico
@@ -151,9 +196,10 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="w-full h-12 rounded-xl bg-gradient-to-r from-[#2d4a2b] to-[#4a7c59] text-white font-medium text-base hover:from-[#1e3a1c] hover:to-[#3d6b4a] transition-all duration-200 shadow-md shadow-[#2d4a2b]/20 hover:shadow-lg hover:shadow-[#2d4a2b]/30 active:scale-[0.98]"
+                disabled={loading}
+                className="w-full h-12 rounded-xl bg-gradient-to-r from-[#2d4a2b] to-[#4a7c59] text-white font-medium text-base hover:from-[#1e3a1c] hover:to-[#3d6b4a] transition-all duration-200 shadow-md shadow-[#2d4a2b]/20 hover:shadow-lg hover:shadow-[#2d4a2b]/30 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Iniciar sesi&oacute;n
+                {loading ? "Iniciando..." : "Iniciar sesi\u00f3n"}
               </button>
             </form>
 
@@ -171,15 +217,17 @@ export default function LoginPage() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
+                  disabled={loading}
                   onClick={() => handleDemoLogin("admin")}
-                  className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98]"
+                  className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   Admin demo
                 </button>
                 <button
                   type="button"
+                  disabled={loading}
                   onClick={() => handleDemoLogin("collaborator")}
-                  className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98]"
+                  className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   Colaborador demo
                 </button>

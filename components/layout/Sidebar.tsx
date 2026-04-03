@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
+import { createClient } from "@/lib/supabase";
 
 const navItems = [
   { label: "Dashboard",       href: "/admin/dashboard",       icon: LayoutDashboard },
@@ -22,6 +23,13 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
 
   return (
     <aside className="fixed left-0 top-0 z-30 hidden lg:flex h-full w-64 flex-col border-r border-[#dde0d4] bg-[#faf9f6]">
@@ -79,13 +87,13 @@ export default function Sidebar() {
 
         <div className="mt-1" />
 
-        <Link
-          href="/login"
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#a4ac86] hover:bg-[#f0f2eb] hover:text-[#7d8471] transition-all duration-200"
+        <button
+          onClick={handleSignOut}
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#a4ac86] hover:bg-[#f0f2eb] hover:text-[#7d8471] transition-all duration-200"
         >
           <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
           Cerrar sesi&oacute;n
-        </Link>
+        </button>
       </div>
     </aside>
   );
