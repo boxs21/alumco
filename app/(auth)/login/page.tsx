@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import FormError from "@/components/ui/form-error";
-import { GraduationCap } from "lucide-react";
+import { Leaf, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-// Query profiles for the role. Falls back to /portal if the query fails —
-// the proxy will enforce correct access based on role.
 async function resolveRedirect(supabase: SupabaseClient, userId: string): Promise<string> {
   try {
     const { data, error } = await supabase
@@ -88,35 +87,50 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center login-bg px-4 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-full bg-dot-pattern opacity-30 pointer-events-none" />
-      <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-[#f0f2eb]/60 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-[#dde0d4]/40 blur-3xl pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center bg-[#f5f4f0] px-4 relative overflow-hidden">
+      {/* Subtle grain texture — aria-hidden, purely decorative */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "128px",
+        }}
+      />
 
-      <div className="w-full max-w-md relative z-10">
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-8 animate-fade-in-up">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2d4a2b] to-[#4a7c59] mb-4 shadow-lg shadow-[#2d4a2b]/20">
-            <GraduationCap className="h-8 w-8 text-white" />
+      <div className="w-full max-w-sm relative z-10">
+        {/* Wordmark */}
+        <div className="flex flex-col items-center mb-10 animate-fade-in-up">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2d4a2b]">
+              <Leaf className="h-4 w-4 text-[#a4ac86]" aria-hidden="true" />
+            </div>
+            <span
+              className="text-3xl font-bold tracking-tight text-[#1e2d1c]"
+              style={{ fontFamily: "var(--font-pt-serif)" }}
+            >
+              ALUMCO
+            </span>
           </div>
-          <h1 className="text-2xl font-bold text-[#1e2d1c] tracking-tight">ALUMCO</h1>
-          <p className="text-sm text-[#7d8471] mt-1">Plataforma de Capacitaci&oacute;n</p>
+          <p className="text-sm text-[#7d8471]">Formación para residencias</p>
         </div>
 
-        <Card className="border-[#dde0d4]/80 shadow-xl shadow-[#1e2d1c]/[0.04] animate-fade-in-up stagger-2 backdrop-blur-sm bg-[#faf9f6]/95">
-          <CardContent className="p-7 space-y-6">
+        <Card className="border-[#dde0d4] shadow-sm animate-fade-in-up stagger-2 bg-white">
+          <CardContent className="p-8 space-y-5">
             <form onSubmit={handleLogin} className="space-y-4">
               {errors.general && (
                 <FormError id="general-error">{errors.general}</FormError>
               )}
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="email" className="text-sm font-medium text-[#1e2d1c]">
-                  Correo electr&oacute;nico
+                  Correo electrónico
                 </Label>
                 <Input
                   id="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="tu@alumco.cl"
                   value={email}
                   onChange={(e) => {
@@ -125,19 +139,28 @@ export default function LoginPage() {
                   }}
                   aria-describedby={errors.email ? "email-error" : undefined}
                   aria-invalid={!!errors.email}
-                  className="h-12 text-base rounded-xl border-[#dde0d4] focus:border-[#4a7c59] focus:ring-[#a4ac86] transition-colors"
+                  className="h-11 text-sm rounded-lg border-[#dde0d4] focus:border-[#4a7c59] focus:ring-[#a4ac86] transition-colors"
                   required
                 />
                 {errors.email && <FormError id="email-error">{errors.email}</FormError>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-[#1e2d1c]">
-                  Contrase&ntilde;a
-                </Label>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-sm font-medium text-[#1e2d1c]">
+                    Contraseña
+                  </Label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-[#4a7c59] hover:text-[#2d4a2b] transition-colors"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </Link>
+                </div>
                 <Input
                   id="password"
                   type="password"
+                  autoComplete="current-password"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => {
@@ -146,7 +169,7 @@ export default function LoginPage() {
                   }}
                   aria-describedby={errors.password ? "password-error" : undefined}
                   aria-invalid={!!errors.password}
-                  className="h-12 text-base rounded-xl border-[#dde0d4] focus:border-[#4a7c59] focus:ring-[#a4ac86] transition-colors"
+                  className="h-11 text-sm rounded-lg border-[#dde0d4] focus:border-[#4a7c59] focus:ring-[#a4ac86] transition-colors"
                   required
                 />
                 {errors.password && <FormError id="password-error">{errors.password}</FormError>}
@@ -155,17 +178,23 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 rounded-xl bg-gradient-to-r from-[#2d4a2b] to-[#4a7c59] text-white font-medium text-base hover:from-[#1e3a1c] hover:to-[#3d6b4a] transition-all duration-200 shadow-md shadow-[#2d4a2b]/20 hover:shadow-lg hover:shadow-[#2d4a2b]/30 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full h-11 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed mt-1"
               >
-                {loading ? "Iniciando..." : "Iniciar sesi\u00f3n"}
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    Iniciando sesión...
+                  </>
+                ) : (
+                  "Iniciar sesión"
+                )}
               </button>
             </form>
-
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-[#6b7260] mt-6 animate-fade-in stagger-4">
-          ALUMCO &mdash; Capacitaci&oacute;n para residencias de adultos mayores
+        <p className="text-center text-xs text-[#a4ac86] mt-8 animate-fade-in stagger-4">
+          ALUMCO &copy; {new Date().getFullYear()}
         </p>
       </div>
     </div>

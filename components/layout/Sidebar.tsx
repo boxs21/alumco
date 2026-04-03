@@ -34,12 +34,12 @@ export default function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 z-30 hidden lg:flex h-full w-64 flex-col border-r border-[#dde0d4] bg-[#faf9f6]">
       {/* Subtle dot pattern overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-dot-pattern opacity-20" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-dot-pattern opacity-20" />
 
       {/* Logo */}
       <div className="relative flex h-16 items-center gap-3 px-6 border-b border-[#dde0d4]">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2d4a2b] shadow-sm shadow-[#2d4a2b]/30">
-          <Leaf className="h-5 w-5 text-[#a4ac86]" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2d4a2b]">
+          <Leaf className="h-4 w-4 text-[#a4ac86]" aria-hidden="true" />
         </div>
         <div>
           <p className="text-base font-bold text-[#1e2d1c] leading-tight tracking-tight" style={{ fontFamily: "var(--font-pt-serif)" }}>ALUMCO</p>
