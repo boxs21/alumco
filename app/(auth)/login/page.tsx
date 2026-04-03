@@ -8,8 +8,27 @@ import { Label } from "@/components/ui/label";
 import FormError from "@/components/ui/form-error";
 import { GraduationCap, Shield, User } from "lucide-react";
 import { createClient } from "@/lib/supabase";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 type RoleTab = "admin" | "collaborator";
+
+async function resolveRoleRedirect(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .single();
+
+  if (error || !data?.role) {
+    console.error("[login] profiles query failed:", error?.message);
+    return null;
+  }
+
+  return data.role === "ADMIN" ? "/admin/dashboard" : "/portal";
+}
 
 interface FormErrors {
   email?: string;
@@ -61,14 +80,13 @@ export default function LoginPage() {
       return;
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user.id)
-      .single();
-
-    const userRole = profile?.role ?? "COLLABORATOR";
-    router.push(userRole === "ADMIN" ? "/admin/dashboard" : "/portal");
+    const redirect = await resolveRoleRedirect(supabase, data.user.id);
+    if (!redirect) {
+      setErrors({ general: "No se pudo determinar tu rol. Contacta al administrador." });
+      setLoading(false);
+      return;
+    }
+    router.push(redirect);
   }
 
   async function handleDemoLogin(demoRole: RoleTab) {
@@ -90,14 +108,13 @@ export default function LoginPage() {
       return;
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user.id)
-      .single();
-
-    const userRole = profile?.role ?? "COLLABORATOR";
-    router.push(userRole === "ADMIN" ? "/admin/dashboard" : "/portal");
+    const redirect = await resolveRoleRedirect(supabase, data.user.id);
+    if (!redirect) {
+      setErrors({ general: "No se pudo determinar tu rol. Contacta al administrador." });
+      setLoading(false);
+      return;
+    }
+    router.push(redirect);
   }
 
   return (

@@ -26,14 +26,30 @@ export async function proxy(request: NextRequest) {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-
   const pathname = request.nextUrl.pathname;
-  const isProtected =
-    pathname.startsWith("/admin") || pathname.startsWith("/portal");
 
-  if (isProtected && !user) {
-    const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
+  // No session → send to login
+  if (!user) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Get role from profiles
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  const role = profile?.role as "ADMIN" | "COLLABORATOR" | undefined;
+
+  // /admin/** → requires ADMIN role
+  if (pathname.startsWith("/admin") && role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/portal", request.url));
+  }
+
+  // /portal/** → requires COLLABORATOR role
+  if (pathname.startsWith("/portal") && role !== "COLLABORATOR") {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 
   return response;
