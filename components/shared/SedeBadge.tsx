@@ -7,28 +7,28 @@ interface SedeBadgeProps {
   size?: "sm" | "md" | "lg";
 }
 
-// Accessibility improvement: Changed text colors for 5.5:1 contrast ratio (WCAG AA)
-// Added Building icon so color is not the only differentiator (colorblind accessibility)
-const sedeStyles: Record<string, { text: string; bg: string; label: string; ariaLabel: string }> = {
+// Uses CSS variables from ThemeProvider so colors adapt to ALL themes (light & dark)
+// without needing any CSS override selectors.
+const sedeStyles: Record<string, { label: string; ariaLabel: string; colorVar: string; bgVar: string }> = {
   s1: {
-    text: "text-[#1a2d1b]",  // Darker green for 5.5:1 contrast on #f0f2eb
-    bg: "bg-[#f0f2eb]",
     label: SEDES.CONCEPCION.nombre,
-    ariaLabel: `${SEDES.CONCEPCION.nombre} (Sede)`
+    ariaLabel: `${SEDES.CONCEPCION.nombre} (Sede)`,
+    colorVar: "var(--color-sede-concepcion)",
+    bgVar:    "var(--color-sede-concepcion-bg)",
   },
   s2: {
-    text: "text-[#794f00]",  // Darker brown for 5.5:1 contrast on #fdf6e3
-    bg: "bg-[#fdf6e3]",
     label: SEDES.COYHAIQUE.nombre,
-    ariaLabel: `${SEDES.COYHAIQUE.nombre} (Sede)`
+    ariaLabel: `${SEDES.COYHAIQUE.nombre} (Sede)`,
+    colorVar: "var(--color-sede-coyhaique)",
+    bgVar:    "var(--color-sede-coyhaique-bg)",
   },
 };
 
 const globalStyle = {
-  text: "text-[#3d5a4a]",  // Darker muted for better contrast
-  bg: "bg-[#f0f2eb]",
   label: "Ambas sedes",
-  ariaLabel: "Ambas sedes"
+  ariaLabel: "Ambas sedes",
+  colorVar: "var(--muted-foreground)",
+  bgVar:    "var(--secondary)",
 };
 
 const sizeClasses = {
@@ -39,21 +39,24 @@ const sizeClasses = {
 
 const iconSizeClasses = {
   sm: "h-3 w-3",
-  md: "h-4 w-4",
+  md: "h-3.5 w-3.5",
   lg: "h-4 w-4",
 };
 
 export default function SedeBadge({ sedeId, sedeName, size = "md" }: SedeBadgeProps) {
-  const style = sedeId ? sedeStyles[sedeId] ?? globalStyle : globalStyle;
+  const style = sedeId ? (sedeStyles[sedeId] ?? globalStyle) : globalStyle;
   const label = sedeName ?? style.label;
 
   return (
     <span
-      className={`inline-flex items-center gap-1 font-medium rounded-full ${style.bg} ${style.text} ${sizeClasses[size]}`}
+      className={`inline-flex items-center gap-1 font-medium rounded-full ${sizeClasses[size]}`}
+      style={{
+        color: style.colorVar,
+        backgroundColor: style.bgVar,
+      }}
       aria-label={style.ariaLabel}
-      role="badge"
     >
-      <Building className={iconSizeClasses[size]} />
+      <Building className={iconSizeClasses[size]} aria-hidden="true" />
       {label}
     </span>
   );
