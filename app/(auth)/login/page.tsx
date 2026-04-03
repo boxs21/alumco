@@ -6,28 +6,39 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import FormError from "@/components/ui/form-error";
-import { GraduationCap, Shield, User } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-type RoleTab = "admin" | "collaborator";
-
-async function resolveRoleRedirect(
-  supabase: SupabaseClient,
-  userId: string
-): Promise<string | null> {
+// Tries multiple strategies to resolve the role, falling back to /portal.
+// The proxy enforces role-based access, so /portal is a safe default.
+async function resolveRedirect(supabase: SupabaseClient, userId: string): Promise<string> {
+  // 1. Query profiles by id
   const { data, error } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", userId)
     .single();
 
-  if (error || !data?.role) {
-    console.error("[login] profiles query failed:", error?.message);
-    return null;
+  if (!error && data?.role) {
+    return data.role === "ADMIN" ? "/admin/dashboard" : "/portal";
   }
 
-  return data.role === "ADMIN" ? "/admin/dashboard" : "/portal";
+  console.warn("[login] profiles.id query failed:", error?.message, "— trying user_metadata");
+
+  // 2. Fallback: check user_metadata / app_metadata (set via Supabase Auth hooks)
+  const { data: { user } } = await supabase.auth.getUser();
+  const metaRole =
+    (user?.user_metadata?.role as string | undefined) ??
+    (user?.app_metadata?.role as string | undefined);
+
+  if (metaRole) {
+    return metaRole === "ADMIN" ? "/admin/dashboard" : "/portal";
+  }
+
+  // 3. Default — proxy will redirect if role doesn't match the route
+  console.warn("[login] role not found in metadata either, defaulting to /portal");
+  return "/portal";
 }
 
 interface FormErrors {
@@ -38,7 +49,6 @@ interface FormErrors {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = useState<RoleTab>("collaborator");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
@@ -46,33 +56,29 @@ export default function LoginPage() {
 
   function validateForm(): boolean {
     const newErrors: FormErrors = {};
-
     if (!email.trim()) {
       newErrors.email = "El correo electrónico es requerido";
     } else if (!email.includes("@")) {
       newErrors.email = "Por favor ingresa un correo válido";
     }
-
     if (!password.trim()) {
       newErrors.password = "La contraseña es requerida";
     } else if (password.length < 6) {
       newErrors.password = "La contraseña debe tener al menos 6 caracteres";
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
+  async function signIn(emailVal: string, passwordVal: string) {
     setLoading(true);
     setErrors({});
 
     const supabase = createClient();
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: emailVal,
+      password: passwordVal,
+    });
 
     if (error || !data.user) {
       setErrors({ general: "Correo o contraseña incorrectos" });
@@ -80,41 +86,14 @@ export default function LoginPage() {
       return;
     }
 
-    const redirect = await resolveRoleRedirect(supabase, data.user.id);
-    if (!redirect) {
-      setErrors({ general: "No se pudo determinar tu rol. Contacta al administrador." });
-      setLoading(false);
-      return;
-    }
+    const redirect = await resolveRedirect(supabase, data.user.id);
     router.push(redirect);
   }
 
-  async function handleDemoLogin(demoRole: RoleTab) {
-    setLoading(true);
-    setErrors({});
-
-    const demoEmail = demoRole === "admin" ? "valentina@alumco.cl" : "maria@alumco.cl";
-    const demoPassword = demoRole === "admin" ? "demo123456" : "demo123456";
-
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: demoEmail,
-      password: demoPassword,
-    });
-
-    if (error || !data.user) {
-      setErrors({ general: "Cuenta demo no disponible" });
-      setLoading(false);
-      return;
-    }
-
-    const redirect = await resolveRoleRedirect(supabase, data.user.id);
-    if (!redirect) {
-      setErrors({ general: "No se pudo determinar tu rol. Contacta al administrador." });
-      setLoading(false);
-      return;
-    }
-    router.push(redirect);
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    if (!validateForm()) return;
+    await signIn(email, password);
   }
 
   return (
@@ -135,35 +114,6 @@ export default function LoginPage() {
 
         <Card className="border-[#dde0d4]/80 shadow-xl shadow-[#1e2d1c]/[0.04] animate-fade-in-up stagger-2 backdrop-blur-sm bg-[#faf9f6]/95">
           <CardContent className="p-7 space-y-6">
-            {/* Role Toggle */}
-            <div className="flex rounded-xl bg-[#f0f2eb]/80 p-1.5 gap-1">
-              <button
-                type="button"
-                onClick={() => setRole("admin")}
-                className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all duration-200 ${
-                  role === "admin"
-                    ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm ring-1 ring-[#dde0d4]/60"
-                    : "text-[#7d8471] hover:text-[#1e2d1c]"
-                }`}
-              >
-                <Shield className={`h-4 w-4 ${role === "admin" ? "text-[#2d4a2b]" : ""}`} />
-                Administrador
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole("collaborator")}
-                className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all duration-200 ${
-                  role === "collaborator"
-                    ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm ring-1 ring-[#dde0d4]/60"
-                    : "text-[#7d8471] hover:text-[#1e2d1c]"
-                }`}
-              >
-                <User className={`h-4 w-4 ${role === "collaborator" ? "text-[#2d4a2b]" : ""}`} />
-                Colaborador
-              </button>
-            </div>
-
-            {/* Form */}
             <form onSubmit={handleLogin} className="space-y-4">
               {errors.general && (
                 <FormError id="general-error">{errors.general}</FormError>
@@ -235,7 +185,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   disabled={loading}
-                  onClick={() => handleDemoLogin("admin")}
+                  onClick={() => signIn("valentina@alumco.cl", "demo123456")}
                   className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   Admin demo
@@ -243,7 +193,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   disabled={loading}
-                  onClick={() => handleDemoLogin("collaborator")}
+                  onClick={() => signIn("maria@alumco.cl", "demo123456")}
                   className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   Colaborador demo
