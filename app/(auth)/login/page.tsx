@@ -161,36 +161,6 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Demo Buttons */}
-            <div className="space-y-3">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#dde0d4]/80" />
-                </div>
-                <div className="relative flex justify-center text-xs">
-                  <span className="bg-[#faf9f6]/95 px-3 text-[#6b7260] font-medium">Acceso r&aacute;pido de prueba</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  disabled={loading}
-                  onClick={() => signIn("valentina@alumco.cl", "demo123456")}
-                  className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  Admin demo
-                </button>
-                <button
-                  type="button"
-                  disabled={loading}
-                  onClick={() => signIn("maria@alumco.cl", "demo123456")}
-                  className="h-11 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#7d8471] hover:bg-[#f0f2eb]/60 hover:border-[#a4ac86] transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  Colaborador demo
-                </button>
-              </div>
-            </div>
           </CardContent>
         </Card>
 
