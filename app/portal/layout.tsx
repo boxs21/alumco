@@ -118,6 +118,9 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       </header>
 
       <main className="mx-auto max-w-5xl px-4 lg:px-6 py-4 lg:py-6 pb-16 sm:pb-6">
+        {userName && (
+          <p className="text-sm text-[#7d8471] mb-4">¡Hola, {userName}!</p>
+        )}
         {children}
       </main>
 
