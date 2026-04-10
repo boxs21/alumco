@@ -1,4 +1,4 @@
-import { SEDES } from "@/lib/mock-data";
+import { SEDES } from "@/lib/config";
 import { Building } from "lucide-react";
 
 interface SedeBadgeProps {

@@ -14,7 +14,9 @@
       "Bash(python \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"corporate training LMS dashboard professional\" --design-system -p \"ALUMCO Capacitación\")",
       "Bash(PYTHONIOENCODING=utf-8 python \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"corporate training LMS dashboard professional\" --design-system -p \"ALUMCO Capacitación\")",
       "Bash(PYTHONIOENCODING=utf-8 python \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"animation accessibility loading\" --domain ux -n 10)",
-      "Bash(PYTHONIOENCODING=utf-8 python \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"dashboard performance responsive\" --stack nextjs)"
+      "Bash(PYTHONIOENCODING=utf-8 python \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"dashboard performance responsive\" --stack nextjs)",
+      "Bash(find C:/Users/AndyV/alumcotest/node_modules/next/dist/docs -name *middleware*)",
+      "Bash(grep -r middleware C:/Users/AndyV/alumcotest/node_modules/next/dist/docs/01-app/03-api-reference/ --include=*.md -l)"
     ]
   }
 }

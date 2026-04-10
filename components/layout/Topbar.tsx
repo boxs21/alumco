@@ -1,6 +1,8 @@
 "use client";
 
-import { SEDES } from "@/lib/mock-data";
+import { useEffect, useState } from "react";
+import { SEDES } from "@/lib/config";
+import { createClient } from "@/lib/supabase";
 import {
   Select,
   SelectContent,
@@ -18,7 +20,29 @@ interface TopbarProps {
   title?: string;
 }
 
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
 export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProps) {
+  const [userName, setUserName] = useState("");
+  const [userInitials, setUserInitials] = useState("--");
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      const name = user.user_metadata?.full_name ?? user.email ?? "Usuario";
+      setUserName(name);
+      setUserInitials(getInitials(name));
+    });
+  }, []);
+
   return (
     <header className="sticky top-0 z-20 flex h-14 lg:h-16 items-center justify-between border-b border-[#dde0d4]/80 bg-[#faf9f6]/95 backdrop-blur-sm px-4 lg:px-6">
       <div className="flex items-center gap-4">
@@ -36,7 +60,7 @@ export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProp
           <ThemeSwitcher compact />
         </div>
 
-        {/* Sede selector — hidden on very small screens, shown from sm */}
+        {/* Sede selector */}
         <div className="hidden sm:block">
           <Select value={selectedSede} onValueChange={onSedeChange}>
             <SelectTrigger className="w-36 lg:w-48 h-9 lg:h-10 text-sm rounded-xl border-[#dde0d4]">
@@ -64,13 +88,13 @@ export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProp
 
         <div className="flex items-center gap-2 lg:gap-3">
           <Avatar className="h-8 w-8 lg:h-9 lg:w-9 ring-2 ring-[#f0f2eb]">
-            <AvatarFallback className="bg-gradient-to-br from-[#f0f2eb] to-[#dde0d4] text-[#2d4a2b] text-xs lg:text-sm font-semibold">
-              VL
+            <AvatarFallback className="bg-[#f0f2eb] text-[#2d4a2b] text-xs lg:text-sm font-semibold">
+              {userInitials}
             </AvatarFallback>
           </Avatar>
           <div className="hidden lg:block">
-            <p className="text-sm font-medium text-[#1e2d1c] leading-tight">Valentina Lagos</p>
-            <p className="text-xs text-[#a4ac86]">Administradora</p>
+            <p className="text-sm font-medium text-[#1e2d1c] leading-tight">{userName || "—"}</p>
+            <p className="text-xs text-[#a4ac86]">Administrador</p>
           </div>
         </div>
       </div>

@@ -1,13 +1,15 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import Topbar from "@/components/layout/Topbar";
 import SedeBadge from "@/components/shared/SedeBadge";
 import StatCard from "@/components/shared/StatCard";
+import EmptyState from "@/components/shared/EmptyState";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { mockTrainings, mockFiles, mockUsers, mockQuestions } from "@/lib/mock-data";
+import { createClient } from "@/lib/supabase";
+import { sedeName } from "@/lib/config";
 import {
   Users,
   CheckCircle,
@@ -20,6 +22,42 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+interface Training {
+  id: string;
+  title: string;
+  area: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  sede_id: string | null;
+  passing_score: number | null;
+  max_attempts: number | null;
+}
+
+interface TrainingFile {
+  id: string;
+  name: string;
+  type: string;
+  size_label: string | null;
+}
+
+interface TrainingQuestion {
+  id: string;
+}
+
+interface AssignmentProfile {
+  full_name: string | null;
+  email: string | null;
+  area: string | null;
+  sede_id: string | null;
+}
+
+interface Assignment {
+  id: string;
+  user_id: string;
+  status: string;
+  // Supabase returns embedded relations as arrays even for many-to-one
+  profiles: AssignmentProfile[] | AssignmentProfile | null;
+}
+
 const fileTypeIcons: Record<string, typeof FileText> = {
   PDF: FileText,
   VIDEO: Video,
@@ -27,19 +65,72 @@ const fileTypeIcons: Record<string, typeof FileText> = {
 };
 
 const statusConfig = {
-  DRAFT: { label: "Borrador", className: "bg-[#f0f2eb] text-[#7d8471]" },
-  PUBLISHED: { label: "Publicado", className: "bg-emerald-50 text-emerald-700" },
-  ARCHIVED: { label: "Archivado", className: "bg-red-50 text-red-600" },
+  DRAFT:     { label: "Borrador",  className: "bg-[#f0f2eb] text-[#7d8471]" },
+  PUBLISHED: { label: "Publicado", className: "bg-[#f0f2eb] text-[#2d4a2b]" },
+  ARCHIVED:  { label: "Archivado", className: "bg-[#fdf0ec] text-[#b74729]" },
 };
 
 export default function CapacitacionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [selectedSede, setSelectedSede] = useState("global");
+  const [training, setTraining] = useState<Training | null>(null);
+  const [files, setFiles] = useState<TrainingFile[]>([]);
+  const [questions, setQuestions] = useState<TrainingQuestion[]>([]);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const training = mockTrainings.find((t) => t.id === id) ?? mockTrainings[0];
-  const statusInfo = statusConfig[training.status];
-  const progress = training.asignados > 0 ? Math.round((training.completados / training.asignados) * 100) : 0;
-  const assignedUsers = mockUsers.filter((u) => u.role === "COLLABORATOR").slice(0, 4);
+  useEffect(() => {
+    const supabase = createClient();
+    async function load() {
+      const [
+        { data: trainingData },
+        { data: filesData },
+        { data: questionsData },
+        { data: assignmentsData },
+      ] = await Promise.all([
+        supabase
+          .from("trainings")
+          .select("id, title, area, status, sede_id, passing_score, max_attempts")
+          .eq("id", id)
+          .single(),
+        supabase.from("training_files").select("id, name, type, size_label").eq("training_id", id),
+        supabase.from("training_questions").select("id").eq("training_id", id),
+        supabase
+          .from("assignments")
+          .select("id, user_id, status, profiles(full_name, email, area, sede_id)")
+          .eq("training_id", id),
+      ]);
+      setTraining(trainingData as Training | null);
+      setFiles(filesData ?? []);
+      setQuestions(questionsData ?? []);
+      setAssignments(((assignmentsData ?? []) as unknown) as Assignment[]);
+      setLoading(false);
+    }
+    load();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div>
+        <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
+        <div className="p-6 text-sm text-[#7d8471]">Cargando...</div>
+      </div>
+    );
+  }
+
+  if (!training) {
+    return (
+      <div>
+        <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
+        <div className="p-6 text-sm text-[#7d8471]">Capacitación no encontrada.</div>
+      </div>
+    );
+  }
+
+  const statusInfo = statusConfig[training.status] ?? statusConfig.DRAFT;
+  const total = assignments.length;
+  const completed = assignments.filter((a) => a.status === "COMPLETED").length;
+  const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return (
     <div>
@@ -63,7 +154,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
               <Badge className={statusInfo.className}>{statusInfo.label}</Badge>
             </div>
             <div className="flex flex-wrap items-center gap-2 lg:gap-3">
-              <SedeBadge sedeId={training.sedeId} sedeName={training.sedeName} />
+              <SedeBadge sedeId={training.sede_id} sedeName={sedeName(training.sede_id)} />
               <span className="text-sm text-[#6b7260]">&Aacute;rea: {training.area}</span>
             </div>
           </div>
@@ -76,42 +167,44 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
           </Link>
         </div>
 
-        {/* Stats — 3 cols on sm+, stack on mobile */}
+        {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 lg:gap-4">
-          <StatCard title="Asignados" value={training.asignados} icon={Users} />
-          <StatCard title="Completados" value={training.completados} icon={CheckCircle} />
+          <StatCard title="Asignados" value={total} icon={Users} />
+          <StatCard title="Completados" value={completed} icon={CheckCircle} />
           <StatCard title="Cumplimiento" value={`${progress}%`} icon={TrendingUp} />
         </div>
 
-        {/* Material + Quiz — 1 col mobile, 2 cols lg */}
+        {/* Material + Quiz */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-          {/* Material */}
           <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-4 lg:p-6">
               <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-3 lg:mb-4 flex items-center gap-2">
                 <FileText className="h-5 w-5 text-[#a4ac86]" aria-hidden="true" />
                 Material formativo
               </h2>
-              <div className="space-y-2">
-                {mockFiles.map((file) => {
-                  const FileIcon = fileTypeIcons[file.type] ?? FileText;
-                  return (
-                    <div key={file.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#dde0d4]">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f0f2eb]">
-                        <FileIcon className="h-4 w-4 text-[#6b7260]" aria-hidden="true" />
+              {files.length === 0 ? (
+                <p className="text-sm text-[#7d8471]">Sin archivos cargados.</p>
+              ) : (
+                <div className="space-y-2">
+                  {files.map((file) => {
+                    const FileIcon = fileTypeIcons[file.type] ?? FileText;
+                    return (
+                      <div key={file.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#dde0d4]">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f0f2eb]">
+                          <FileIcon className="h-4 w-4 text-[#6b7260]" aria-hidden="true" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
+                          {file.size_label && <p className="text-xs text-[#6b7260]">{file.size_label}</p>}
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
-                        <p className="text-xs text-[#6b7260]">{file.size}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          {/* Quiz summary */}
           <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-4 lg:p-6">
               <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-3 lg:mb-4 flex items-center gap-2">
@@ -121,15 +214,19 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-[#6b7260]">Preguntas</span>
-                  <span className="font-medium text-[#1e2d1c]">{mockQuestions.length}</span>
+                  <span className="font-medium text-[#1e2d1c]">{questions.length}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[#6b7260]">Nota m&iacute;nima</span>
-                  <span className="font-medium text-[#1e2d1c]">60%</span>
+                  <span className="font-medium text-[#1e2d1c]">
+                    {training.passing_score != null ? `${training.passing_score}%` : "—"}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[#6b7260]">Intentos m&aacute;ximos</span>
-                  <span className="font-medium text-[#1e2d1c]">3</span>
+                  <span className="font-medium text-[#1e2d1c]">
+                    {training.max_attempts != null ? training.max_attempts : "—"}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -140,27 +237,48 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
         <Card className="border-[#dde0d4] shadow-sm">
           <CardContent className="p-4 lg:p-6">
             <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-3 lg:mb-4">Colaboradores asignados</h2>
-            <div className="space-y-2">
-              {assignedUsers.map((user) => (
-                <div key={user.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-lg border border-[#dde0d4]">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f0f2eb] text-sm font-medium text-[#1e2d1c] shrink-0">
-                      {user.name.split(" ").map((n) => n[0]).join("")}
+            {assignments.length === 0 ? (
+              <EmptyState
+                icon={Users}
+                title="Sin asignaciones"
+                description="Aún no hay colaboradores asignados a esta capacitación."
+              />
+            ) : (
+              <div className="space-y-2">
+                {assignments.map((a) => {
+                  const profile = Array.isArray(a.profiles) ? a.profiles[0] ?? null : a.profiles;
+                  const pName = profile?.full_name ?? profile?.email ?? "—";
+                  return (
+                    <div
+                      key={a.id}
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-lg border border-[#dde0d4]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f0f2eb] text-sm font-medium text-[#1e2d1c] shrink-0">
+                          {pName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-[#1e2d1c]">{pName}</p>
+                          {profile?.area && <p className="text-xs text-[#6b7260]">{profile.area}</p>}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 ml-12 sm:ml-0">
+                        <SedeBadge sedeId={profile?.sede_id ?? null} sedeName={sedeName(profile?.sede_id ?? null)} size="sm" />
+                        <Badge
+                          className={
+                            a.status === "COMPLETED"
+                              ? "bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb]"
+                              : "bg-[#fff8e8] text-[#9a6800] hover:bg-[#fff8e8]"
+                          }
+                        >
+                          {a.status === "COMPLETED" ? "Completado" : "Pendiente"}
+                        </Badge>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-[#1e2d1c]">{user.name}</p>
-                      <p className="text-xs text-[#6b7260]">{user.area}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 ml-12 sm:ml-0">
-                    <SedeBadge sedeId={user.sedeId} sedeName={user.sedeName} size="sm" />
-                    <Badge className={user.completadas > 0 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}>
-                      {user.completadas > 0 ? "Completado" : "Pendiente"}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

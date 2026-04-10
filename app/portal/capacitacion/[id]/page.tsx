@@ -1,9 +1,9 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { mockFiles, mockQuestions, mockCollaboratorTrainings } from "@/lib/mock-data";
+import { createClient } from "@/lib/supabase";
 import {
   FileText,
   Video,
@@ -12,7 +12,34 @@ import {
   CheckCircle,
   Award,
   ArrowRight,
+  BookOpen,
+  ClipboardList,
 } from "lucide-react";
+
+interface TrainingFile {
+  id: string;
+  name: string;
+  type: string;
+  size_label: string | null;
+}
+
+interface QuestionOption {
+  id: string;
+  text: string;
+  is_correct: boolean;
+}
+
+interface TrainingQuestion {
+  id: string;
+  question_text: string;
+  options: QuestionOption[];
+}
+
+interface TrainingInfo {
+  title: string;
+  passing_score: number | null;
+  max_attempts: number | null;
+}
 
 const fileTypeIcons: Record<string, typeof FileText> = {
   PDF: FileText,
@@ -27,30 +54,78 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
   const [currentStep, setCurrentStep] = useState<Step>("material");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [score, setScore] = useState<number | null>(null);
 
-  const training = mockCollaboratorTrainings.find((t) => t.trainingId === id) ?? mockCollaboratorTrainings[0];
+  const [training, setTraining] = useState<TrainingInfo | null>(null);
+  const [files, setFiles] = useState<TrainingFile[]>([]);
+  const [questions, setQuestions] = useState<TrainingQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const steps: { key: Step; label: string; shortLabel: string }[] = [
-    { key: "material", label: "Revisar material", shortLabel: "Material" },
-    { key: "quiz", label: "Rendir evaluación", shortLabel: "Evaluación" },
-    { key: "certificate", label: "Obtener certificado", shortLabel: "Certificado" },
-  ];
+  useEffect(() => {
+    const supabase = createClient();
+    async function load() {
+      const [{ data: trainingData }, { data: filesData }, { data: questionsData }] = await Promise.all([
+        supabase.from("trainings").select("title, passing_score, max_attempts").eq("id", id).single(),
+        supabase.from("training_files").select("id, name, type, size_label").eq("training_id", id),
+        supabase.from("training_questions").select("id, question_text, options").eq("training_id", id).order("order"),
+      ]);
+      setTraining(trainingData ?? null);
+      setFiles(filesData ?? []);
+      setQuestions((questionsData as TrainingQuestion[]) ?? []);
+      setLoading(false);
+    }
+    load();
+  }, [id]);
 
   function handleSubmitQuiz() {
+    // Compute score from answers vs correct options
+    if (questions.length === 0) {
+      setScore(100);
+      setSubmitted(true);
+      setCurrentStep("certificate");
+      return;
+    }
+    let correct = 0;
+    for (const q of questions) {
+      const selectedId = answers[q.id];
+      const correctOpt = q.options.find((o) => o.is_correct);
+      if (selectedId && correctOpt && selectedId === correctOpt.id) correct++;
+    }
+    const computed = Math.round((correct / questions.length) * 100);
+    setScore(computed);
     setSubmitted(true);
     setCurrentStep("certificate");
   }
 
-  const score = submitted ? 85 : null;
+  const steps: { key: Step; label: string; shortLabel: string }[] = [
+    { key: "material",    label: "Revisar material",   shortLabel: "Material" },
+    { key: "quiz",        label: "Rendir evaluación",  shortLabel: "Evaluación" },
+    { key: "certificate", label: "Obtener certificado", shortLabel: "Certificado" },
+  ];
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="text-sm text-[#7d8471] py-8 text-center">Cargando...</div>
+      </div>
+    );
+  }
+
+  if (!training) {
+    return (
+      <div className="space-y-4">
+        <p className="text-sm text-[#7d8471]">Capacitación no encontrada.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 lg:space-y-6">
-      {/* Title */}
       <div>
         <h1 className="text-xl lg:text-2xl font-semibold text-[#1e2d1c]">{training.title}</h1>
       </div>
 
-      {/* Step indicator — horizontal on sm+, compact on mobile */}
+      {/* Step indicator */}
       <div className="flex flex-wrap items-center gap-1 sm:gap-2">
         {steps.map((step, i) => (
           <div key={step.key} className="flex items-center gap-1 sm:gap-2">
@@ -61,9 +136,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
               }}
               aria-label={`Ir a paso ${i + 1}: ${step.label}`}
               className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                currentStep === step.key
-                  ? "bg-[#f0f2eb] text-[#1e2d1c]"
-                  : "text-[#6b7260] hover:text-[#1e2d1c]"
+                currentStep === step.key ? "bg-[#f0f2eb] text-[#1e2d1c]" : "text-[#6b7260] hover:text-[#1e2d1c]"
               }`}
             >
               <div
@@ -91,29 +164,40 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
         ))}
       </div>
 
-      {/* Content: 1 col mobile, 3 cols lg (2+1) */}
+      {/* Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-        {/* Main Content */}
         <div className="lg:col-span-2">
           {currentStep === "material" && (
             <Card className="border-[#dde0d4] shadow-sm">
               <CardContent className="p-4 lg:p-6 space-y-4">
                 <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c]">Material de estudio</h2>
-                {mockFiles.map((file) => {
-                  const FileIcon = fileTypeIcons[file.type] ?? FileText;
-                  return (
-                    <div key={file.id} className="flex items-center gap-3 p-3 lg:p-4 rounded-lg border border-[#dde0d4] hover:bg-[#faf9f6] cursor-pointer transition-colors">
-                      <div className="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-lg bg-[#f0f2eb]">
-                        <FileIcon className="h-4 w-4 lg:h-5 lg:w-5 text-[#6b7260]" aria-hidden="true" />
+                {files.length === 0 ? (
+                  <div className="flex flex-col items-center py-8 text-center">
+                    <BookOpen className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
+                    <p className="text-sm text-[#7d8471]">Sin archivos de estudio.</p>
+                  </div>
+                ) : (
+                  files.map((file) => {
+                    const FileIcon = fileTypeIcons[file.type] ?? FileText;
+                    return (
+                      <div
+                        key={file.id}
+                        className="flex items-center gap-3 p-3 lg:p-4 rounded-lg border border-[#dde0d4] hover:bg-[#faf9f6] cursor-pointer transition-colors"
+                      >
+                        <div className="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-lg bg-[#f0f2eb]">
+                          <FileIcon className="h-4 w-4 lg:h-5 lg:w-5 text-[#6b7260]" aria-hidden="true" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
+                          {file.size_label && <p className="text-xs text-[#6b7260]">{file.size_label}</p>}
+                        </div>
+                        <Badge className="bg-[#f0f2eb] text-[#6b7260] hover:bg-[#f0f2eb] hidden sm:inline-flex">
+                          {file.type}
+                        </Badge>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
-                        <p className="text-xs text-[#6b7260]">{file.size}</p>
-                      </div>
-                      <Badge className="bg-[#f0f2eb] text-[#6b7260] hover:bg-[#f0f2eb] hidden sm:inline-flex">{file.type}</Badge>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
                 <button
                   onClick={() => setCurrentStep("quiz")}
                   className="inline-flex items-center gap-2 h-10 lg:h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors mt-2"
@@ -129,46 +213,51 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
             <Card className="border-[#dde0d4] shadow-sm">
               <CardContent className="p-4 lg:p-6 space-y-5 lg:space-y-6">
                 <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c]">Evaluaci&oacute;n</h2>
-                {mockQuestions.map((q, qi) => (
-                  <div key={q.id} className="space-y-3">
-                    <p className="text-sm font-semibold text-[#1e2d1c]">
-                      {qi + 1}. {q.text}
-                    </p>
-                    <div className="space-y-2" role="radiogroup" aria-label={`Pregunta ${qi + 1}`}>
-                      {q.options.map((opt) => (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          role="radio"
-                          aria-checked={answers[q.id] === opt.id}
-                          onClick={() => setAnswers({ ...answers, [q.id]: opt.id })}
-                          className={`flex items-center gap-3 w-full p-3 rounded-lg border text-left text-sm transition-colors ${
-                            answers[q.id] === opt.id
-                              ? "border-[#a4ac86] bg-[#f0f2eb] text-[#1e2d1c]"
-                              : "border-[#dde0d4] text-[#1e2d1c] hover:bg-[#faf9f6]"
-                          }`}
-                        >
-                          <div
-                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+                {questions.length === 0 ? (
+                  <div className="flex flex-col items-center py-8 text-center">
+                    <ClipboardList className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
+                    <p className="text-sm text-[#7d8471]">Esta capacitación no tiene evaluación.</p>
+                  </div>
+                ) : (
+                  questions.map((q, qi) => (
+                    <div key={q.id} className="space-y-3">
+                      <p className="text-sm font-semibold text-[#1e2d1c]">
+                        {qi + 1}. {q.question_text}
+                      </p>
+                      <div className="space-y-2" role="radiogroup" aria-label={`Pregunta ${qi + 1}`}>
+                        {q.options.map((opt) => (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            role="radio"
+                            aria-checked={answers[q.id] === opt.id}
+                            onClick={() => setAnswers({ ...answers, [q.id]: opt.id })}
+                            className={`flex items-center gap-3 w-full p-3 rounded-lg border text-left text-sm transition-colors ${
                               answers[q.id] === opt.id
-                                ? "border-[#2d4a2b] bg-[#2d4a2b]"
-                                : "border-[#dde0d4]"
+                                ? "border-[#a4ac86] bg-[#f0f2eb] text-[#1e2d1c]"
+                                : "border-[#dde0d4] text-[#1e2d1c] hover:bg-[#faf9f6]"
                             }`}
                           >
-                            {answers[q.id] === opt.id && <Check className="h-3 w-3 text-white" />}
-                          </div>
-                          {opt.text}
-                        </button>
-                      ))}
+                            <div
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+                                answers[q.id] === opt.id ? "border-[#2d4a2b] bg-[#2d4a2b]" : "border-[#dde0d4]"
+                              }`}
+                            >
+                              {answers[q.id] === opt.id && <Check className="h-3 w-3 text-white" />}
+                            </div>
+                            {opt.text}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
                 <button
                   onClick={handleSubmitQuiz}
-                  disabled={Object.keys(answers).length < mockQuestions.length}
+                  disabled={questions.length > 0 && Object.keys(answers).length < questions.length}
                   className="inline-flex items-center gap-2 h-10 lg:h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Enviar respuestas
+                  {questions.length === 0 ? "Completar capacitación" : "Enviar respuestas"}
                 </button>
               </CardContent>
             </Card>
@@ -177,14 +266,17 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
           {currentStep === "certificate" && (
             <Card className="border-[#dde0d4] shadow-sm">
               <CardContent className="p-6 lg:p-8 text-center space-y-4">
-                <div className="flex h-14 w-14 lg:h-16 lg:w-16 items-center justify-center rounded-full bg-emerald-100 mx-auto">
-                  <Award className="h-7 w-7 lg:h-8 lg:w-8 text-emerald-600" />
+                <div className="flex h-14 w-14 lg:h-16 lg:w-16 items-center justify-center rounded-full bg-[#f0f2eb] mx-auto">
+                  <Award className="h-7 w-7 lg:h-8 lg:w-8 text-[#2d4a2b]" />
                 </div>
                 <h2 className="text-lg lg:text-xl font-semibold text-[#1e2d1c]">Capacitaci&oacute;n completada</h2>
-                <p className="text-sm text-[#6b7260]">
-                  Has obtenido una nota de <span className="font-semibold text-[#1e2d1c]">{score}%</span>.
-                  Tu certificado est&aacute; listo para descargar.
-                </p>
+                {score != null && (
+                  <p className="text-sm text-[#6b7260]">
+                    Has obtenido una nota de{" "}
+                    <span className="font-semibold text-[#1e2d1c]">{score}%</span>.
+                    Tu certificado est&aacute; listo para descargar.
+                  </p>
+                )}
                 <button className="inline-flex items-center gap-2 h-10 lg:h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors">
                   Descargar certificado
                 </button>
@@ -207,18 +299,16 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                   return (
                     <div key={step.key} className="flex items-center gap-2">
                       {isDone ? (
-                        <CheckCircle className="h-4 w-4 text-emerald-500" aria-label="Completado" />
+                        <CheckCircle className="h-4 w-4 text-[#2d4a2b]" aria-label="Completado" />
                       ) : (
                         <div
-                          className={`h-4 w-4 rounded-full border-2 ${
-                            isCurrent ? "border-[#2d4a2b]" : "border-[#dde0d4]"
-                          }`}
+                          className={`h-4 w-4 rounded-full border-2 ${isCurrent ? "border-[#2d4a2b]" : "border-[#dde0d4]"}`}
                           aria-hidden="true"
                         />
                       )}
                       <span
                         className={`text-sm ${
-                          isDone ? "text-emerald-600 font-medium" : isCurrent ? "text-[#1e2d1c] font-medium" : "text-[#6b7260]"
+                          isDone ? "text-[#2d4a2b] font-medium" : isCurrent ? "text-[#1e2d1c] font-medium" : "text-[#6b7260]"
                         }`}
                       >
                         {step.label}
@@ -236,15 +326,19 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between">
                   <span className="text-[#6b7260]">Preguntas</span>
-                  <span className="text-[#1e2d1c] font-medium">{mockQuestions.length}</span>
+                  <span className="text-[#1e2d1c] font-medium">{questions.length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#6b7260]">Nota m&iacute;nima</span>
-                  <span className="text-[#1e2d1c] font-medium">60%</span>
+                  <span className="text-[#1e2d1c] font-medium">
+                    {training.passing_score != null ? `${training.passing_score}%` : "—"}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#6b7260]">Intentos</span>
-                  <span className="text-[#1e2d1c] font-medium">3 m&aacute;ximo</span>
+                  <span className="text-[#1e2d1c] font-medium">
+                    {training.max_attempts != null ? `${training.max_attempts} máximo` : "—"}
+                  </span>
                 </div>
               </div>
             </CardContent>

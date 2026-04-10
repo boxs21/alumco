@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,24 +11,52 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { mockCollaboratorTrainings } from "@/lib/mock-data";
+import { createClient } from "@/lib/supabase";
 import { Download, History } from "lucide-react";
 
+interface CompletedAssignment {
+  id: string;
+  score: number | null;
+  completed_at: string | null;
+  has_certificate: boolean;
+  trainings: { title: string }[] | { title: string } | null;
+}
+
 export default function HistorialPage() {
-  const completed = mockCollaboratorTrainings.filter((t) => t.status === "COMPLETED");
+  const [completed, setCompleted] = useState<CompletedAssignment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+    async function load() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setLoading(false); return; }
+
+      const { data } = await supabase
+        .from("assignments")
+        .select("id, score, completed_at, has_certificate, trainings(title)")
+        .eq("user_id", user.id)
+        .eq("status", "COMPLETED")
+        .order("completed_at", { ascending: false });
+
+      setCompleted(((data ?? []) as unknown) as CompletedAssignment[]);
+      setLoading(false);
+    }
+    load();
+  }, []);
 
   return (
     <div className="space-y-4 lg:space-y-6">
       <div>
         <h1 className="text-xl lg:text-2xl font-semibold text-[#1e2d1c]">Historial</h1>
-        <p className="text-sm text-[#6b7260] mt-1">
-          Capacitaciones completadas y certificados obtenidos
-        </p>
+        <p className="text-sm text-[#6b7260] mt-1">Capacitaciones completadas y certificados obtenidos</p>
       </div>
 
       <Card className="border-[#dde0d4] shadow-sm">
         <CardContent className="p-0">
-          {completed.length > 0 ? (
+          {loading ? (
+            <div className="py-12 text-center text-sm text-[#7d8471]">Cargando...</div>
+          ) : completed.length > 0 ? (
             <>
               {/* Desktop Table */}
               <div className="hidden sm:block overflow-x-auto">
@@ -41,21 +70,27 @@ export default function HistorialPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {completed.map((training) => (
-                      <TableRow key={training.id}>
+                    {completed.map((a) => (
+                      <TableRow key={a.id}>
                         <TableCell className="text-sm font-medium text-[#1e2d1c]">
-                          {training.title}
+                          {(Array.isArray(a.trainings) ? a.trainings[0]?.title : a.trainings?.title) ?? "—"}
                         </TableCell>
                         <TableCell>
-                          <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb]">
-                            {training.score}%
-                          </Badge>
+                          {a.score != null ? (
+                            <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb]">
+                              {a.score}%
+                            </Badge>
+                          ) : (
+                            <span className="text-sm text-[#6b7260]">—</span>
+                          )}
                         </TableCell>
-                        <TableCell className="text-sm text-[#6b7260] whitespace-nowrap">{training.date}</TableCell>
+                        <TableCell className="text-sm text-[#6b7260] whitespace-nowrap">
+                          {a.completed_at ? new Date(a.completed_at).toLocaleDateString("es-CL") : "—"}
+                        </TableCell>
                         <TableCell className="text-right">
-                          {training.hasCertificate ? (
+                          {a.has_certificate ? (
                             <button
-                              aria-label={`Descargar certificado de ${training.title}`}
+                              aria-label={`Descargar certificado de ${(Array.isArray(a.trainings) ? a.trainings[0]?.title : a.trainings?.title) ?? ""}`}
                               className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors cursor-pointer"
                             >
                               <Download className="h-4 w-4" aria-hidden="true" />
@@ -73,19 +108,23 @@ export default function HistorialPage() {
 
               {/* Mobile Cards */}
               <div className="sm:hidden divide-y divide-[#dde0d4]">
-                {completed.map((training) => (
-                  <div key={training.id} className="p-4 space-y-2">
+                {completed.map((a) => (
+                  <div key={a.id} className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-semibold text-[#1e2d1c]">{training.title}</p>
-                      <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb] shrink-0">
-                        {training.score}%
-                      </Badge>
+                      <p className="text-sm font-semibold text-[#1e2d1c]">{(Array.isArray(a.trainings) ? a.trainings[0]?.title : a.trainings?.title) ?? "—"}</p>
+                      {a.score != null && (
+                        <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb] shrink-0">
+                          {a.score}%
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-[#6b7260]">{training.date}</span>
-                      {training.hasCertificate ? (
+                      <span className="text-xs text-[#6b7260]">
+                        {a.completed_at ? new Date(a.completed_at).toLocaleDateString("es-CL") : "—"}
+                      </span>
+                      {a.has_certificate ? (
                         <button
-                          aria-label={`Descargar certificado de ${training.title}`}
+                          aria-label={`Descargar certificado de ${(Array.isArray(a.trainings) ? a.trainings[0]?.title : a.trainings?.title) ?? ""}`}
                           className="text-xs font-medium text-[#2d4a2b] hover:text-[#1e2d1c] transition-colors cursor-pointer"
                         >
                           Descargar certificado →

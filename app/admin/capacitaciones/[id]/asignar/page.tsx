@@ -1,13 +1,14 @@
 "use client";
 
-import { use, useState, useMemo } from "react";
+import { use, useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Topbar from "@/components/layout/Topbar";
 import SedeBadge from "@/components/shared/SedeBadge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { mockUsers, mockTrainings, SEDES, AREAS } from "@/lib/mock-data";
+import { createClient } from "@/lib/supabase";
+import { SEDES, AREAS, sedeName } from "@/lib/config";
 import {
   Users,
   Building2,
@@ -17,14 +18,23 @@ import {
   ArrowLeft,
   Check,
 } from "lucide-react";
+
 type TargetType = "ALL" | "SEDE" | "AREA" | "INDIVIDUAL";
 
 const targetOptions: { key: TargetType; label: string; description: string; icon: typeof Users }[] = [
-  { key: "ALL", label: "Todos los colaboradores", description: "Asignar a todas las sedes", icon: Users },
-  { key: "SEDE", label: "Una sede completa", description: "Todos los de una sede", icon: Building2 },
-  { key: "AREA", label: "Por área o cargo", description: "Un área específica", icon: Briefcase },
-  { key: "INDIVIDUAL", label: "Colaboradores específicos", description: "Seleccionar manualmente", icon: UserCheck },
+  { key: "ALL",        label: "Todos los colaboradores", description: "Asignar a todas las sedes", icon: Users },
+  { key: "SEDE",       label: "Una sede completa",       description: "Todos los de una sede",      icon: Building2 },
+  { key: "AREA",       label: "Por área o cargo",        description: "Un área específica",         icon: Briefcase },
+  { key: "INDIVIDUAL", label: "Colaboradores específicos", description: "Seleccionar manualmente",  icon: UserCheck },
 ];
+
+interface Profile {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  area: string | null;
+  sede_id: string | null;
+}
 
 export default function AsignarPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -36,24 +46,40 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [dueDate, setDueDate] = useState("");
   const [search, setSearch] = useState("");
+  const [trainingTitle, setTrainingTitle] = useState("");
+  const [collaborators, setCollaborators] = useState<Profile[]>([]);
 
-  const training = mockTrainings.find((t) => t.id === id) ?? mockTrainings[0];
-  const collaborators = mockUsers.filter((u) => u.role === "COLLABORATOR" && u.active);
+  useEffect(() => {
+    const supabase = createClient();
+    async function load() {
+      const [{ data: trainingData }, { data: profilesData }] = await Promise.all([
+        supabase.from("trainings").select("title").eq("id", id).single(),
+        supabase.from("profiles").select("id, full_name, email, area, sede_id").eq("role", "COLLABORATOR").eq("active", true),
+      ]);
+      setTrainingTitle(trainingData?.title ?? "Capacitación");
+      setCollaborators(profilesData ?? []);
+    }
+    load();
+  }, [id]);
 
   const filteredCollaborators = useMemo(() => {
     let list = collaborators;
     if (search) {
       const q = search.toLowerCase();
-      list = list.filter((u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+      list = list.filter(
+        (u) =>
+          (u.full_name ?? "").toLowerCase().includes(q) ||
+          (u.email ?? "").toLowerCase().includes(q)
+      );
     }
     return list;
   }, [search, collaborators]);
 
   const affectedCount = useMemo(() => {
-    if (targetType === "ALL") return collaborators.length;
-    if (targetType === "SEDE" && targetSede) return collaborators.filter((u) => u.sedeId === targetSede).length;
-    if (targetType === "AREA" && targetArea) return collaborators.filter((u) => u.area === targetArea).length;
-    if (targetType === "INDIVIDUAL") return selectedUsers.size;
+    if (targetType === "ALL")                      return collaborators.length;
+    if (targetType === "SEDE" && targetSede)       return collaborators.filter((u) => u.sede_id === targetSede).length;
+    if (targetType === "AREA" && targetArea)       return collaborators.filter((u) => u.area === targetArea).length;
+    if (targetType === "INDIVIDUAL")               return selectedUsers.size;
     return 0;
   }, [targetType, targetSede, targetArea, selectedUsers, collaborators]);
 
@@ -68,7 +94,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
   return (
     <div>
-      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title={`Asignar: ${training.title}`} />
+      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title={`Asignar: ${trainingTitle}`} />
 
       <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-4 lg:space-y-6">
         {/* Target Type Selection */}
@@ -91,9 +117,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                     : "border-[#dde0d4] bg-[#faf9f6] hover:bg-[#f0f2eb]/60"
                 }`}
               >
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-                  targetType === opt.key ? "bg-[#f0f2eb]" : "bg-[#f0f2eb]"
-                }`}>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#f0f2eb]">
                   <opt.icon className={`h-5 w-5 ${targetType === opt.key ? "text-[#2d4a2b]" : "text-[#a4ac86]"}`} />
                 </div>
                 <div>
@@ -135,7 +159,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
           <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-5 space-y-3">
               <Label className="text-sm font-medium text-[#1e2d1c]">Seleccionar área</Label>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {AREAS.map((a) => (
                   <button
                     key={a}
@@ -165,33 +189,38 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                 onChange={(e) => setSearch(e.target.value)}
                 className="h-11 text-base"
               />
-              <div className="space-y-1 max-h-72 overflow-y-auto">
-                {filteredCollaborators.map((user) => (
-                  <button
-                    key={user.id}
-                    type="button"
-                    onClick={() => toggleUser(user.id)}
-                    className={`flex items-center gap-3 w-full p-3 rounded-lg text-left transition-colors ${
-                      selectedUsers.has(user.id) ? "bg-[#f0f2eb]" : "hover:bg-[#f0f2eb]/60"
-                    }`}
-                  >
-                    <div
-                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
-                        selectedUsers.has(user.id)
-                          ? "border-[#2d4a2b] bg-[#2d4a2b]"
-                          : "border-[#dde0d4]"
-                      }`}
-                    >
-                      {selectedUsers.has(user.id) && <Check className="h-3 w-3 text-white" />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[#1e2d1c]">{user.name}</p>
-                      <p className="text-xs text-[#7d8471]">{user.area}</p>
-                    </div>
-                    <SedeBadge sedeId={user.sedeId} sedeName={user.sedeName} size="sm" />
-                  </button>
-                ))}
-              </div>
+              {filteredCollaborators.length === 0 ? (
+                <p className="text-sm text-[#7d8471] text-center py-4">Sin colaboradores activos.</p>
+              ) : (
+                <div className="space-y-1 max-h-72 overflow-y-auto">
+                  {filteredCollaborators.map((user) => {
+                    const name = user.full_name ?? user.email ?? "—";
+                    return (
+                      <button
+                        key={user.id}
+                        type="button"
+                        onClick={() => toggleUser(user.id)}
+                        className={`flex items-center gap-3 w-full p-3 rounded-lg text-left transition-colors ${
+                          selectedUsers.has(user.id) ? "bg-[#f0f2eb]" : "hover:bg-[#f0f2eb]/60"
+                        }`}
+                      >
+                        <div
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
+                            selectedUsers.has(user.id) ? "border-[#2d4a2b] bg-[#2d4a2b]" : "border-[#dde0d4]"
+                          }`}
+                        >
+                          {selectedUsers.has(user.id) && <Check className="h-3 w-3 text-white" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-[#1e2d1c]">{name}</p>
+                          {user.area && <p className="text-xs text-[#7d8471]">{user.area}</p>}
+                        </div>
+                        <SedeBadge sedeId={user.sede_id} sedeName={sedeName(user.sede_id)} size="sm" />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
