@@ -33,22 +33,26 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Get role from profiles — guard against network errors
+  // Get role from profiles
   let role: "ADMIN" | "COLLABORATOR" | undefined;
   try {
-    const { data: profile } = await supabase
+    const { data: profile, error } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .single();
+    if (error) {
+      console.error("[proxy] profiles query error:", error.code, error.message);
+    }
     role = profile?.role as typeof role;
-  } catch {
-    // If profiles query fails, let the request through — auth is already verified
-    return response;
+  } catch (err) {
+    console.error("[proxy] profiles fetch threw:", err);
   }
 
-  // If role couldn't be determined, let it through
-  if (!role) return response;
+  // If role couldn't be determined, send to login — don't let through unauthenticated
+  if (!role) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   // /admin/** → requires ADMIN role
   if (pathname.startsWith("/admin") && role !== "ADMIN") {

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,22 +11,21 @@ import { createClient } from "@/lib/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 async function resolveRedirect(supabase: SupabaseClient, userId: string): Promise<string> {
-  try {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", userId)
-      .single();
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .single();
 
-    if (!error && data?.role) {
-      return data.role === "ADMIN" ? "/admin/dashboard" : "/portal";
-    }
-
-    console.warn("[login] profiles query failed:", error?.message);
-  } catch (err) {
-    console.warn("[login] profiles fetch error:", err);
+  if (error) {
+    console.error("[login] profiles query error:", error.code, error.message);
   }
 
+  if (profile?.role === "ADMIN") return "/admin/dashboard";
+  if (profile?.role === "COLLABORATOR") return "/portal";
+
+  // Role unknown — default to portal; proxy will correct if needed
+  console.warn("[login] role not determined, defaulting to /portal. Profile:", profile);
   return "/portal";
 }
 
@@ -38,7 +36,6 @@ interface FormErrors {
 }
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
@@ -77,7 +74,7 @@ export default function LoginPage() {
     }
 
     const redirect = await resolveRedirect(supabase, data.user.id);
-    router.push(redirect);
+    window.location.href = redirect;
   }
 
   async function handleLogin(e: React.FormEvent) {
