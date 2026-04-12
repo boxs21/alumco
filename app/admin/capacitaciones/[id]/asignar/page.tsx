@@ -25,7 +25,7 @@ const targetOptions: { key: TargetType; label: string; description: string; icon
   { key: "ALL",        label: "Todos los colaboradores", description: "Asignar a todas las sedes", icon: Users },
   { key: "SEDE",       label: "Una sede completa",       description: "Todos los de una sede",      icon: Building2 },
   { key: "AREA",       label: "Por área o cargo",        description: "Un área específica",         icon: Briefcase },
-  { key: "INDIVIDUAL", label: "Colaboradores específicos", description: "Seleccionar manualmente",  icon: UserCheck },
+  { key: "INDIVIDUAL", label: "Colaboradores específicos", description: "Seleccionar manually",  icon: UserCheck },
 ];
 
 interface Profile {
@@ -34,6 +34,7 @@ interface Profile {
   email: string | null;
   area: string | null;
   sede_id: string | null;
+  active: boolean;
 }
 
 export default function AsignarPage({ params }: { params: Promise<{ id: string }> }) {
@@ -48,14 +49,25 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
   const [search, setSearch] = useState("");
   const [trainingTitle, setTrainingTitle] = useState("");
   const [collaborators, setCollaborators] = useState<Profile[]>([]);
+  const [loadError, setLoadError]   = useState<string | null>(null);
+  const [saving,    setSaving]      = useState(false);
+  const [saveError, setSaveError]   = useState<string | null>(null);
+  
 
   useEffect(() => {
     const supabase = createClient();
     async function load() {
-      const [{ data: trainingData }, { data: profilesData }] = await Promise.all([
+      const [
+        { data: trainingData },
+        { data: profilesData, error: profilesError },
+      ] = await Promise.all([
         supabase.from("trainings").select("title").eq("id", id).single(),
-        supabase.from("profiles").select("id, name, email, area, sede_id").eq("role", "COLLABORATOR").eq("active", true),
+        supabase.from("profiles").select("id, name, email, area, sede_id, active").eq("role", "COLLABORATOR").order("name"),
       ]);
+      if (profilesError) {
+        setLoadError(`${profilesError.code}: ${profilesError.message}`);
+        return;
+      }
       setTrainingTitle(trainingData?.title ?? "Capacitación");
       setCollaborators(profilesData ?? []);
     }
@@ -83,6 +95,48 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
     return 0;
   }, [targetType, targetSede, targetArea, selectedUsers, collaborators]);
 
+  async function handleConfirm() {
+    if (!targetType || saving) return;
+    setSaving(true);
+    setSaveError(null);
+
+    const supabase = createClient();
+    let error: { message: string } | null = null;
+
+    if (targetType === "INDIVIDUAL") {
+      // One row per selected user
+      const rows = [...selectedUsers].map((userId) => ({
+        training_id:  id,
+        target_type:  "INDIVIDUAL",
+        user_id:      userId,
+        status:       "ACTIVE",
+        due_date:     dueDate || null,
+      }));
+      const res = await supabase.from("assignments").insert(rows);
+      error = res.error;
+    } else {
+      // One row for the group target
+      const row: Record<string, unknown> = {
+        training_id:  id,
+        target_type:  targetType,
+        status:       "ACTIVE",
+        due_date:     dueDate || null,
+      };
+      if (targetType === "SEDE" && targetSede)   row.target_sede_id = targetSede;
+      if (targetType === "AREA" && targetArea)   row.target_area    = targetArea;
+      const res = await supabase.from("assignments").insert(row);
+      error = res.error;
+    }
+
+    if (error) {
+      setSaveError(error.message);
+      setSaving(false);
+      return;
+    }
+
+    router.push(`/admin/capacitaciones/${id}`);
+  }
+
   function toggleUser(userId: string) {
     setSelectedUsers((prev) => {
       const next = new Set(prev);
@@ -90,6 +144,16 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
       else next.add(userId);
       return next;
     });
+  }
+
+
+  if (loadError) {
+    return (
+      <div>
+        <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Asignar" />
+        <div className="p-6 text-sm text-red-600">Error al cargar colaboradores: {loadError}</div>
+      </div>
+    );
   }
 
   return (
@@ -190,7 +254,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                 className="h-11 text-base"
               />
               {filteredCollaborators.length === 0 ? (
-                <p className="text-sm text-[#7d8471] text-center py-4">Sin colaboradores activos.</p>
+                <p className="text-sm text-[#7d8471] text-center py-4">Sin colaboradores.</p>
               ) : (
                 <div className="space-y-1 max-h-72 overflow-y-auto">
                   {filteredCollaborators.map((user) => {
@@ -212,7 +276,10 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                           {selectedUsers.has(user.id) && <Check className="h-3 w-3 text-white" />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[#1e2d1c]">{name}</p>
+                          <p className={`text-sm font-medium ${user.active ? "text-[#1e2d1c]" : "text-[#a4ac86]"}`}>
+                            {name}
+                            {!user.active && <span className="ml-1.5 text-xs font-normal">(Inactivo)</span>}
+                          </p>
                           {user.area && <p className="text-xs text-[#7d8471]">{user.area}</p>}
                         </div>
                         <SedeBadge sedeId={user.sede_id} sedeName={sedeName(user.sede_id)} size="sm" />
@@ -251,22 +318,27 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
         {/* Summary & Submit */}
         {targetType && (
           <Card className="border-[#dde0d4] bg-[#f0f2eb]/50 shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-[#1e2d1c]">Resumen de asignación</p>
-                <p className="text-sm text-[#7d8471] mt-0.5">
-                  {affectedCount} {affectedCount === 1 ? "persona recibirá" : "personas recibirán"} esta capacitación
-                  {dueDate && ` · Fecha límite: ${dueDate}`}
-                </p>
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-[#1e2d1c]">Resumen de asignación</p>
+                  <p className="text-sm text-[#7d8471] mt-0.5">
+                    {affectedCount} {affectedCount === 1 ? "persona recibirá" : "personas recibirán"} esta capacitación
+                    {dueDate && ` · Fecha límite: ${dueDate}`}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleConfirm}
+                  disabled={affectedCount === 0 || saving}
+                  className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                >
+                  {saving ? "Guardando…" : "Confirmar asignación"}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => router.push(`/admin/capacitaciones/${id}`)}
-                disabled={affectedCount === 0}
-                className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Confirmar asignación
-              </button>
+              {saveError && (
+                <p className="text-sm text-red-600" role="alert">Error: {saveError}</p>
+              )}
             </CardContent>
           </Card>
         )}

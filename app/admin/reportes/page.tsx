@@ -53,16 +53,24 @@ export default function ReportesPage() {
   const [trainingsCount, setTrainingsCount] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
 
+  const [appliedFrom, setAppliedFrom] = useState("");
+  const [appliedTo,   setAppliedTo]   = useState("");
+
   useEffect(() => {
     const supabase = createClient();
     async function load() {
+      // Build assignments query with optional date filters
+      let assignmentsQuery = supabase.from("assignments").select("user_id, status, created_at");
+      if (appliedFrom) assignmentsQuery = assignmentsQuery.gte("created_at", appliedFrom);
+      if (appliedTo)   assignmentsQuery = assignmentsQuery.lte("created_at", `${appliedTo}T23:59:59`);
+
       const [
         { data: profilesData },
         { data: assignmentsData },
         { data: trainingsData },
       ] = await Promise.all([
         supabase.from("profiles").select("id, name, email, area, sede_id, active").eq("role", "COLLABORATOR"),
-        supabase.from("assignments").select("user_id, status"),
+        assignmentsQuery,
         supabase.from("trainings").select("id, sede_id").eq("status", "PUBLISHED"),
       ]);
       setProfiles(profilesData ?? []);
@@ -79,7 +87,7 @@ export default function ReportesPage() {
       setLoading(false);
     }
     load();
-  }, []);
+  }, [appliedFrom, appliedTo]);
 
   function computeSedeStats(sedeId: string): SedeStats {
     const sedeProfiles = profiles.filter((p) => p.sede_id === sedeId);
@@ -165,6 +173,32 @@ export default function ReportesPage() {
                 <Label className="text-sm font-medium text-[#1e2d1c]">Hasta</Label>
                 <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-10 text-sm" />
               </div>
+            </div>
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#dde0d4]">
+              <button
+                type="button"
+                onClick={() => { setAppliedFrom(dateFrom); setAppliedTo(dateTo); }}
+                className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
+              >
+                <Filter className="h-3.5 w-3.5" />
+                Aplicar filtros
+              </button>
+              {(appliedFrom || appliedTo) && (
+                <button
+                  type="button"
+                  onClick={() => { setDateFrom(""); setDateTo(""); setAppliedFrom(""); setAppliedTo(""); }}
+                  className="inline-flex items-center h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm text-[#7d8471] hover:bg-[#f0f2eb] transition-colors"
+                >
+                  Limpiar
+                </button>
+              )}
+              {(appliedFrom || appliedTo) && (
+                <span className="text-xs text-[#7d8471]">
+                  Filtrando por fecha
+                  {appliedFrom && ` desde ${appliedFrom}`}
+                  {appliedTo   && ` hasta ${appliedTo}`}
+                </span>
+              )}
             </div>
           </CardContent>
         </Card>

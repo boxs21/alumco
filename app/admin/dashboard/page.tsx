@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Topbar from "@/components/layout/Topbar";
 import StatCard from "@/components/shared/StatCard";
 import { Card, CardContent } from "@/components/ui/card";
-import { SEDES, SEDE_ID_MAP } from "@/lib/config";
+import { SEDES } from "@/lib/config";
 import { createClient } from "@/lib/supabase";
 import { Users, BookOpen, TrendingUp, Award, Activity } from "lucide-react";
 
@@ -44,7 +44,7 @@ function computeStats(
   certificates: Certificate[],
   selectedSede: string
 ): SedeStats {
-  const sedeId = selectedSede !== "global" ? SEDE_ID_MAP[selectedSede] ?? null : null;
+  const sedeId = selectedSede !== "global" ? selectedSede : null;
 
   const filteredProfiles = sedeId
     ? profiles.filter((p) => p.sede_id === sedeId)
@@ -106,8 +106,8 @@ export default function DashboardPage() {
   }, []);
 
   const stats = computeStats(profiles, trainings, assignments, certificates, selectedSede);
-  const concStats = computeStats(profiles, trainings, assignments, certificates, "CONCEPCION");
-  const coyStats = computeStats(profiles, trainings, assignments, certificates, "COYHAIQUE");
+  const concStats = computeStats(profiles, trainings, assignments, certificates, SEDES.CONCEPCION.id);
+  const coyStats = computeStats(profiles, trainings, assignments, certificates, SEDES.COYHAIQUE.id);
 
   // Area progress from published trainings + assignments
   const areaMap: Record<string, { total: number; completed: number }> = {};

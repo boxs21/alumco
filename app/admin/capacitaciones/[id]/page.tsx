@@ -20,6 +20,8 @@ import {
   ClipboardList,
   UserPlus,
   ChevronRight,
+  Globe,
+  EyeOff,
 } from "lucide-react";
 
 interface Training {
@@ -79,6 +81,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
   const [files, setFiles] = useState<TrainingFile[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -143,6 +146,18 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
   const completed = assignments.filter((a) => a.status === "COMPLETED").length;
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
+  async function handleToggleStatus() {
+    if (!training || publishing) return;
+    setPublishing(true);
+    const next = training.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
+    const { error } = await createClient()
+      .from("trainings")
+      .update({ status: next })
+      .eq("id", id);
+    if (!error) setTraining((prev) => prev ? { ...prev, status: next as Training["status"] } : prev);
+    setPublishing(false);
+  }
+
   return (
     <div>
       <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
@@ -169,13 +184,32 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
               {training.target_area && <span className="text-sm text-[#6b7260]">&Aacute;rea: {training.target_area}</span>}
             </div>
           </div>
-          <Link
-            href={`/admin/capacitaciones/${id}/asignar`}
-            className="inline-flex items-center justify-center gap-2 h-10 lg:h-11 px-4 lg:px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors shrink-0"
-          >
-            <UserPlus className="h-4 w-4" />
-            Asignar colaboradores
-          </Link>
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Publish / Unpublish toggle */}
+            <button
+              type="button"
+              onClick={handleToggleStatus}
+              disabled={publishing}
+              className={`inline-flex items-center justify-center gap-2 h-10 lg:h-11 px-4 lg:px-5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+                training.status === "PUBLISHED"
+                  ? "border border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]"
+                  : "border border-[#2d4a2b] bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#e4e8dd]"
+              }`}
+            >
+              {training.status === "PUBLISHED"
+                ? <><EyeOff className="h-4 w-4" /><span className="hidden sm:inline">Despublicar</span></>
+                : <><Globe className="h-4 w-4" /><span className="hidden sm:inline">Publicar</span></>
+              }
+            </button>
+            <Link
+              href={`/admin/capacitaciones/${id}/asignar`}
+              className="inline-flex items-center justify-center gap-2 h-10 lg:h-11 px-4 lg:px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
+            >
+              <UserPlus className="h-4 w-4" />
+              <span className="hidden sm:inline">Asignar colaboradores</span>
+              <span className="sm:hidden">Asignar</span>
+            </Link>
+          </div>
         </div>
 
         {/* Stats */}

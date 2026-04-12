@@ -228,6 +228,46 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
     setCurrentStep("certificate");
   }
 
+  /* ── Complete without quiz ───────────────────────────────── */
+  async function handleCompleteWithoutQuiz() {
+    if (saving || !userId) return;
+    setSaving(true);
+    setSaveError(null);
+    const supabase = createClient();
+    const uid = userId;
+
+    const verCode = crypto.randomUUID();
+
+    const { error: certErr } = await supabase
+      .from("certificates")
+      .insert({
+        user_id:           uid,
+        training_id:       id,
+        attempt_id:        null,
+        verification_code: verCode,
+        issued_at:         new Date().toISOString(),
+      });
+
+    if (certErr) {
+      setSaveError(certErr.message);
+      setSaving(false);
+      return;
+    }
+
+    await supabase
+      .from("assignments")
+      .update({ status: "COMPLETED" })
+      .eq("training_id", id)
+      .eq("user_id", uid);
+
+    setCertCode(verCode);
+    setPassed(true);
+    setSubmitted(true);
+    setAlreadyDone(true);
+    setCurrentStep("certificate");
+    setSaving(false);
+  }
+
   /* ── Stepper helpers ─────────────────────────────────────── */
   const steps: { key: Step; label: string }[] = [
     { key: "material",    label: "Material"    },
@@ -548,7 +588,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                 )}
 
                 <button
-                  onClick={handleSubmitQuiz}
+                  onClick={questions.length === 0 ? handleCompleteWithoutQuiz : handleSubmitQuiz}
                   disabled={(questions.length > 0 && !allAnswered) || saving}
                   style={{ background: T.blue, boxShadow: T.shadowBtn, letterSpacing: "0.08px" }}
                   className="inline-flex items-center gap-2 h-10 lg:h-11 px-6 rounded-xl text-white text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"

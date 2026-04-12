@@ -68,13 +68,13 @@ export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProp
             </SelectTrigger>
             <SelectContent className="rounded-xl">
               <SelectItem value="global">Todas las sedes</SelectItem>
-              <SelectItem value="CONCEPCION">
+              <SelectItem value={SEDES.CONCEPCION.id}>
                 <span className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-[#2d4a2b]" />
                   {SEDES.CONCEPCION.nombre}
                 </span>
               </SelectItem>
-              <SelectItem value="COYHAIQUE">
+              <SelectItem value={SEDES.COYHAIQUE.id}>
                 <span className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-[#f9a620]" />
                   {SEDES.COYHAIQUE.nombre}
