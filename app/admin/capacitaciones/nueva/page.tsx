@@ -154,7 +154,7 @@ export default function NuevaCapacitacionPage() {
       .insert({
         id: trainingId,
         title: title.trim(),
-        area: area || null,
+        target_area: area || null,
         status: "DRAFT",
         sede_id: sedeId,
         ...(hasQuiz ? { passing_score: passingScore } : {}),

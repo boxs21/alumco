@@ -12,7 +12,7 @@ import { Plus, BookOpen } from "lucide-react";
 interface Training {
   id: string;
   title: string;
-  area: string;
+  target_area: string;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   sede_id: string | null;
 }
@@ -34,7 +34,7 @@ export default function CapacitacionesPage() {
     const supabase = createClient();
     async function load() {
       const [{ data: trainingsData }, { data: assignmentsData }] = await Promise.all([
-        supabase.from("trainings").select("id, title, area, status, sede_id").order("created_at", { ascending: false }),
+        supabase.from("trainings").select("id, title, target_area, status, sede_id").order("created_at", { ascending: false }),
         supabase.from("assignments").select("training_id, status"),
       ]);
       setTrainings((trainingsData as Training[]) ?? []);
@@ -124,7 +124,7 @@ export default function CapacitacionesPage() {
                   key={t.id}
                   id={t.id}
                   title={t.title}
-                  area={t.area}
+                  area={t.target_area}
                   status={t.status}
                   sedeId={t.sede_id}
                   sedeName={sedeName(t.sede_id)}

@@ -17,7 +17,7 @@ interface Profile {
 
 interface Training {
   id: string;
-  area: string;
+  target_area: string;
   sede_id: string | null;
 }
 
@@ -93,7 +93,7 @@ export default function DashboardPage() {
         { data: activityData },
       ] = await Promise.all([
         supabase.from("profiles").select("id, sede_id, active").eq("role", "COLLABORATOR"),
-        supabase.from("trainings").select("id, area, sede_id").eq("status", "PUBLISHED"),
+        supabase.from("trainings").select("id, target_area, sede_id").eq("status", "PUBLISHED"),
         supabase.from("assignments").select("user_id, training_id, status, has_certificate"),
         supabase
           .from("activity_log")
@@ -118,10 +118,10 @@ export default function DashboardPage() {
   // Area progress from published trainings + assignments
   const areaMap: Record<string, { total: number; completed: number }> = {};
   for (const t of trainings) {
-    if (!areaMap[t.area]) areaMap[t.area] = { total: 0, completed: 0 };
+    if (!areaMap[t.target_area]) areaMap[t.target_area] = { total: 0, completed: 0 };
     const ta = assignments.filter((a) => a.training_id === t.id);
-    areaMap[t.area].total += ta.length;
-    areaMap[t.area].completed += ta.filter((a) => a.status === "COMPLETED").length;
+    areaMap[t.target_area].total += ta.length;
+    areaMap[t.target_area].completed += ta.filter((a) => a.status === "COMPLETED").length;
   }
   const areaProgress = Object.entries(areaMap).map(([area, { total, completed }]) => ({
     area,

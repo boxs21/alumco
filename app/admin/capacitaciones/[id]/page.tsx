@@ -25,7 +25,7 @@ import {
 interface Training {
   id: string;
   title: string;
-  area: string;
+  target_area: string;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   sede_id: string | null;
   passing_score: number | null;
@@ -91,7 +91,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
       ] = await Promise.all([
         supabase
           .from("trainings")
-          .select("id, title, area, status, sede_id, passing_score, max_attempts")
+          .select("id, title, target_area, status, sede_id, passing_score, max_attempts")
           .eq("id", id)
           .single(),
         supabase.from("training_files").select("id, name, type, size_label, url").eq("training_id", id),
@@ -156,7 +156,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
             </div>
             <div className="flex flex-wrap items-center gap-2 lg:gap-3">
               <SedeBadge sedeId={training.sede_id} sedeName={sedeName(training.sede_id)} />
-              <span className="text-sm text-[#6b7260]">&Aacute;rea: {training.area}</span>
+              <span className="text-sm text-[#6b7260]">&Aacute;rea: {training.target_area}</span>
             </div>
           </div>
           <Link
