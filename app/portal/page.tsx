@@ -107,7 +107,7 @@ export default function PortalPage() {
     return assignments.filter(
       (a) =>
         (a.training?.title ?? "").toLowerCase().includes(q) ||
-        sedeName(a.training?.sede_id ?? null).toLowerCase().includes(q),
+        (sedeName(a.training?.sede_id ?? null) ?? "").toLowerCase().includes(q)
     );
   }, [assignments, search]);
 
