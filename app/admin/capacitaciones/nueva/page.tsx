@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Topbar from "@/components/layout/Topbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SEDES, AREAS } from "@/lib/config";
+import { createClient } from "@/lib/supabase";
 import {
   Check,
   Upload,
@@ -18,6 +19,7 @@ import {
   Video,
   Link as LinkIcon,
   X,
+  Loader2,
 } from "lucide-react";
 
 function getEmbedUrl(url: string): string | null {
@@ -40,21 +42,32 @@ const steps = [
   { number: 3, label: "Evaluación" },
 ];
 
+interface VideoLink { id: string; url: string; embedUrl: string; source: "youtube" | "gdrive" }
+interface Question {
+  id: string;
+  text: string;
+  options: { id: string; text: string; isCorrect: boolean }[];
+}
+
 export default function NuevaCapacitacionPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedSede, setSelectedSede] = useState("global");
+  const [userId, setUserId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Step 1 state
+  // Step 1
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [area, setArea] = useState("");
   const [sedeSelection, setSedeSelection] = useState<string | null>(null);
+  const [step1Error, setStep1Error] = useState<string | null>(null);
 
-  // Step 2 state
+  // Step 2
   const [videoUrl, setVideoUrl] = useState("");
-  interface VideoLink { id: string; url: string; embedUrl: string; source: "youtube" | "gdrive" }
   const [videoLinks, setVideoLinks] = useState<VideoLink[]>([]);
+  const previewEmbed = videoUrl.trim() ? getEmbedUrl(videoUrl.trim()) : null;
 
   function addVideoLink() {
     const embed = getEmbedUrl(videoUrl.trim());
@@ -68,12 +81,10 @@ export default function NuevaCapacitacionPage() {
     setVideoLinks(videoLinks.filter((v) => v.id !== id));
   }
 
-  const previewEmbed = videoUrl.trim() ? getEmbedUrl(videoUrl.trim()) : null;
-
-  // Step 3 state
+  // Step 3
   const [hasQuiz, setHasQuiz] = useState(false);
   const [passingScore, setPassingScore] = useState(60);
-  const [questions, setQuestions] = useState([
+  const [questions, setQuestions] = useState<Question[]>([
     {
       id: "new-1",
       text: "",
@@ -83,6 +94,12 @@ export default function NuevaCapacitacionPage() {
       ],
     },
   ]);
+
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data: { user } }) => {
+      setUserId(user?.id ?? null);
+    });
+  }, []);
 
   function addQuestion() {
     const qId = `new-${Date.now()}`;
@@ -111,6 +128,78 @@ export default function NuevaCapacitacionPage() {
           : q
       )
     );
+  }
+
+  function goToStep2() {
+    if (!title.trim()) {
+      setStep1Error("El título es requerido para continuar");
+      return;
+    }
+    setStep1Error(null);
+    setCurrentStep(2);
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    setSaveError(null);
+
+    const supabase = createClient();
+    const sedeId = !sedeSelection || sedeSelection === "global" ? null : sedeSelection;
+
+    // 1. Insert training
+    const { data: trainingData, error: trainingError } = await supabase
+      .from("trainings")
+      .insert({
+        title: title.trim(),
+        description: description.trim() || null,
+        area: area || null,
+        status: "DRAFT",
+        sede_id: sedeId,
+        created_by: userId,
+        ...(hasQuiz ? { passing_score: passingScore } : {}),
+      })
+      .select("id")
+      .single();
+
+    if (trainingError || !trainingData) {
+      console.error("[nueva] training insert error:", trainingError);
+      setSaveError("Error al guardar la capacitación. Inténtalo de nuevo.");
+      setSaving(false);
+      return;
+    }
+
+    const trainingId = trainingData.id;
+
+    // 2. Insert video links as training_files
+    if (videoLinks.length > 0) {
+      const fileRows = videoLinks.map((v) => ({
+        training_id: trainingId,
+        name: v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive",
+        type: "VIDEO",
+        url: v.url,
+        size_label: null,
+      }));
+      const { error: filesError } = await supabase.from("training_files").insert(fileRows);
+      if (filesError) console.error("[nueva] files insert error:", filesError);
+    }
+
+    // 3. Insert questions if quiz enabled
+    if (hasQuiz) {
+      const questionRows = questions
+        .filter((q) => q.text.trim())
+        .map((q, i) => ({
+          training_id: trainingId,
+          question_text: q.text.trim(),
+          options: q.options.map((o) => ({ id: o.id, text: o.text, is_correct: o.isCorrect })),
+          order: i + 1,
+        }));
+      if (questionRows.length > 0) {
+        const { error: qError } = await supabase.from("training_questions").insert(questionRows);
+        if (qError) console.error("[nueva] questions insert error:", qError);
+      }
+    }
+
+    router.push("/admin/capacitaciones");
   }
 
   const sedeOptions = [
@@ -160,15 +249,16 @@ export default function NuevaCapacitacionPage() {
             <CardContent className="p-6 space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="title" className="text-sm font-medium text-[#1e2d1c]">
-                  Título de la capacitación
+                  Título de la capacitación <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="title"
                   placeholder="Ej: Protocolo de Higiene Personal"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="h-11 text-base"
+                  onChange={(e) => { setTitle(e.target.value); if (step1Error) setStep1Error(null); }}
+                  className={`h-11 text-base ${step1Error ? "border-red-400 focus:ring-red-300" : ""}`}
                 />
+                {step1Error && <p className="text-xs text-red-500">{step1Error}</p>}
               </div>
 
               <div className="space-y-2">
@@ -239,7 +329,7 @@ export default function NuevaCapacitacionPage() {
           </Card>
         )}
 
-        {/* Step 2: Files */}
+        {/* Step 2: Material */}
         {currentStep === 2 && (
           <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-6 space-y-5">
@@ -282,7 +372,6 @@ export default function NuevaCapacitacionPage() {
                   </button>
                 </div>
 
-                {/* Live preview */}
                 {videoUrl.trim() && (
                   <div className="rounded-lg border border-[#dde0d4] overflow-hidden bg-[#faf9f6]">
                     {previewEmbed ? (
@@ -303,8 +392,7 @@ export default function NuevaCapacitacionPage() {
                 )}
               </div>
 
-              {/* Added video links */}
-              {videoLinks.length > 0 && (
+              {videoLinks.length > 0 ? (
                 <div className="space-y-2">
                   {videoLinks.map((v) => (
                     <div key={v.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#dde0d4] bg-[#faf9f6]">
@@ -328,10 +416,7 @@ export default function NuevaCapacitacionPage() {
                     </div>
                   ))}
                 </div>
-              )}
-
-              {/* Empty state when nothing added */}
-              {videoLinks.length === 0 && (
+              ) : (
                 <div className="flex flex-col items-center py-4 text-center">
                   <FileText className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
                   <p className="text-sm text-[#7d8471]">No hay material cargado todavía.</p>
@@ -461,6 +546,12 @@ export default function NuevaCapacitacionPage() {
                   </div>
                 </>
               )}
+
+              {saveError && (
+                <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                  {saveError}
+                </p>
+              )}
             </CardContent>
           </Card>
         )}
@@ -469,29 +560,51 @@ export default function NuevaCapacitacionPage() {
         <div className="flex items-center justify-between">
           <button
             type="button"
+            disabled={saving}
             onClick={() => (currentStep > 1 ? setCurrentStep(currentStep - 1) : router.back())}
-            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors"
+            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors disabled:opacity-50"
           >
             <ArrowLeft className="h-4 w-4" />
             {currentStep > 1 ? "Anterior" : "Cancelar"}
           </button>
 
-          {currentStep < 3 ? (
+          {currentStep === 1 && (
             <button
               type="button"
-              onClick={() => setCurrentStep(currentStep + 1)}
+              onClick={goToStep2}
               className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
             >
               Siguiente
               <ArrowRight className="h-4 w-4" />
             </button>
-          ) : (
+          )}
+
+          {currentStep === 2 && (
             <button
               type="button"
-              onClick={() => router.push("/admin/capacitaciones")}
+              onClick={() => setCurrentStep(3)}
               className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
             >
-              Crear capacitación
+              Siguiente
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          )}
+
+          {currentStep === 3 && (
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Guardando...
+                </>
+              ) : (
+                "Guardar capacitación"
+              )}
             </button>
           )}
         </div>

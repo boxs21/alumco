@@ -37,6 +37,7 @@ interface TrainingFile {
   name: string;
   type: string;
   size_label: string | null;
+  url: string | null;
 }
 
 interface TrainingQuestion {
@@ -93,7 +94,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
           .select("id, title, area, status, sede_id, passing_score, max_attempts")
           .eq("id", id)
           .single(),
-        supabase.from("training_files").select("id, name, type, size_label").eq("training_id", id),
+        supabase.from("training_files").select("id, name, type, size_label, url").eq("training_id", id),
         supabase.from("training_questions").select("id").eq("training_id", id),
         supabase
           .from("assignments")
@@ -196,6 +197,16 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
                           {file.size_label && <p className="text-xs text-[#6b7260]">{file.size_label}</p>}
+                          {file.type === "VIDEO" && file.url && (
+                            <a
+                              href={file.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-[#4a7c59] hover:underline truncate block"
+                            >
+                              {file.url}
+                            </a>
+                          )}
                         </div>
                       </div>
                     );

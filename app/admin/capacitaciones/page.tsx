@@ -34,7 +34,7 @@ export default function CapacitacionesPage() {
     const supabase = createClient();
     async function load() {
       const [{ data: trainingsData }, { data: assignmentsData }] = await Promise.all([
-        supabase.from("trainings").select("id, title, area, status, sede_id"),
+        supabase.from("trainings").select("id, title, area, status, sede_id").order("created_at", { ascending: false }),
         supabase.from("assignments").select("training_id, status"),
       ]);
       setTrainings((trainingsData as Training[]) ?? []);
