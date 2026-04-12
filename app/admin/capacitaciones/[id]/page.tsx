@@ -28,6 +28,10 @@ interface Training {
   target_area: string;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   sede_id: string | null;
+}
+
+interface Quiz {
+  id: string;
   passing_score: number | null;
   max_attempts: number | null;
 }
@@ -36,16 +40,11 @@ interface TrainingFile {
   id: string;
   name: string;
   type: string;
-  size_label: string | null;
   url: string | null;
 }
 
-interface TrainingQuestion {
-  id: string;
-}
-
 interface AssignmentProfile {
-  full_name: string | null;
+  name: string | null;
   email: string | null;
   area: string | null;
   sede_id: string | null;
@@ -75,8 +74,9 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
   const { id } = use(params);
   const [selectedSede, setSelectedSede] = useState("global");
   const [training, setTraining] = useState<Training | null>(null);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [questionCount, setQuestionCount] = useState(0);
   const [files, setFiles] = useState<TrainingFile[]>([]);
-  const [questions, setQuestions] = useState<TrainingQuestion[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -86,25 +86,35 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
       const [
         { data: trainingData },
         { data: filesData },
-        { data: questionsData },
+        { data: quizData },
         { data: assignmentsData },
       ] = await Promise.all([
         supabase
           .from("trainings")
-          .select("id, title, target_area, status, sede_id, passing_score, max_attempts")
+          .select("id, title, target_area, status, sede_id")
           .eq("id", id)
           .single(),
-        supabase.from("training_files").select("id, name, type, size_label, url").eq("training_id", id),
-        supabase.from("training_questions").select("id").eq("training_id", id),
+        supabase.from("files").select("id, name, type, url").eq("training_id", id),
+        supabase.from("quizzes").select("id, passing_score, max_attempts").eq("training_id", id).maybeSingle(),
         supabase
           .from("assignments")
-          .select("id, user_id, status, profiles(full_name, email, area, sede_id)")
+          .select("id, user_id, status, profiles(name, email, area, sede_id)")
           .eq("training_id", id),
       ]);
       setTraining(trainingData as Training | null);
       setFiles(filesData ?? []);
-      setQuestions(questionsData ?? []);
+      setQuiz(quizData ?? null);
       setAssignments(((assignmentsData ?? []) as unknown) as Assignment[]);
+
+      // Count questions for the quiz
+      if (quizData?.id) {
+        const { count } = await supabase
+          .from("questions")
+          .select("id", { count: "exact", head: true })
+          .eq("quiz_id", quizData.id);
+        setQuestionCount(count ?? 0);
+      }
+
       setLoading(false);
     }
     load();
@@ -156,7 +166,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
             </div>
             <div className="flex flex-wrap items-center gap-2 lg:gap-3">
               <SedeBadge sedeId={training.sede_id} sedeName={sedeName(training.sede_id)} />
-              <span className="text-sm text-[#6b7260]">&Aacute;rea: {training.target_area}</span>
+              {training.target_area && <span className="text-sm text-[#6b7260]">&Aacute;rea: {training.target_area}</span>}
             </div>
           </div>
           <Link
@@ -196,7 +206,6 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
-                          {file.size_label && <p className="text-xs text-[#6b7260]">{file.size_label}</p>}
                           {file.type === "VIDEO" && file.url && (
                             <a
                               href={file.url}
@@ -222,24 +231,28 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
                 <ClipboardList className="h-5 w-5 text-[#a4ac86]" aria-hidden="true" />
                 Evaluaci&oacute;n
               </h2>
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7260]">Preguntas</span>
-                  <span className="font-medium text-[#1e2d1c]">{questions.length}</span>
+              {quiz ? (
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#6b7260]">Preguntas</span>
+                    <span className="font-medium text-[#1e2d1c]">{questionCount}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#6b7260]">Nota m&iacute;nima</span>
+                    <span className="font-medium text-[#1e2d1c]">
+                      {quiz.passing_score != null ? `${quiz.passing_score}%` : "—"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#6b7260]">Intentos m&aacute;ximos</span>
+                    <span className="font-medium text-[#1e2d1c]">
+                      {quiz.max_attempts != null ? quiz.max_attempts : "—"}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7260]">Nota m&iacute;nima</span>
-                  <span className="font-medium text-[#1e2d1c]">
-                    {training.passing_score != null ? `${training.passing_score}%` : "—"}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7260]">Intentos m&aacute;ximos</span>
-                  <span className="font-medium text-[#1e2d1c]">
-                    {training.max_attempts != null ? training.max_attempts : "—"}
-                  </span>
-                </div>
-              </div>
+              ) : (
+                <p className="text-sm text-[#7d8471]">Sin evaluación configurada.</p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -258,7 +271,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
               <div className="space-y-2">
                 {assignments.map((a) => {
                   const profile = Array.isArray(a.profiles) ? a.profiles[0] ?? null : a.profiles;
-                  const pName = profile?.full_name ?? profile?.email ?? "—";
+                  const pName = profile?.name ?? profile?.email ?? "—";
                   return (
                     <div
                       key={a.id}

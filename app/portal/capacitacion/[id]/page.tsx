@@ -20,7 +20,6 @@ interface TrainingFile {
   id: string;
   name: string;
   type: string;
-  size_label: string | null;
   url: string | null;
 }
 
@@ -40,14 +39,18 @@ interface QuestionOption {
 
 interface TrainingQuestion {
   id: string;
-  question_text: string;
+  text: string;
   options: QuestionOption[];
+}
+
+interface Quiz {
+  id: string;
+  passing_score: number | null;
+  max_attempts: number | null;
 }
 
 interface TrainingInfo {
   title: string;
-  passing_score: number | null;
-  max_attempts: number | null;
 }
 
 const fileTypeIcons: Record<string, typeof FileText> = {
@@ -66,6 +69,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
   const [score, setScore] = useState<number | null>(null);
 
   const [training, setTraining] = useState<TrainingInfo | null>(null);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [files, setFiles] = useState<TrainingFile[]>([]);
   const [questions, setQuestions] = useState<TrainingQuestion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,21 +77,48 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
   useEffect(() => {
     const supabase = createClient();
     async function load() {
-      const [{ data: trainingData }, { data: filesData }, { data: questionsData }] = await Promise.all([
-        supabase.from("trainings").select("title, passing_score, max_attempts").eq("id", id).single(),
-        supabase.from("training_files").select("id, name, type, size_label, url").eq("training_id", id),
-        supabase.from("training_questions").select("id, question_text, options").eq("training_id", id).order("order"),
+      const [{ data: trainingData }, { data: filesData }, { data: quizData }] = await Promise.all([
+        supabase.from("trainings").select("title").eq("id", id).single(),
+        supabase.from("files").select("id, name, type, url").eq("training_id", id).order("order"),
+        supabase.from("quizzes").select("id, passing_score, max_attempts").eq("training_id", id).maybeSingle(),
       ]);
+
       setTraining(trainingData ?? null);
       setFiles(filesData ?? []);
-      setQuestions((questionsData as TrainingQuestion[]) ?? []);
+      setQuiz(quizData ?? null);
+
+      // Load questions + options for the quiz
+      if (quizData?.id) {
+        const { data: questionsData } = await supabase
+          .from("questions")
+          .select("id, text, order")
+          .eq("quiz_id", quizData.id)
+          .order("order");
+
+        if (questionsData && questionsData.length > 0) {
+          const qIds = questionsData.map((q) => q.id);
+          const { data: optionsData } = await supabase
+            .from("options")
+            .select("id, question_id, text, is_correct")
+            .in("question_id", qIds);
+
+          const opts = optionsData ?? [];
+          setQuestions(
+            questionsData.map((q) => ({
+              id: q.id,
+              text: q.text,
+              options: opts.filter((o) => o.question_id === q.id),
+            }))
+          );
+        }
+      }
+
       setLoading(false);
     }
     load();
   }, [id]);
 
   function handleSubmitQuiz() {
-    // Compute score from answers vs correct options
     if (questions.length === 0) {
       setScore(100);
       setSubmitted(true);
@@ -107,24 +138,20 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
   }
 
   const steps: { key: Step; label: string; shortLabel: string }[] = [
-    { key: "material",    label: "Revisar material",   shortLabel: "Material" },
-    { key: "quiz",        label: "Rendir evaluación",  shortLabel: "Evaluación" },
+    { key: "material",    label: "Revisar material",    shortLabel: "Material" },
+    { key: "quiz",        label: "Rendir evaluación",   shortLabel: "Evaluación" },
     { key: "certificate", label: "Obtener certificado", shortLabel: "Certificado" },
   ];
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <div className="text-sm text-[#7d8471] py-8 text-center">Cargando...</div>
-      </div>
+      <div className="text-sm text-[#7d8471] py-8 text-center">Cargando...</div>
     );
   }
 
   if (!training) {
     return (
-      <div className="space-y-4">
-        <p className="text-sm text-[#7d8471]">Capacitación no encontrada.</p>
-      </div>
+      <div className="text-sm text-[#7d8471]">Capacitación no encontrada.</div>
     );
   }
 
@@ -226,7 +253,6 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
-                            {file.size_label && <p className="text-xs text-[#6b7260]">{file.size_label}</p>}
                           </div>
                           <Badge className="bg-[#f0f2eb] text-[#6b7260] hover:bg-[#f0f2eb] hidden sm:inline-flex">
                             {file.type}
@@ -260,7 +286,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                   questions.map((q, qi) => (
                     <div key={q.id} className="space-y-3">
                       <p className="text-sm font-semibold text-[#1e2d1c]">
-                        {qi + 1}. {q.question_text}
+                        {qi + 1}. {q.text}
                       </p>
                       <div className="space-y-2" role="radiogroup" aria-label={`Pregunta ${qi + 1}`}>
                         {q.options.map((opt) => (
@@ -369,13 +395,13 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                 <div className="flex justify-between">
                   <span className="text-[#6b7260]">Nota m&iacute;nima</span>
                   <span className="text-[#1e2d1c] font-medium">
-                    {training.passing_score != null ? `${training.passing_score}%` : "—"}
+                    {quiz?.passing_score != null ? `${quiz.passing_score}%` : "—"}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#6b7260]">Intentos</span>
                   <span className="text-[#1e2d1c] font-medium">
-                    {training.max_attempts != null ? `${training.max_attempts} máximo` : "—"}
+                    {quiz?.max_attempts != null ? `${quiz.max_attempts} máximo` : "—"}
                   </span>
                 </div>
               </div>

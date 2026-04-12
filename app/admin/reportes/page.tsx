@@ -22,7 +22,7 @@ import { Download, Filter, Users } from "lucide-react";
 
 interface Profile {
   id: string;
-  full_name: string | null;
+  name: string | null;
   email: string | null;
   area: string | null;
   sede_id: string | null;
@@ -32,7 +32,6 @@ interface Profile {
 interface Assignment {
   user_id: string;
   status: string;
-  score: number | null;
 }
 
 interface SedeStats {
@@ -62,8 +61,8 @@ export default function ReportesPage() {
         { data: assignmentsData },
         { data: trainingsData },
       ] = await Promise.all([
-        supabase.from("profiles").select("id, full_name, email, area, sede_id, active").eq("role", "COLLABORATOR"),
-        supabase.from("assignments").select("user_id, status, score"),
+        supabase.from("profiles").select("id, name, email, area, sede_id, active").eq("role", "COLLABORATOR"),
+        supabase.from("assignments").select("user_id, status"),
         supabase.from("trainings").select("id, sede_id").eq("status", "PUBLISHED"),
       ]);
       setProfiles(profilesData ?? []);
@@ -109,9 +108,7 @@ export default function ReportesPage() {
   function userStats(userId: string) {
     const ua = assignments.filter((a) => a.user_id === userId);
     const completadas = ua.filter((a) => a.status === "COMPLETED").length;
-    const scores = ua.map((a) => a.score).filter((s): s is number => s !== null);
-    const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
-    return { completadas, avg };
+    return { completadas, avg: null as number | null };
   }
 
   return (
@@ -245,7 +242,7 @@ export default function ReportesPage() {
                       return (
                         <TableRow key={user.id}>
                           <TableCell className="text-sm font-medium text-[#1e2d1c] whitespace-nowrap">
-                            {user.full_name ?? user.email ?? "—"}
+                            {user.name ?? user.email ?? "—"}
                           </TableCell>
                           <TableCell className="text-sm text-[#1e2d1c] whitespace-nowrap">{user.area ?? "—"}</TableCell>
                           <TableCell>

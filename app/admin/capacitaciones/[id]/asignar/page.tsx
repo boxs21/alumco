@@ -30,7 +30,7 @@ const targetOptions: { key: TargetType; label: string; description: string; icon
 
 interface Profile {
   id: string;
-  full_name: string | null;
+  name: string | null;
   email: string | null;
   area: string | null;
   sede_id: string | null;
@@ -54,7 +54,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
     async function load() {
       const [{ data: trainingData }, { data: profilesData }] = await Promise.all([
         supabase.from("trainings").select("title").eq("id", id).single(),
-        supabase.from("profiles").select("id, full_name, email, area, sede_id").eq("role", "COLLABORATOR").eq("active", true),
+        supabase.from("profiles").select("id, name, email, area, sede_id").eq("role", "COLLABORATOR").eq("active", true),
       ]);
       setTrainingTitle(trainingData?.title ?? "Capacitación");
       setCollaborators(profilesData ?? []);
@@ -68,7 +68,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
       const q = search.toLowerCase();
       list = list.filter(
         (u) =>
-          (u.full_name ?? "").toLowerCase().includes(q) ||
+          (u.name ?? "").toLowerCase().includes(q) ||
           (u.email ?? "").toLowerCase().includes(q)
       );
     }
@@ -194,7 +194,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
               ) : (
                 <div className="space-y-1 max-h-72 overflow-y-auto">
                   {filteredCollaborators.map((user) => {
-                    const name = user.full_name ?? user.email ?? "—";
+                    const name = user.name ?? user.email ?? "—";
                     return (
                       <button
                         key={user.id}

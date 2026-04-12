@@ -154,10 +154,11 @@ export default function NuevaCapacitacionPage() {
       .insert({
         id: trainingId,
         title: title.trim(),
+        description: description.trim() || null,
         target_area: area || null,
         status: "DRAFT",
         sede_id: sedeId,
-        ...(hasQuiz ? { passing_score: passingScore } : {}),
+        created_by: userId,
       });
 
     if (trainingError) {
@@ -166,31 +167,55 @@ export default function NuevaCapacitacionPage() {
       return;
     }
 
-    // 2. Insert video links as training_files
+    // 2. Insert video links as files
     if (videoLinks.length > 0) {
-      await supabase.from("training_files").insert(
-        videoLinks.map((v) => ({
+      await supabase.from("files").insert(
+        videoLinks.map((v, i) => ({
           training_id: trainingId,
           name: v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive",
           type: "VIDEO",
           url: v.url,
-          size_label: null,
+          order: i + 1,
         }))
       );
     }
 
-    // 3. Insert questions if quiz enabled
+    // 3. Insert quiz, questions, options
     if (hasQuiz) {
-      const questionRows = questions
-        .filter((q) => q.text.trim())
-        .map((q, i) => ({
+      const validQuestions = questions.filter((q) => q.text.trim());
+      if (validQuestions.length > 0) {
+        const quizId = crypto.randomUUID();
+        const { error: quizError } = await supabase.from("quizzes").insert({
+          id: quizId,
           training_id: trainingId,
-          question_text: q.text.trim(),
-          options: q.options.map((o) => ({ id: o.id, text: o.text, is_correct: o.isCorrect })),
-          order: i + 1,
-        }));
-      if (questionRows.length > 0) {
-        await supabase.from("training_questions").insert(questionRows);
+          passing_score: passingScore,
+          max_attempts: null,
+        });
+
+        if (!quizError) {
+          for (let qi = 0; qi < validQuestions.length; qi++) {
+            const q = validQuestions[qi];
+            const questionId = crypto.randomUUID();
+            await supabase.from("questions").insert({
+              id: questionId,
+              quiz_id: quizId,
+              text: q.text.trim(),
+              points: 1,
+              order: qi + 1,
+            });
+            const optionRows = q.options
+              .filter((o) => o.text.trim())
+              .map((o) => ({
+                id: crypto.randomUUID(),
+                question_id: questionId,
+                text: o.text.trim(),
+                is_correct: o.isCorrect,
+              }));
+            if (optionRows.length > 0) {
+              await supabase.from("options").insert(optionRows);
+            }
+          }
+        }
       }
     }
 

@@ -14,16 +14,16 @@ import {
 import { createClient } from "@/lib/supabase";
 import { Download, History } from "lucide-react";
 
-interface CompletedAssignment {
+interface Certificate {
   id: string;
-  score: number | null;
-  completed_at: string | null;
-  has_certificate: boolean;
+  pdf_url: string | null;
+  issued_at: string | null;
   trainings: { title: string }[] | { title: string } | null;
+  attempts: { score: number | null }[] | { score: number | null } | null;
 }
 
 export default function HistorialPage() {
-  const [completed, setCompleted] = useState<CompletedAssignment[]>([]);
+  const [certs, setCerts] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,17 +33,25 @@ export default function HistorialPage() {
       if (!user) { setLoading(false); return; }
 
       const { data } = await supabase
-        .from("assignments")
-        .select("id, score, completed_at, has_certificate, trainings(title)")
+        .from("certificates")
+        .select("id, pdf_url, issued_at, trainings(title), attempts(score)")
         .eq("user_id", user.id)
-        .eq("status", "COMPLETED")
-        .order("completed_at", { ascending: false });
+        .order("issued_at", { ascending: false });
 
-      setCompleted(((data ?? []) as unknown) as CompletedAssignment[]);
+      setCerts(((data ?? []) as unknown) as Certificate[]);
       setLoading(false);
     }
     load();
   }, []);
+
+  function getTitle(c: Certificate): string {
+    return (Array.isArray(c.trainings) ? c.trainings[0]?.title : c.trainings?.title) ?? "—";
+  }
+
+  function getScore(c: Certificate): number | null {
+    const a = Array.isArray(c.attempts) ? c.attempts[0] : c.attempts;
+    return a?.score ?? null;
+  }
 
   return (
     <div className="space-y-4 lg:space-y-6">
@@ -56,7 +64,7 @@ export default function HistorialPage() {
         <CardContent className="p-0">
           {loading ? (
             <div className="py-12 text-center text-sm text-[#7d8471]">Cargando...</div>
-          ) : completed.length > 0 ? (
+          ) : certs.length > 0 ? (
             <>
               {/* Desktop Table */}
               <div className="hidden sm:block overflow-x-auto">
@@ -70,71 +78,81 @@ export default function HistorialPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {completed.map((a) => (
-                      <TableRow key={a.id}>
-                        <TableCell className="text-sm font-medium text-[#1e2d1c]">
-                          {(Array.isArray(a.trainings) ? a.trainings[0]?.title : a.trainings?.title) ?? "—"}
-                        </TableCell>
-                        <TableCell>
-                          {a.score != null ? (
-                            <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb]">
-                              {a.score}%
-                            </Badge>
-                          ) : (
-                            <span className="text-sm text-[#6b7260]">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-sm text-[#6b7260] whitespace-nowrap">
-                          {a.completed_at ? new Date(a.completed_at).toLocaleDateString("es-CL") : "—"}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {a.has_certificate ? (
-                            <button
-                              aria-label={`Descargar certificado de ${(Array.isArray(a.trainings) ? a.trainings[0]?.title : a.trainings?.title) ?? ""}`}
-                              className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors cursor-pointer"
-                            >
-                              <Download className="h-4 w-4" aria-hidden="true" />
-                              Descargar
-                            </button>
-                          ) : (
-                            <span className="text-sm text-[#6b7260]">No disponible</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {certs.map((c) => {
+                      const score = getScore(c);
+                      return (
+                        <TableRow key={c.id}>
+                          <TableCell className="text-sm font-medium text-[#1e2d1c]">{getTitle(c)}</TableCell>
+                          <TableCell>
+                            {score != null ? (
+                              <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb]">
+                                {score}%
+                              </Badge>
+                            ) : (
+                              <span className="text-sm text-[#6b7260]">—</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-sm text-[#6b7260] whitespace-nowrap">
+                            {c.issued_at ? new Date(c.issued_at).toLocaleDateString("es-CL") : "—"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {c.pdf_url ? (
+                              <a
+                                href={c.pdf_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`Descargar certificado de ${getTitle(c)}`}
+                                className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors"
+                              >
+                                <Download className="h-4 w-4" aria-hidden="true" />
+                                Descargar
+                              </a>
+                            ) : (
+                              <span className="text-sm text-[#6b7260]">Sin PDF</span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
 
               {/* Mobile Cards */}
               <div className="sm:hidden divide-y divide-[#dde0d4]">
-                {completed.map((a) => (
-                  <div key={a.id} className="p-4 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-semibold text-[#1e2d1c]">{(Array.isArray(a.trainings) ? a.trainings[0]?.title : a.trainings?.title) ?? "—"}</p>
-                      {a.score != null && (
-                        <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb] shrink-0">
-                          {a.score}%
-                        </Badge>
-                      )}
+                {certs.map((c) => {
+                  const score = getScore(c);
+                  return (
+                    <div key={c.id} className="p-4 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm font-semibold text-[#1e2d1c]">{getTitle(c)}</p>
+                        {score != null && (
+                          <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb] shrink-0">
+                            {score}%
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[#6b7260]">
+                          {c.issued_at ? new Date(c.issued_at).toLocaleDateString("es-CL") : "—"}
+                        </span>
+                        {c.pdf_url ? (
+                          <a
+                            href={c.pdf_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Descargar certificado de ${getTitle(c)}`}
+                            className="text-xs font-medium text-[#2d4a2b] hover:text-[#1e2d1c] transition-colors"
+                          >
+                            Descargar certificado →
+                          </a>
+                        ) : (
+                          <span className="text-xs text-[#6b7260]">Sin certificado</span>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-[#6b7260]">
-                        {a.completed_at ? new Date(a.completed_at).toLocaleDateString("es-CL") : "—"}
-                      </span>
-                      {a.has_certificate ? (
-                        <button
-                          aria-label={`Descargar certificado de ${(Array.isArray(a.trainings) ? a.trainings[0]?.title : a.trainings?.title) ?? ""}`}
-                          className="text-xs font-medium text-[#2d4a2b] hover:text-[#1e2d1c] transition-colors cursor-pointer"
-                        >
-                          Descargar certificado →
-                        </button>
-                      ) : (
-                        <span className="text-xs text-[#6b7260]">Sin certificado</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </>
           ) : (

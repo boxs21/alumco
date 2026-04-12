@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import Topbar from "@/components/layout/Topbar";
 import StatCard from "@/components/shared/StatCard";
-import SedeBadge from "@/components/shared/SedeBadge";
 import { Card, CardContent } from "@/components/ui/card";
-import { SEDES, SEDE_ID_MAP, sedeName } from "@/lib/config";
+import { SEDES, SEDE_ID_MAP } from "@/lib/config";
 import { createClient } from "@/lib/supabase";
 import { Users, BookOpen, TrendingUp, Award, Activity } from "lucide-react";
 
@@ -25,15 +24,10 @@ interface Assignment {
   user_id: string;
   training_id: string;
   status: string;
-  has_certificate: boolean;
 }
 
-interface ActivityItem {
-  id: string;
-  text: string;
-  sede_id: string | null;
-  sede_name: string | null;
-  created_at: string;
+interface Certificate {
+  user_id: string;
 }
 
 interface SedeStats {
@@ -47,6 +41,7 @@ function computeStats(
   profiles: Profile[],
   trainings: Training[],
   assignments: Assignment[],
+  certificates: Certificate[],
   selectedSede: string
 ): SedeStats {
   const sedeId = selectedSede !== "global" ? SEDE_ID_MAP[selectedSede] ?? null : null;
@@ -66,12 +61,15 @@ function computeStats(
 
   const total = filteredAssignments.length;
   const completed = filteredAssignments.filter((a) => a.status === "COMPLETED").length;
+  const filteredCerts = sedeId
+    ? certificates.filter((c) => profileIds.has(c.user_id))
+    : certificates;
 
   return {
     colaboradores: filteredProfiles.filter((p) => p.active).length,
     capacitaciones: filteredTrainings.length,
     cumplimiento: total > 0 ? Math.round((completed / total) * 100) : 0,
-    certificados: filteredAssignments.filter((a) => a.has_certificate).length,
+    certificados: filteredCerts.length,
   };
 }
 
@@ -80,7 +78,7 @@ export default function DashboardPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -90,30 +88,26 @@ export default function DashboardPage() {
         { data: profilesData },
         { data: trainingsData },
         { data: assignmentsData },
-        { data: activityData },
+        { data: certificatesData },
       ] = await Promise.all([
         supabase.from("profiles").select("id, sede_id, active").eq("role", "COLLABORATOR"),
         supabase.from("trainings").select("id, target_area, sede_id").eq("status", "PUBLISHED"),
-        supabase.from("assignments").select("user_id, training_id, status, has_certificate"),
-        supabase
-          .from("activity_log")
-          .select("id, text, sede_id, sede_name, created_at")
-          .order("created_at", { ascending: false })
-          .limit(5),
+        supabase.from("assignments").select("user_id, training_id, status"),
+        supabase.from("certificates").select("user_id"),
       ]);
 
       setProfiles(profilesData ?? []);
       setTrainings(trainingsData ?? []);
       setAssignments(assignmentsData ?? []);
-      setActivity(activityData ?? []);
+      setCertificates(certificatesData ?? []);
     }
 
     load();
   }, []);
 
-  const stats = computeStats(profiles, trainings, assignments, selectedSede);
-  const concStats = computeStats(profiles, trainings, assignments, "CONCEPCION");
-  const coyStats = computeStats(profiles, trainings, assignments, "COYHAIQUE");
+  const stats = computeStats(profiles, trainings, assignments, certificates, selectedSede);
+  const concStats = computeStats(profiles, trainings, assignments, certificates, "CONCEPCION");
+  const coyStats = computeStats(profiles, trainings, assignments, certificates, "COYHAIQUE");
 
   // Area progress from published trainings + assignments
   const areaMap: Record<string, { total: number; completed: number }> = {};
@@ -176,37 +170,10 @@ export default function DashboardPage() {
           <Card className="border-[#dde0d4]/80 shadow-sm animate-fade-in-up stagger-5">
             <CardContent className="p-4 lg:p-6">
               <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-4 lg:mb-5">Actividad reciente</h2>
-              {activity.length > 0 ? (
-                <div className="space-y-3 lg:space-y-4">
-                  {activity.map((item, index) => (
-                    <div
-                      key={item.id}
-                      className="flex items-start gap-3 animate-fade-in"
-                      style={{ animationDelay: `${0.4 + index * 0.08}s` }}
-                    >
-                      <div className="mt-0.5">
-                        <SedeBadge sedeId={item.sede_id} sedeName={item.sede_name} size="sm" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-[#1e2d1c] leading-snug">{item.text}</p>
-                        <p className="text-xs text-[#6b7260] mt-0.5">
-                          {new Date(item.created_at).toLocaleDateString("es-CL", {
-                            day: "numeric",
-                            month: "short",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center py-8 text-center">
-                  <Activity className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
-                  <p className="text-sm text-[#7d8471]">Sin actividad reciente</p>
-                </div>
-              )}
+              <div className="flex flex-col items-center py-8 text-center">
+                <Activity className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
+                <p className="text-sm text-[#7d8471]">Sin actividad reciente</p>
+              </div>
             </CardContent>
           </Card>
 

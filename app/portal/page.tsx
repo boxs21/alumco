@@ -20,8 +20,6 @@ interface AssignmentWithTraining {
   id: string;
   training_id: string;
   status: "IN_PROGRESS" | "COMPLETED";
-  score: number | null;
-  progress: number;
   trainings: TrainingData[] | TrainingData | null;
 }
 
@@ -42,7 +40,7 @@ export default function PortalPage() {
 
       const { data } = await supabase
         .from("assignments")
-        .select("id, training_id, status, score, progress, trainings(id, title, sede_id)")
+        .select("id, training_id, status, trainings(id, title, sede_id)")
         .eq("user_id", user.id);
 
       setAssignments((data as AssignmentWithTraining[]) ?? []);
@@ -86,7 +84,7 @@ export default function PortalPage() {
             const statusKey = assignment.status in statusConfig ? assignment.status : "IN_PROGRESS";
             const status = statusConfig[statusKey as keyof typeof statusConfig];
             const StatusIcon = status.icon;
-            const isInProgress = assignment.status === "IN_PROGRESS";
+            const isInProgress = assignment.status !== "COMPLETED";
             const title = training?.title ?? "Capacitación";
             const sedeId = training?.sede_id ?? null;
 
@@ -114,27 +112,10 @@ export default function PortalPage() {
                       </h3>
                     </div>
 
-                    {isInProgress && assignment.progress != null && (
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs text-[#7d8471]">
-                          <span>Progreso</span>
-                          <span className="font-medium text-[#1e2d1c]">{assignment.progress}%</span>
-                        </div>
-                        <div className="h-1.5 w-full rounded-full bg-[#f0f2eb] overflow-hidden">
-                          <div
-                            className="h-1.5 rounded-full bg-[#f9a620] transition-all"
-                            style={{ width: `${assignment.progress}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
 
                     <div className="flex items-center justify-between mt-auto pt-1 border-t border-[#f0f2eb]">
                       <div className="flex items-center gap-2">
                         <SedeBadge sedeId={sedeId} sedeName={sedeName(sedeId)} size="sm" />
-                        {assignment.score != null && (
-                          <span className="text-xs text-[#7d8471]">Aprobado · {assignment.score}%</span>
-                        )}
                       </div>
                       <ChevronRight
                         className="h-4 w-4 text-[#a4ac86] group-hover:text-[#2d4a2b] transition-colors"

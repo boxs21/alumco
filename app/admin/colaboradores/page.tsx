@@ -21,7 +21,7 @@ import { Users } from "lucide-react";
 
 interface Profile {
   id: string;
-  full_name: string | null;
+  name: string | null;
   email: string | null;
   area: string | null;
   sede_id: string | null;
@@ -48,7 +48,7 @@ export default function ColaboradoresPage() {
     const supabase = createClient();
     async function load() {
       const [{ data: profilesData }, { data: assignmentsData }] = await Promise.all([
-        supabase.from("profiles").select("id, full_name, email, area, sede_id, active").eq("role", "COLLABORATOR"),
+        supabase.from("profiles").select("id, name, email, area, sede_id, active").eq("role", "COLLABORATOR"),
         supabase.from("assignments").select("user_id, status"),
       ]);
       setProfiles(profilesData ?? []);
@@ -124,7 +124,7 @@ export default function ColaboradoresPage() {
                 </TableHeader>
                 <TableBody>
                   {filtered.map((user) => {
-                    const name = user.full_name ?? user.email ?? "Sin nombre";
+                    const name = user.name ?? user.email ?? "Sin nombre";
                     const done = completadas(user.id);
                     const total = totalAsignadas(user.id);
                     return (
@@ -186,7 +186,7 @@ export default function ColaboradoresPage() {
             {/* Mobile Cards */}
             <div className="md:hidden space-y-3">
               {filtered.map((user) => {
-                const name = user.full_name ?? user.email ?? "Sin nombre";
+                const name = user.name ?? user.email ?? "Sin nombre";
                 const done = completadas(user.id);
                 const total = totalAsignadas(user.id);
                 return (
