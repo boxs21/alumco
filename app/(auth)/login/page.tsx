@@ -113,7 +113,30 @@ export default function LoginPage() {
           <p className="text-sm text-[#7d8471]">Formación para residencias</p>
         </div>
 
-        <Card className="border-[#dde0d4] shadow-sm animate-fade-in-up stagger-2 bg-white">
+        {/* Demo access */}
+        <div className="mb-4 space-y-2 animate-fade-in-up stagger-2">
+          <p className="text-xs text-center text-[#a4ac86] font-medium uppercase tracking-wide">Acceso demo</p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => signIn("valentina@alumco.cl", "12341234")}
+              className="h-10 rounded-lg border border-[#dde0d4] bg-white text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors disabled:opacity-50"
+            >
+              Admin
+            </button>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => signIn("maria@alumco.cl", "12341234")}
+              className="h-10 rounded-lg border border-[#dde0d4] bg-white text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors disabled:opacity-50"
+            >
+              Colaborador
+            </button>
+          </div>
+        </div>
+
+        <Card className="border-[#dde0d4] shadow-sm animate-fade-in-up stagger-3 bg-white">
           <CardContent className="p-8 space-y-5">
             <form onSubmit={handleLogin} className="space-y-4">
               {errors.general && (
