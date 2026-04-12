@@ -145,42 +145,38 @@ export default function NuevaCapacitacionPage() {
 
     const supabase = createClient();
     const sedeId = !sedeSelection || sedeSelection === "global" ? null : sedeSelection;
+    // Pre-generate ID so we don't depend on Supabase returning the row
+    const trainingId = crypto.randomUUID();
 
     // 1. Insert training
-    const { data: trainingData, error: trainingError } = await supabase
+    const { error: trainingError } = await supabase
       .from("trainings")
       .insert({
+        id: trainingId,
         title: title.trim(),
-        description: description.trim() || null,
         area: area || null,
         status: "DRAFT",
         sede_id: sedeId,
-        created_by: userId,
         ...(hasQuiz ? { passing_score: passingScore } : {}),
-      })
-      .select("id")
-      .single();
+      });
 
-    if (trainingError || !trainingData) {
-      console.error("[nueva] training insert error:", trainingError);
-      setSaveError("Error al guardar la capacitación. Inténtalo de nuevo.");
+    if (trainingError) {
+      setSaveError(`Error al guardar: ${trainingError.message}`);
       setSaving(false);
       return;
     }
 
-    const trainingId = trainingData.id;
-
     // 2. Insert video links as training_files
     if (videoLinks.length > 0) {
-      const fileRows = videoLinks.map((v) => ({
-        training_id: trainingId,
-        name: v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive",
-        type: "VIDEO",
-        url: v.url,
-        size_label: null,
-      }));
-      const { error: filesError } = await supabase.from("training_files").insert(fileRows);
-      if (filesError) console.error("[nueva] files insert error:", filesError);
+      await supabase.from("training_files").insert(
+        videoLinks.map((v) => ({
+          training_id: trainingId,
+          name: v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive",
+          type: "VIDEO",
+          url: v.url,
+          size_label: null,
+        }))
+      );
     }
 
     // 3. Insert questions if quiz enabled
@@ -194,8 +190,7 @@ export default function NuevaCapacitacionPage() {
           order: i + 1,
         }));
       if (questionRows.length > 0) {
-        const { error: qError } = await supabase.from("training_questions").insert(questionRows);
-        if (qError) console.error("[nueva] questions insert error:", qError);
+        await supabase.from("training_questions").insert(questionRows);
       }
     }
 
