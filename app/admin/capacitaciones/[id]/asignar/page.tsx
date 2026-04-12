@@ -109,7 +109,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
         training_id:  id,
         target_type:  "INDIVIDUAL",
         user_id:      userId,
-        status:       "ACTIVE",
+        status:       "PENDING",
         due_date:     dueDate || null,
       }));
       const res = await supabase.from("assignments").insert(rows);
@@ -119,7 +119,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
       const row: Record<string, unknown> = {
         training_id:  id,
         target_type:  targetType,
-        status:       "ACTIVE",
+        status:       "PENDING",
         due_date:     dueDate || null,
       };
       if (targetType === "SEDE" && targetSede)   row.target_sede_id = targetSede;
