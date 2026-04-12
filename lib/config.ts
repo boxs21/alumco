@@ -2,8 +2,8 @@
 // These are real business values, not mock data.
 
 export const SEDES = {
-  CONCEPCION: { id: "s1", nombre: "Concepción" },
-  COYHAIQUE:  { id: "s2", nombre: "Coyhaique" },
+  CONCEPCION: { id: "294d17a7-e282-4789-82ff-bbf0de6015c2", nombre: "Concepción" },
+  COYHAIQUE:  { id: "2e309cf3-84fe-49b0-8de9-7aa5eeb4a96a", nombre: "Coyhaique" },
 } as const;
 
 export type SedeKey = keyof typeof SEDES;
