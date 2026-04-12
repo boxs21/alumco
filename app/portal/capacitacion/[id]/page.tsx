@@ -21,6 +21,15 @@ interface TrainingFile {
   name: string;
   type: string;
   size_label: string | null;
+  url: string | null;
+}
+
+function getEmbedUrl(url: string): string | null {
+  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+  const gdMatch = url.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if (gdMatch) return `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
+  return null;
 }
 
 interface QuestionOption {
@@ -66,7 +75,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
     async function load() {
       const [{ data: trainingData }, { data: filesData }, { data: questionsData }] = await Promise.all([
         supabase.from("trainings").select("title, passing_score, max_attempts").eq("id", id).single(),
-        supabase.from("training_files").select("id, name, type, size_label").eq("training_id", id),
+        supabase.from("training_files").select("id, name, type, size_label, url").eq("training_id", id),
         supabase.from("training_questions").select("id, question_text, options").eq("training_id", id).order("order"),
       ]);
       setTraining(trainingData ?? null);
@@ -177,26 +186,55 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                     <p className="text-sm text-[#7d8471]">Sin archivos de estudio.</p>
                   </div>
                 ) : (
-                  files.map((file) => {
-                    const FileIcon = fileTypeIcons[file.type] ?? FileText;
-                    return (
-                      <div
-                        key={file.id}
-                        className="flex items-center gap-3 p-3 lg:p-4 rounded-lg border border-[#dde0d4] hover:bg-[#faf9f6] cursor-pointer transition-colors"
-                      >
-                        <div className="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-lg bg-[#f0f2eb]">
-                          <FileIcon className="h-4 w-4 lg:h-5 lg:w-5 text-[#6b7260]" aria-hidden="true" />
+                  <div className="space-y-3">
+                    {files.map((file) => {
+                      if (file.type === "VIDEO" && file.url) {
+                        const embedUrl = getEmbedUrl(file.url);
+                        return (
+                          <div key={file.id} className="rounded-lg border border-[#dde0d4] overflow-hidden">
+                            <div className="flex items-center gap-3 px-3 lg:px-4 py-2.5 bg-[#faf9f6] border-b border-[#dde0d4]">
+                              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[#f0f2eb]">
+                                <Video className="h-3.5 w-3.5 text-[#6b7260]" aria-hidden="true" />
+                              </div>
+                              <p className="text-sm font-medium text-[#1e2d1c] truncate flex-1">{file.name || "Video"}</p>
+                              <Badge className="bg-[#f0f2eb] text-[#6b7260] hover:bg-[#f0f2eb] hidden sm:inline-flex shrink-0">
+                                VIDEO
+                              </Badge>
+                            </div>
+                            {embedUrl ? (
+                              <iframe
+                                src={embedUrl}
+                                title={file.name || "Video"}
+                                className="w-full aspect-video"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            ) : (
+                              <div className="p-4 text-sm text-[#7d8471]">Video no disponible.</div>
+                            )}
+                          </div>
+                        );
+                      }
+                      const FileIcon = fileTypeIcons[file.type] ?? FileText;
+                      return (
+                        <div
+                          key={file.id}
+                          className="flex items-center gap-3 p-3 lg:p-4 rounded-lg border border-[#dde0d4] hover:bg-[#faf9f6] cursor-pointer transition-colors"
+                        >
+                          <div className="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-lg bg-[#f0f2eb]">
+                            <FileIcon className="h-4 w-4 lg:h-5 lg:w-5 text-[#6b7260]" aria-hidden="true" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
+                            {file.size_label && <p className="text-xs text-[#6b7260]">{file.size_label}</p>}
+                          </div>
+                          <Badge className="bg-[#f0f2eb] text-[#6b7260] hover:bg-[#f0f2eb] hidden sm:inline-flex">
+                            {file.type}
+                          </Badge>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[#1e2d1c] truncate">{file.name}</p>
-                          {file.size_label && <p className="text-xs text-[#6b7260]">{file.size_label}</p>}
-                        </div>
-                        <Badge className="bg-[#f0f2eb] text-[#6b7260] hover:bg-[#f0f2eb] hidden sm:inline-flex">
-                          {file.type}
-                        </Badge>
-                      </div>
-                    );
-                  })
+                      );
+                    })}
+                  </div>
                 )}
                 <button
                   onClick={() => setCurrentStep("quiz")}

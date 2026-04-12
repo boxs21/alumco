@@ -15,7 +15,24 @@ import {
   Trash2,
   ArrowLeft,
   ArrowRight,
+  Video,
+  Link as LinkIcon,
+  X,
 } from "lucide-react";
+
+function getEmbedUrl(url: string): string | null {
+  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+  const gdMatch = url.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if (gdMatch) return `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
+  return null;
+}
+
+function detectVideoSource(url: string): "youtube" | "gdrive" | null {
+  if (/youtube\.com|youtu\.be/.test(url)) return "youtube";
+  if (/drive\.google\.com/.test(url)) return "gdrive";
+  return null;
+}
 
 const steps = [
   { number: 1, label: "Información básica" },
@@ -33,6 +50,25 @@ export default function NuevaCapacitacionPage() {
   const [description, setDescription] = useState("");
   const [area, setArea] = useState("");
   const [sedeSelection, setSedeSelection] = useState<string | null>(null);
+
+  // Step 2 state
+  const [videoUrl, setVideoUrl] = useState("");
+  interface VideoLink { id: string; url: string; embedUrl: string; source: "youtube" | "gdrive" }
+  const [videoLinks, setVideoLinks] = useState<VideoLink[]>([]);
+
+  function addVideoLink() {
+    const embed = getEmbedUrl(videoUrl.trim());
+    const source = detectVideoSource(videoUrl.trim());
+    if (!embed || !source) return;
+    setVideoLinks([...videoLinks, { id: `v-${Date.now()}`, url: videoUrl.trim(), embedUrl: embed, source }]);
+    setVideoUrl("");
+  }
+
+  function removeVideoLink(id: string) {
+    setVideoLinks(videoLinks.filter((v) => v.id !== id));
+  }
+
+  const previewEmbed = videoUrl.trim() ? getEmbedUrl(videoUrl.trim()) : null;
 
   // Step 3 state
   const [hasQuiz, setHasQuiz] = useState(false);
@@ -207,19 +243,100 @@ export default function NuevaCapacitacionPage() {
         {currentStep === 2 && (
           <Card className="border-[#dde0d4] shadow-sm">
             <CardContent className="p-6 space-y-5">
+              {/* File dropzone */}
               <div className="border-2 border-dashed border-[#dde0d4] rounded-xl p-8 text-center hover:border-[#7d8471] hover:bg-[#f0f2eb]/30 transition-colors cursor-pointer">
                 <Upload className="h-10 w-10 text-[#a4ac86] mx-auto mb-3" />
                 <p className="text-sm font-medium text-[#1e2d1c]">
                   Arrastra archivos aquí o haz clic para seleccionar
                 </p>
-                <p className="text-xs text-[#7d8471] mt-1">PDF, videos o presentaciones (máx. 50MB)</p>
+                <p className="text-xs text-[#7d8471] mt-1">PDF o presentaciones (máx. 50MB)</p>
               </div>
 
-              <div className="flex flex-col items-center py-6 text-center">
-                <FileText className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
-                <p className="text-sm text-[#7d8471]">No hay archivos cargados todavía.</p>
-                <p className="text-xs text-[#a4ac86] mt-1">Arrastra archivos arriba para comenzar.</p>
+              {/* Divider */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-px bg-[#dde0d4]" />
+                <span className="text-xs text-[#a4ac86] font-medium">o agregar link de video</span>
+                <div className="flex-1 h-px bg-[#dde0d4]" />
               </div>
+
+              {/* Video URL input */}
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#a4ac86]" aria-hidden="true" />
+                    <Input
+                      placeholder="Pegar link de YouTube o Google Drive..."
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && previewEmbed && addVideoLink()}
+                      className="h-11 pl-9 text-sm"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addVideoLink}
+                    disabled={!previewEmbed}
+                    className="h-11 px-4 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                  >
+                    Agregar
+                  </button>
+                </div>
+
+                {/* Live preview */}
+                {videoUrl.trim() && (
+                  <div className="rounded-lg border border-[#dde0d4] overflow-hidden bg-[#faf9f6]">
+                    {previewEmbed ? (
+                      <iframe
+                        src={previewEmbed}
+                        title="Vista previa del video"
+                        className="w-full aspect-video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2 p-3 text-sm text-[#a4ac86]">
+                        <Video className="h-4 w-4 shrink-0" />
+                        <span>Link no reconocido. Usa YouTube o Google Drive.</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Added video links */}
+              {videoLinks.length > 0 && (
+                <div className="space-y-2">
+                  {videoLinks.map((v) => (
+                    <div key={v.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#dde0d4] bg-[#faf9f6]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f0f2eb] shrink-0">
+                        <Video className="h-4 w-4 text-[#6b7260]" aria-hidden="true" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[#1e2d1c] truncate">
+                          {v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive"}
+                        </p>
+                        <p className="text-xs text-[#7d8471] truncate">{v.url}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeVideoLink(v.id)}
+                        aria-label="Eliminar video"
+                        className="text-[#a4ac86] hover:text-red-500 transition-colors shrink-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Empty state when nothing added */}
+              {videoLinks.length === 0 && (
+                <div className="flex flex-col items-center py-4 text-center">
+                  <FileText className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
+                  <p className="text-sm text-[#7d8471]">No hay material cargado todavía.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
