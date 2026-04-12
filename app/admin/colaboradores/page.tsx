@@ -16,7 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase";
-import { SEDES, sedeName } from "@/lib/config";
 import { Users } from "lucide-react";
 
 interface Profile {
@@ -33,6 +32,11 @@ interface Assignment {
   status: string;
 }
 
+interface Sede {
+  id: string;
+  nombre: string;
+}
+
 function getInitials(name: string): string {
   return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 }
@@ -42,26 +46,41 @@ export default function ColaboradoresPage() {
   const [sedeTab, setSedeTab] = useState("ALL");
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [sedes, setSedes] = useState<Sede[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const supabase = createClient();
     async function load() {
-      const [{ data: profilesData }, { data: assignmentsData }] = await Promise.all([
-        supabase.from("profiles").select("id, name, email, area, sede_id, active").eq("role", "COLLABORATOR"),
+      const [
+        { data: profilesData, error: profilesError },
+        { data: assignmentsData },
+        { data: sedesData },
+      ] = await Promise.all([
+        supabase.from("profiles").select("id, name, email, area, sede_id, active").eq("role", "COLLABORATOR").order("name"),
         supabase.from("assignments").select("user_id, status"),
+        supabase.from("sedes").select("id, nombre").order("nombre"),
       ]);
+      if (profilesError) {
+        // RLS or schema issue — surface the error code so it's visible in console
+        throw new Error(`profiles query failed: ${profilesError.code} ${profilesError.message}`);
+      }
       setProfiles(profilesData ?? []);
       setAssignments(assignmentsData ?? []);
+      setSedes(sedesData ?? []);
       setLoading(false);
     }
-    load();
+    load().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      setLoading(false);
+    });
   }, []);
 
+  // Use real sede IDs from the database, not hardcoded constants
   const filtered = profiles.filter((u) => {
-    if (sedeTab === "CONCEPCION") return u.sede_id === SEDES.CONCEPCION.id;
-    if (sedeTab === "COYHAIQUE")  return u.sede_id === SEDES.COYHAIQUE.id;
-    return true;
+    if (sedeTab === "ALL") return true;
+    return u.sede_id === sedeTab;
   });
 
   function completadas(userId: string) {
@@ -71,10 +90,14 @@ export default function ColaboradoresPage() {
     return assignments.filter((a) => a.user_id === userId).length;
   }
 
+  function sedeNameLocal(sedeId: string | null): string | null {
+    if (!sedeId) return null;
+    return sedes.find((s) => s.id === sedeId)?.nombre ?? null;
+  }
+
   const sedeTabs = [
-    { key: "ALL",       label: "Todas" },
-    { key: "CONCEPCION", label: SEDES.CONCEPCION.nombre },
-    { key: "COYHAIQUE",  label: SEDES.COYHAIQUE.nombre },
+    { key: "ALL", label: "Todas" },
+    ...sedes.map((s) => ({ key: s.id, label: s.nombre })),
   ];
 
   return (
@@ -144,7 +167,7 @@ export default function ColaboradoresPage() {
                         </TableCell>
                         <TableCell className="text-sm text-[#1e2d1c]">{user.area ?? "—"}</TableCell>
                         <TableCell>
-                          <SedeBadge sedeId={user.sede_id} sedeName={sedeName(user.sede_id)} size="sm" />
+                          <SedeBadge sedeId={user.sede_id} sedeName={sedeNameLocal(user.sede_id)} size="sm" />
                         </TableCell>
                         <TableCell>
                           <Badge
@@ -217,7 +240,7 @@ export default function ColaboradoresPage() {
                       {user.area && (
                         <span className="text-xs text-[#7d8471] bg-[#f0f2eb] px-2 py-1 rounded-md">{user.area}</span>
                       )}
-                      <SedeBadge sedeId={user.sede_id} sedeName={sedeName(user.sede_id)} size="sm" />
+                      <SedeBadge sedeId={user.sede_id} sedeName={sedeNameLocal(user.sede_id)} size="sm" />
                     </div>
                     <div className="mt-3 flex items-center justify-between">
                       <div className="flex items-center gap-2 flex-1">
