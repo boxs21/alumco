@@ -8,7 +8,7 @@ import {
   Plus,
   AlertCircle,
   X,
-  CalendarDays,
+  Calendar,
 } from "lucide-react";
 import Topbar from "@/components/layout/Topbar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -595,7 +595,7 @@ export default function CalendarioPage() {
         {!loading && visibleSessions.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in">
             <div className="h-12 w-12 rounded-2xl bg-[#f0f2eb] flex items-center justify-center mb-3">
-              <CalendarDays className="h-6 w-6 text-[#a4ac86]" />
+              <Calendar className="h-6 w-6 text-[#a4ac86]" />
             </div>
             <p className="text-sm font-medium text-[#1e2d1c]">
               Sin sesiones en {MONTHS[month]}
