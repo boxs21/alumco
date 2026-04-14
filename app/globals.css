@@ -48,60 +48,60 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 
   /* ─── Semantic Theme Variables ─── */
-  --color-forest: #2d4a2b;
-  --color-forest-hover: #4a7c59;
-  --color-forest-light: #f0f2eb;
-  --color-forest-olive: #a4ac86;
-  --color-forest-sage: #7d8471;
-  --color-forest-ivory: #faf9f6;
-  --color-forest-text: #1e2d1c;
-  --color-forest-border: #dde0d4;
-  --color-forest-success: #4a7c59;
-  --color-forest-warning: #f9a620;
+  --color-forest: #4a6fa5;
+  --color-forest-hover: #6389bf;
+  --color-forest-light: #e8eff7;
+  --color-forest-olive: #a0b8d0;
+  --color-forest-sage: #4a6a80;
+  --color-forest-ivory: #fafbfc;
+  --color-forest-text: #2a3a4a;
+  --color-forest-border: #d4e1ed;
+  --color-forest-success: #6389bf;
+  --color-forest-warning: #c0a040;
   --color-forest-danger: #b74729;
 
   /* Sede colors */
-  --color-sede-concepcion: #2d4a2b;
-  --color-sede-concepcion-bg: #f0f2eb;
-  --color-sede-coyhaique: #f9a620;
-  --color-sede-coyhaique-bg: #fdf6e3;
-  --color-sede-global: #7d8471;
-  --color-sede-global-bg: #f0f2eb;
+  --color-sede-concepcion: #4a6fa5;
+  --color-sede-concepcion-bg: #e8eff7;
+  --color-sede-coyhaique: #c0a040;
+  --color-sede-coyhaique-bg: #f7f3e4;
+  --color-sede-global: #4a6a80;
+  --color-sede-global-bg: #e8eff7;
 }
 
 :root {
-  --background: #faf9f6;
-  --foreground: #1e2d1c;
-  --card: #ffffff;
-  --card-foreground: #1e2d1c;
-  --popover: #ffffff;
-  --popover-foreground: #1e2d1c;
-  --primary: #2d4a2b;
+  --background: #fafbfc;
+  --foreground: #2a3a4a;
+  --card: #fafbfc;
+  --card-foreground: #2a3a4a;
+  --popover: #fafbfc;
+  --popover-foreground: #2a3a4a;
+  --primary: #4a6fa5;
   --primary-foreground: #ffffff;
-  --secondary: #f0f2eb;
-  --secondary-foreground: #1e2d1c;
-  --muted: #f0f2eb;
-  --muted-foreground: #7d8471;
-  --accent: #f0f2eb;
-  --accent-foreground: #1e2d1c;
+  --secondary: #e8eff7;
+  --secondary-foreground: #2a3a4a;
+  --muted: #e8eff7;
+  --muted-foreground: #4a6a80;
+  --accent: #e8eff7;
+  --accent-foreground: #2a3a4a;
   --destructive: #b74729;
-  --border: #dde0d4;
-  --input: #dde0d4;
-  --ring: #2d4a2b;
-  --chart-1: #2d4a2b;
-  --chart-2: #4a7c59;
-  --chart-3: #f9a620;
+  --border: #d4e1ed;
+  --input: #d4e1ed;
+  --ring: #4a6fa5;
+  --chart-1: #4a6fa5;
+  --chart-2: #6389bf;
+  --chart-3: #c0a040;
   --chart-4: #b74729;
-  --chart-5: #a4ac86;
+  --chart-5: #a0b8d0;
   --radius: 0.625rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1e2d1c;
-  --sidebar-primary: #2d4a2b;
+  --sidebar: #fafbfc;
+  --sidebar-foreground: #2a3a4a;
+  --sidebar-primary: #4a6fa5;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f0f2eb;
-  --sidebar-accent-foreground: #1e2d1c;
-  --sidebar-border: #dde0d4;
-  --sidebar-ring: #2d4a2b;
+  --sidebar-accent: #e8eff7;
+  --sidebar-accent-foreground: #2a3a4a;
+  --sidebar-border: #d4e1ed;
+  --sidebar-ring: #4a6fa5;
 }
 
 @layer base {
@@ -420,21 +420,21 @@
 
 /* ─── Background patterns ─── */
 .bg-dot-pattern {
-  background-image: radial-gradient(circle, #dde0d4 1px, transparent 1px);
+  background-image: radial-gradient(circle, #d4e1ed 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .bg-grid-pattern {
   background-image:
-    linear-gradient(to right, #dde0d420 1px, transparent 1px),
-    linear-gradient(to bottom, #dde0d420 1px, transparent 1px);
+    linear-gradient(to right, #d4e1ed20 1px, transparent 1px),
+    linear-gradient(to bottom, #d4e1ed20 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
 .bg-leaf-pattern {
   background-image:
-    radial-gradient(ellipse at 20% 50%, #f0f2eb 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, #f0f2eb 0%, transparent 40%);
+    radial-gradient(ellipse at 20% 50%, #e8eff7 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, #e8eff7 0%, transparent 40%);
 }
 
 /* ─── Card hover ─── */
@@ -448,16 +448,16 @@
   box-shadow:
     0 4px 6px -1px rgb(0 0 0 / 0.05),
     0 10px 15px -3px rgb(0 0 0 / 0.05),
-    0 0 0 1px rgb(45 74 43 / 0.08);
+    0 0 0 1px rgb(74 111 165 / 0.08);
 }
 
 /* ─── Login background ─── */
 .login-bg {
-  background-color: #faf9f6;
+  background-color: #fafbfc;
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, #f0f2eb 0%, transparent 70%),
-    radial-gradient(circle at 80% 80%, #f0f2eb60 0%, transparent 50%),
-    radial-gradient(circle at 20% 70%, #dde0d430 0%, transparent 40%);
+    radial-gradient(ellipse 80% 50% at 50% -20%, #e8eff7 0%, transparent 70%),
+    radial-gradient(circle at 80% 80%, #e8eff760 0%, transparent 50%),
+    radial-gradient(circle at 20% 70%, #d4e1ed30 0%, transparent 40%);
 }
 
 /* ─── Sidebar active indicator ─── */
@@ -474,7 +474,7 @@
   width: 3px;
   height: 60%;
   border-radius: 0 4px 4px 0;
-  background: #a4ac86;
+  background: #a0b8d0;
 }
 
 /* ─── Smooth scrollbar ─── */
@@ -488,12 +488,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #a4ac86;
+  background: #a0b8d0;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #7d8471;
+  background: #4a6a80;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -537,7 +537,7 @@
 
 /* ─── Focus ring ─── */
 :focus-visible {
-  outline: 2px solid #2d4a2b;
+  outline: 2px solid #4a6fa5;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -548,5 +548,5 @@
 }
 
 .table-row-hover:hover {
-  background-color: #faf9f6;
+  background-color: #fafbfc;
 }
