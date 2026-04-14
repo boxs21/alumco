@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, BookOpen, Users, BarChart3, LogOut } from "lucide-react";
+import { LayoutDashboard, BookOpen, Users, BarChart3, CalendarDays, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
 const navItems = [
-  { label: "Dashboard",  shortLabel: "Dashboard",  href: "/admin/dashboard",      icon: LayoutDashboard },
-  { label: "Capacitaciones", shortLabel: "Capac.",  href: "/admin/capacitaciones", icon: BookOpen },
-  { label: "Colaboradores",  shortLabel: "Colab.",  href: "/admin/colaboradores",  icon: Users },
-  { label: "Reportes",       shortLabel: "Reportes", href: "/admin/reportes",      icon: BarChart3 },
+  { label: "Dashboard",      shortLabel: "Dashboard", href: "/admin/dashboard",      icon: LayoutDashboard },
+  { label: "Capacitaciones", shortLabel: "Capac.",    href: "/admin/capacitaciones", icon: BookOpen },
+  { label: "Colaboradores",  shortLabel: "Colab.",    href: "/admin/colaboradores",  icon: Users },
+  { label: "Reportes",       shortLabel: "Reportes",  href: "/admin/reportes",       icon: BarChart3 },
+  { label: "Calendario",     shortLabel: "Agenda",    href: "/admin/calendario",     icon: CalendarDays },
 ];
 
 export default function BottomNav() {

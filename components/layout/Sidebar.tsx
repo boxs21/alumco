@@ -7,6 +7,7 @@ import {
   BookOpen,
   Users,
   BarChart3,
+  CalendarDays,
   LogOut,
   Leaf,
 } from "lucide-react";
@@ -19,6 +20,7 @@ const navItems = [
   { label: "Capacitaciones",  href: "/admin/capacitaciones",  icon: BookOpen },
   { label: "Colaboradores",   href: "/admin/colaboradores",   icon: Users },
   { label: "Reportes",        href: "/admin/reportes",        icon: BarChart3 },
+  { label: "Calendario",      href: "/admin/calendario",      icon: CalendarDays },
 ];
 
 export default function Sidebar() {
