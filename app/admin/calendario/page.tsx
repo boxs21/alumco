@@ -171,7 +171,7 @@ export default function CalendarioPage() {
         .neq("status", "ARCHIVED")
         .order("title"),
     ]);
-    const s = (sessionsData ?? []) as SessionRow[];
+    const s = (sessionsData ?? []) as unknown as SessionRow[];
     setSessions(s);
     setAllTrainings(trainingsData ?? []);
     setConflictIds(computeConflictIds(s));
