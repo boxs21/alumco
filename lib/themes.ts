@@ -330,7 +330,7 @@ export const themes: Theme[] = [
   },
 ];
 
-export const DEFAULT_THEME = "forest-canopy";
+export const DEFAULT_THEME = "arctic-frost";
 
 export function getThemeById(id: string): Theme {
   return themes.find((t) => t.id === id) ?? themes[0];
