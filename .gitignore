@@ -41,8 +41,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# claude code
+# ai / claude tooling — never publish
+_ai/
 .claude/
+.agents/
+skills-lock.json
 CLAUDE.md
 AGENTS.md
 PROMPTS_HOY.md
