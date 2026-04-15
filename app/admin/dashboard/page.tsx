@@ -79,22 +79,30 @@ export default function DashboardPage() {
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
 
     async function load() {
       const [
-        { data: profilesData },
-        { data: trainingsData },
-        { data: assignmentsData },
-        { data: certificatesData },
+        { data: profilesData, error: e1 },
+        { data: trainingsData, error: e2 },
+        { data: assignmentsData, error: e3 },
+        { data: certificatesData, error: e4 },
       ] = await Promise.all([
         supabase.from("profiles").select("id, sede_id, active").eq("role", "COLLABORATOR"),
         supabase.from("trainings").select("id, target_area, sede_id").eq("status", "PUBLISHED"),
         supabase.from("assignments").select("user_id, training_id, status"),
         supabase.from("certificates").select("user_id"),
       ]);
+
+      const firstError = e1 ?? e2 ?? e3 ?? e4;
+      if (firstError) {
+        console.error("[dashboard] load error:", firstError.message);
+        setLoadError("No se pudieron cargar los datos del dashboard.");
+        return;
+      }
 
       setProfiles(profilesData ?? []);
       setTrainings(trainingsData ?? []);
@@ -127,6 +135,11 @@ export default function DashboardPage() {
       <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Dashboard" />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+        {loadError && (
+          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+            {loadError}
+          </div>
+        )}
         {/* Stat Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
           <StatCard title="Colaboradores activos" value={stats.colaboradores} icon={Users} delay={0} />

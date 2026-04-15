@@ -7,7 +7,13 @@ import TrainingCard from "@/components/shared/TrainingCard";
 import EmptyState from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase";
 import { SEDES, sedeName } from "@/lib/config";
-import { Plus, BookOpen } from "lucide-react";
+import { Plus, BookOpen, AlertCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Training {
   id: string;
@@ -29,20 +35,54 @@ export default function CapacitacionesPage() {
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Training | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [formDeleteError, setFormDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
     async function load() {
-      const [{ data: trainingsData }, { data: assignmentsData }] = await Promise.all([
+      const [{ data: trainingsData, error: e1 }, { data: assignmentsData, error: e2 }] = await Promise.all([
         supabase.from("trainings").select("id, title, target_area, status, sede_id").order("created_at", { ascending: false }),
         supabase.from("assignments").select("training_id, status"),
       ]);
+      if (e1 ?? e2) {
+        console.error("[capacitaciones] load error:", (e1 ?? e2)?.message);
+        setLoadError("No se pudieron cargar las capacitaciones.");
+        setLoading(false);
+        return;
+      }
       setTrainings((trainingsData as Training[]) ?? []);
       setAssignments(assignmentsData ?? []);
       setLoading(false);
     }
     load();
   }, []);
+
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    const supabase = createClient();
+    const { error: e1 } = await supabase.from("assignments").delete().eq("training_id", deleteTarget.id);
+    if (e1) {
+      console.error("[capacitaciones] delete assignments error:", e1.message);
+      setFormDeleteError("No se pudieron eliminar las asignaciones. Intenta de nuevo.");
+      setDeleting(false);
+      return;
+    }
+    const { error: e2 } = await supabase.from("trainings").delete().eq("id", deleteTarget.id);
+    if (e2) {
+      console.error("[capacitaciones] delete training error:", e2.message);
+      setFormDeleteError("No se pudo eliminar la capacitación. Intenta de nuevo.");
+      setDeleting(false);
+      return;
+    }
+    setTrainings((prev) => prev.filter((t) => t.id !== deleteTarget.id));
+    setAssignments((prev) => prev.filter((a) => a.training_id !== deleteTarget.id));
+    setDeleteTarget(null);
+    setDeleting(false);
+  }
 
   const filtered = trainings.filter((t) => {
     if (sedeTab === "CONCEPCION" && t.sede_id !== SEDES.CONCEPCION.id && t.sede_id !== null) return false;
@@ -113,6 +153,12 @@ export default function CapacitacionesPage() {
           </Link>
         </div>
 
+        {loadError && (
+          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+            {loadError}
+          </div>
+        )}
+
         {loading ? (
           <div className="text-sm text-[#7d8471] py-8 text-center">Cargando...</div>
         ) : filtered.length > 0 ? (
@@ -131,6 +177,7 @@ export default function CapacitacionesPage() {
                   completados={ta.filter((a) => a.status === "COMPLETED").length}
                   asignados={ta.length}
                   delay={index}
+                  onDelete={() => setDeleteTarget(t)}
                 />
               );
             })}
@@ -143,6 +190,48 @@ export default function CapacitacionesPage() {
           />
         )}
       </div>
+      {/* ── Delete confirmation modal ── */}
+      <Dialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open && !deleting) { setDeleteTarget(null); setFormDeleteError(null); } }}
+      >
+        <DialogContent className="max-w-sm rounded-2xl border-[#dde0d4]">
+          <DialogHeader>
+            <DialogTitle className="text-[#1e2d1c] flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
+              Eliminar capacitación
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-1">
+            <p className="text-sm text-[#7d8471]">
+              ¿Estás seguro de que quieres eliminar{" "}
+              <span className="font-semibold text-[#1e2d1c]">
+                {deleteTarget?.title}
+              </span>
+              ? Esta acción también eliminará todas sus asignaciones y no se puede deshacer.
+            </p>
+            {formDeleteError && (
+              <p className="text-sm text-red-600">{formDeleteError}</p>
+            )}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+                className="flex-1 h-10 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm text-[#7d8471] hover:bg-[#f0f2eb] transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 h-10 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {deleting ? "Eliminando..." : "Eliminar"}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

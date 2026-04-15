@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
+import { useState } from "react";
 import { createClient } from "@/lib/supabase";
 
 const navItems = [
@@ -26,10 +27,17 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
 
   async function handleSignOut() {
+    setSigningOut(true);
     const supabase = createClient();
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("[Sidebar] sign-out error:", error.message);
+      setSigningOut(false);
+      return;
+    }
     router.push("/login");
   }
 
@@ -52,7 +60,7 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav aria-label="Navegación principal" className="relative flex-1 px-3 py-5 space-y-0.5">
         {navItems.map((item, index) => {
-          const isActive = pathname.startsWith(item.href);
+          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link
               key={item.href}
@@ -91,10 +99,11 @@ export default function Sidebar() {
 
         <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#a4ac86] hover:bg-[#f0f2eb] hover:text-[#7d8471] transition-all duration-200"
+          disabled={signingOut}
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#a4ac86] hover:bg-[#f0f2eb] hover:text-[#7d8471] transition-all duration-200 disabled:opacity-50"
         >
           <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
-          Cerrar sesi&oacute;n
+          {signingOut ? "Cerrando..." : "Cerrar sesión"}
         </button>
       </div>
     </aside>

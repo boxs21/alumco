@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, BookOpen, Users, BarChart3, Calendar, LogOut } from "lucide-react";
@@ -16,10 +17,17 @@ const navItems = [
 export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
 
   async function handleSignOut() {
+    setSigningOut(true);
     const supabase = createClient();
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("[BottomNav] sign-out error:", error.message);
+      setSigningOut(false);
+      return;
+    }
     router.push("/login");
   }
 
@@ -44,11 +52,12 @@ export default function BottomNav() {
       })}
       <button
         onClick={handleSignOut}
-        className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[#a4ac86] hover:text-[#7d8471] transition-colors"
+        disabled={signingOut}
+        className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[#a4ac86] hover:text-[#7d8471] transition-colors disabled:opacity-50"
         aria-label="Cerrar sesión"
       >
         <LogOut className="h-[22px] w-[22px]" />
-        <span className="text-[10px] font-medium leading-none">Salir</span>
+        <span className="text-[10px] font-medium leading-none">{signingOut ? "..." : "Salir"}</span>
       </button>
     </nav>
   );

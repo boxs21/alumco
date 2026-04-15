@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import SedeBadge from "./SedeBadge";
-import { BookOpen, FileEdit } from "lucide-react";
+import { BookOpen, FileEdit, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 interface TrainingCardProps {
@@ -15,6 +15,7 @@ interface TrainingCardProps {
   asignados: number;
   href?: string;
   delay?: number;
+  onDelete?: () => void;
 }
 
 const statusConfig = {
@@ -34,6 +35,7 @@ export default function TrainingCard({
   asignados,
   href,
   delay = 0,
+  onDelete,
 }: TrainingCardProps) {
   const statusInfo = statusConfig[status];
   const progress = asignados > 0 ? Math.round((completados / asignados) * 100) : 0;
@@ -53,16 +55,25 @@ export default function TrainingCard({
         } opacity-70`} />
         <CardContent className="p-5 flex flex-col gap-4">
           <div className="flex items-start justify-between gap-2">
-            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-              status === "DRAFT" ? "bg-[#f0f2eb]" : "bg-[#f0f2eb]"
-            }`}>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f0f2eb]">
               {status === "DRAFT" ? (
                 <FileEdit className="h-5 w-5 text-[#6b7260]" />
               ) : (
                 <BookOpen className="h-5 w-5 text-[#2d4a2b]" />
               )}
             </div>
-            <Badge className={statusInfo.className}>{statusInfo.label}</Badge>
+            <div className="flex items-center gap-1.5">
+              <Badge className={statusInfo.className}>{statusInfo.label}</Badge>
+              {onDelete && (
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(); }}
+                  className="h-7 w-7 flex items-center justify-center rounded-lg text-[#a4ac86] hover:text-red-500 hover:bg-red-50 transition-colors"
+                  aria-label="Eliminar capacitación"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
           </div>
 
           <div>

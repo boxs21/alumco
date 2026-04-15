@@ -10,13 +10,13 @@ interface SedeBadgeProps {
 // Uses CSS variables from ThemeProvider so colors adapt to ALL themes (light & dark)
 // without needing any CSS override selectors.
 const sedeStyles: Record<string, { label: string; ariaLabel: string; colorVar: string; bgVar: string }> = {
-  s1: {
+  [SEDES.CONCEPCION.id]: {
     label: SEDES.CONCEPCION.nombre,
     ariaLabel: `${SEDES.CONCEPCION.nombre} (Sede)`,
     colorVar: "var(--color-sede-concepcion)",
     bgVar:    "var(--color-sede-concepcion-bg)",
   },
-  s2: {
+  [SEDES.COYHAIQUE.id]: {
     label: SEDES.COYHAIQUE.nombre,
     ariaLabel: `${SEDES.COYHAIQUE.nombre} (Sede)`,
     colorVar: "var(--color-sede-coyhaique)",

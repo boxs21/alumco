@@ -38,7 +38,6 @@ interface SedeStats {
   colaboradores: number;
   cumplimiento: number;
   capacitaciones: number;
-  certificados: number;
 }
 
 export default function ReportesPage() {
@@ -52,6 +51,7 @@ export default function ReportesPage() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [trainingsCount, setTrainingsCount] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [appliedFrom, setAppliedFrom] = useState("");
   const [appliedTo,   setAppliedTo]   = useState("");
@@ -65,14 +65,21 @@ export default function ReportesPage() {
       if (appliedTo)   assignmentsQuery = assignmentsQuery.lte("created_at", `${appliedTo}T23:59:59`);
 
       const [
-        { data: profilesData },
-        { data: assignmentsData },
-        { data: trainingsData },
+        { data: profilesData, error: e1 },
+        { data: assignmentsData, error: e2 },
+        { data: trainingsData, error: e3 },
       ] = await Promise.all([
         supabase.from("profiles").select("id, name, email, area, sede_id, active").eq("role", "COLLABORATOR"),
         assignmentsQuery,
         supabase.from("trainings").select("id, sede_id").eq("status", "PUBLISHED"),
       ]);
+      if (e1 ?? e2 ?? e3) {
+        console.error("[reportes] load error:", (e1 ?? e2 ?? e3)?.message);
+        setLoadError("No se pudieron cargar los datos de reportes.");
+        setLoading(false);
+        return;
+      }
+      setLoadError(null);
       setProfiles(profilesData ?? []);
       setAssignments(assignmentsData ?? []);
 
@@ -99,7 +106,6 @@ export default function ReportesPage() {
       colaboradores: sedeProfiles.filter((p) => p.active).length,
       cumplimiento: total > 0 ? Math.round((completed / total) * 100) : 0,
       capacitaciones: trainingsCount[sedeId] ?? 0,
-      certificados: 0, // would need has_certificate in assignments query
     };
   }
 
@@ -203,6 +209,12 @@ export default function ReportesPage() {
           </CardContent>
         </Card>
 
+        {loadError && (
+          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+            {loadError}
+          </div>
+        )}
+
         {/* Comparativa */}
         <Card className="border-[#dde0d4] shadow-sm">
           <CardContent className="p-4 lg:p-6">
@@ -224,7 +236,6 @@ export default function ReportesPage() {
                       { label: "Colaboradores",  value: s.colaboradores },
                       { label: "Cumplimiento",   value: `${s.cumplimiento}%` },
                       { label: "Capacitaciones", value: s.capacitaciones },
-                      { label: "Certificados",   value: s.certificados },
                     ].map(({ label, value }) => (
                       <div key={label} className={`p-3 rounded-lg ${bg}`}>
                         <p className="text-xl font-semibold text-[#1e2d1c]">{value}</p>

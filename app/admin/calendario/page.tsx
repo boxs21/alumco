@@ -147,7 +147,6 @@ export default function CalendarioPage() {
   const [formSedeId, setFormSedeId] = useState("");
   const [formStart, setFormStart] = useState("");
   const [formEnd, setFormEnd] = useState("");
-  const [formModality, setFormModality] = useState<"PRESENCIAL" | "ONLINE">("PRESENCIAL");
   const [formNotes, setFormNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -155,10 +154,13 @@ export default function CalendarioPage() {
 
   // ─── Load data ───────────────────────────────────────────────────────────────
 
+  const [loadError, setLoadError] = useState<string | null>(null);
+
   const loadData = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     const supabase = createClient();
-    const [{ data: sessionsData }, { data: trainingsData }] = await Promise.all([
+    const [{ data: sessionsData, error: e1 }, { data: trainingsData, error: e2 }] = await Promise.all([
       supabase
         .from("sessions")
         .select(
@@ -171,6 +173,12 @@ export default function CalendarioPage() {
         .neq("status", "ARCHIVED")
         .order("title"),
     ]);
+    if (e1 ?? e2) {
+      console.error("[calendario] load error:", (e1 ?? e2)?.message);
+      setLoadError("No se pudieron cargar los datos del calendario.");
+      setLoading(false);
+      return;
+    }
     const s = (sessionsData ?? []) as unknown as SessionRow[];
     setSessions(s);
     setAllTrainings(trainingsData ?? []);
@@ -218,10 +226,15 @@ export default function CalendarioPage() {
       setPreviewConflicts([]);
       return;
     }
+    const sedeIds =
+      formSedeId === "AMBAS"
+        ? [SEDES.CONCEPCION.id, SEDES.COYHAIQUE.id]
+        : [formSedeId];
     setPreviewConflicts(
       sessions.filter(
         (s) =>
-          s.sede_id === formSedeId &&
+          s.sede_id !== null &&
+          sedeIds.includes(s.sede_id) &&
           s.start_date <= formEnd &&
           s.end_date >= formStart
       )
@@ -251,7 +264,6 @@ export default function CalendarioPage() {
     setFormSedeId("");
     setFormStart("");
     setFormEnd("");
-    setFormModality("PRESENCIAL");
     setFormNotes("");
     setFormError(null);
     setPreviewConflicts([]);
@@ -271,15 +283,29 @@ export default function CalendarioPage() {
     setSaving(true);
     setFormError(null);
     const supabase = createClient();
-    const { error } = await supabase.from("sessions").insert({
-      id: crypto.randomUUID(),
-      training_id: formTrainingId,
-      sede_id: formSedeId || null,
-      start_date: formStart,
-      end_date: formEnd,
-      modality: formModality,
-      notes: formNotes.trim() || null,
-    });
+    const rows =
+      formSedeId === "AMBAS"
+        ? [SEDES.CONCEPCION.id, SEDES.COYHAIQUE.id].map((sede_id) => ({
+            id: crypto.randomUUID(),
+            training_id: formTrainingId,
+            sede_id,
+            start_date: formStart,
+            end_date: formEnd,
+            modality: "PRESENCIAL" as const,
+            notes: formNotes.trim() || null,
+          }))
+        : [
+            {
+              id: crypto.randomUUID(),
+              training_id: formTrainingId,
+              sede_id: formSedeId || null,
+              start_date: formStart,
+              end_date: formEnd,
+              modality: "PRESENCIAL" as const,
+              notes: formNotes.trim() || null,
+            },
+          ];
+    const { error } = await supabase.from("sessions").insert(rows);
     if (error) {
       setFormError(error.message);
       setSaving(false);
@@ -294,7 +320,11 @@ export default function CalendarioPage() {
 
   async function handleDelete(id: string) {
     const supabase = createClient();
-    await supabase.from("sessions").delete().eq("id", id);
+    const { error } = await supabase.from("sessions").delete().eq("id", id);
+    if (error) {
+      console.error("[calendario] delete session error:", error.message);
+      return;
+    }
     loadData();
   }
 
@@ -381,6 +411,14 @@ export default function CalendarioPage() {
             </button>
           </div>
         </div>
+
+        {/* ── Load error banner ── */}
+        {loadError && (
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            {loadError}
+          </div>
+        )}
 
         {/* ── Conflict banner ── */}
         {visibleConflictCount > 0 && (
@@ -667,6 +705,12 @@ export default function CalendarioPage() {
                       Coyhaique
                     </span>
                   </SelectItem>
+                  <SelectItem value="AMBAS">
+                    <span className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#7d8471]" />
+                      Ambas sedes
+                    </span>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -701,29 +745,6 @@ export default function CalendarioPage() {
                   }}
                   className="h-10 rounded-xl border-[#dde0d4]"
                 />
-              </div>
-            </div>
-
-            {/* Modality */}
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-[#1e2d1c]">
-                Modalidad
-              </Label>
-              <div className="flex rounded-xl bg-[#f0f2eb] p-1 gap-1">
-                {(["PRESENCIAL", "ONLINE"] as const).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setFormModality(m)}
-                    className={cn(
-                      "flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors",
-                      formModality === m
-                        ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
-                        : "text-[#7d8471] hover:text-[#1e2d1c]",
-                    )}
-                  >
-                    {m === "PRESENCIAL" ? "Presencial" : "Online"}
-                  </button>
-                ))}
               </div>
             </div>
 
