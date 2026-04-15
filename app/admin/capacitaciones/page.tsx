@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import Topbar from "@/components/layout/Topbar";
 import TrainingCard from "@/components/shared/TrainingCard";
 import EmptyState from "@/components/shared/EmptyState";
@@ -29,7 +30,6 @@ interface Assignment {
 }
 
 export default function CapacitacionesPage() {
-  const [selectedSede, setSelectedSede] = useState("global");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [sedeTab, setSedeTab] = useState("ALL");
   const [trainings, setTrainings] = useState<Training[]>([]);
@@ -78,10 +78,12 @@ export default function CapacitacionesPage() {
       setDeleting(false);
       return;
     }
+    const deleted = deleteTarget.title;
     setTrainings((prev) => prev.filter((t) => t.id !== deleteTarget.id));
     setAssignments((prev) => prev.filter((a) => a.training_id !== deleteTarget.id));
     setDeleteTarget(null);
     setDeleting(false);
+    toast.success(`"${deleted}" eliminada correctamente`);
   }
 
   const filtered = trainings.filter((t) => {
@@ -105,7 +107,7 @@ export default function CapacitacionesPage() {
 
   return (
     <div>
-      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Capacitaciones" />
+      <Topbar title="Capacitaciones" />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Header with filters + action */}

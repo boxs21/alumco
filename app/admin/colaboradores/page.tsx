@@ -42,7 +42,6 @@ function getInitials(name: string): string {
 }
 
 export default function ColaboradoresPage() {
-  const [selectedSede, setSelectedSede] = useState("global");
   const [sedeTab, setSedeTab] = useState("ALL");
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -102,7 +101,7 @@ export default function ColaboradoresPage() {
 
   return (
     <div>
-      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Colaboradores" />
+      <Topbar title="Colaboradores" />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Sede Tabs */}

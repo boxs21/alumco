@@ -11,7 +11,7 @@ import {
   LogOut,
   Leaf,
 } from "lucide-react";
-import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
+import DarkModeToggle from "@/components/shared/DarkModeToggle";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase";
@@ -52,7 +52,7 @@ export default function Sidebar() {
           <Leaf className="h-4 w-4 text-[#a4ac86]" aria-hidden="true" />
         </div>
         <div>
-          <p className="text-base font-bold text-[#1e2d1c] leading-tight tracking-tight" style={{ fontFamily: "var(--font-pt-serif)" }}>ALUMCO</p>
+          <p className="text-base font-bold text-[#1e2d1c] leading-tight tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>ALUMCO</p>
           <p className="text-[11px] text-[#7d8471] font-medium uppercase tracking-widest">Capacitaci&oacute;n</p>
         </div>
       </div>
@@ -92,8 +92,8 @@ export default function Sidebar() {
 
         <div className="mt-2" />
 
-        {/* Theme Switcher */}
-        <ThemeSwitcher />
+        {/* Dark Mode Toggle */}
+        <DarkModeToggle />
 
         <div className="mt-1" />
 

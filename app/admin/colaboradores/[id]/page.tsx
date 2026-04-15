@@ -56,7 +56,6 @@ function getInitials(name: string): string {
 
 export default function ColaboradorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [selectedSede, setSelectedSede] = useState("global");
   const [profile, setProfile] = useState<Profile | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [certs, setCerts] = useState<Certificate[]>([]);
@@ -89,7 +88,7 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
   if (loading) {
     return (
       <div>
-        <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
+        <Topbar title="" />
         <div className="p-6 text-sm text-[#7d8471]">Cargando...</div>
       </div>
     );
@@ -98,7 +97,7 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
   if (!profile) {
     return (
       <div>
-        <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
+        <Topbar title="" />
         <div className="p-6 text-sm text-[#7d8471]">Colaborador no encontrado.</div>
       </div>
     );
@@ -123,7 +122,7 @@ export default function ColaboradorDetailPage({ params }: { params: Promise<{ id
 
   return (
     <div>
-      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
+      <Topbar title="" />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Header */}

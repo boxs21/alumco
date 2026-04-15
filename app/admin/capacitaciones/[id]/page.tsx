@@ -74,7 +74,6 @@ const statusConfig = {
 
 export default function CapacitacionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [selectedSede, setSelectedSede] = useState("global");
   const [training, setTraining] = useState<Training | null>(null);
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [questionCount, setQuestionCount] = useState(0);
@@ -126,7 +125,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
   if (loading) {
     return (
       <div>
-        <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
+        <Topbar title="" />
         <div className="p-6 text-sm text-[#7d8471]">Cargando...</div>
       </div>
     );
@@ -135,7 +134,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
   if (!training) {
     return (
       <div>
-        <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
+        <Topbar title="" />
         <div className="p-6 text-sm text-[#7d8471]">Capacitación no encontrada.</div>
       </div>
     );
@@ -160,7 +159,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
 
   return (
     <div>
-      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="" />
+      <Topbar title="" />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Breadcrumb */}

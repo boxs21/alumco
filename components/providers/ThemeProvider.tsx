@@ -56,7 +56,7 @@ function applyThemeToDOM(theme: Theme) {
   root.style.setProperty("--color-forest", c.primary);
   root.style.setProperty("--color-forest-hover", c.primaryHover);
   root.style.setProperty("--color-forest-light", c.secondary);
-  root.style.setProperty("--color-forest-olive", c.accent);
+  root.style.setProperty("--color-forest-olive", c.iconAccent);
   root.style.setProperty("--color-forest-sage", c.mutedForeground);
   root.style.setProperty("--color-forest-ivory", c.background);
   root.style.setProperty("--color-forest-text", c.foreground);
@@ -76,15 +76,15 @@ function applyThemeToDOM(theme: Theme) {
   // Dark mode: toggle data-dark for CSS overrides
   if (theme.dark) {
     root.setAttribute("data-dark", "true");
-    // Dark themes need white text on primary buttons
     root.style.setProperty("--primary-foreground", "#ffffff");
-    // Emerald badges need darker bg in dark mode
+    // Emerald badges in dark mode
     root.style.setProperty("--color-emerald-bg", "#0f2a1a");
     root.style.setProperty("--color-emerald-text", "#6ee7b7");
     root.style.setProperty("--color-amber-bg", "#2a2010");
     root.style.setProperty("--color-amber-text", "#fcd34d");
   } else {
     root.removeAttribute("data-dark");
+    // --color-forest-olive is already set to c.accent by applyThemeToDOM above — no removeProperty needed
     root.style.removeProperty("--color-emerald-bg");
     root.style.removeProperty("--color-emerald-text");
     root.style.removeProperty("--color-amber-bg");

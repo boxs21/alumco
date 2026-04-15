@@ -30,6 +30,13 @@ interface Certificate {
   user_id: string;
 }
 
+interface RecentCert {
+  id: string;
+  issued_at: string | null;
+  profiles: { name: string | null; email: string | null } | null;
+  trainings: { title: string } | null;
+}
+
 interface SedeStats {
   colaboradores: number;
   capacitaciones: number;
@@ -79,6 +86,7 @@ export default function DashboardPage() {
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [recentCerts, setRecentCerts] = useState<RecentCert[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -90,11 +98,17 @@ export default function DashboardPage() {
         { data: trainingsData, error: e2 },
         { data: assignmentsData, error: e3 },
         { data: certificatesData, error: e4 },
+        { data: recentData },
       ] = await Promise.all([
         supabase.from("profiles").select("id, sede_id, active").eq("role", "COLLABORATOR"),
         supabase.from("trainings").select("id, target_area, sede_id").eq("status", "PUBLISHED"),
         supabase.from("assignments").select("user_id, training_id, status"),
         supabase.from("certificates").select("user_id"),
+        supabase
+          .from("certificates")
+          .select("id, issued_at, profiles(name, email), trainings(title)")
+          .order("issued_at", { ascending: false })
+          .limit(5),
       ]);
 
       const firstError = e1 ?? e2 ?? e3 ?? e4;
@@ -108,6 +122,7 @@ export default function DashboardPage() {
       setTrainings(trainingsData ?? []);
       setAssignments(assignmentsData ?? []);
       setCertificates(certificatesData ?? []);
+      setRecentCerts(((recentData ?? []) as unknown) as RecentCert[]);
     }
 
     load();
@@ -132,7 +147,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Dashboard" />
+      <Topbar title="Dashboard" />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {loadError && (
@@ -140,6 +155,26 @@ export default function DashboardPage() {
             {loadError}
           </div>
         )}
+        {/* Sede filter pills */}
+        <div className="flex rounded-lg bg-[#f0f2eb] p-1 w-fit">
+          {[
+            { key: "global",           label: "Todas" },
+            { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre },
+            { key: SEDES.COYHAIQUE.id,  label: SEDES.COYHAIQUE.nombre },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setSelectedSede(tab.key)}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                selectedSede === tab.key
+                  ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
+                  : "text-[#7d8471] hover:text-[#1e2d1c]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
         {/* Stat Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
           <StatCard title="Colaboradores activos" value={stats.colaboradores} icon={Users} delay={0} />
@@ -183,10 +218,46 @@ export default function DashboardPage() {
           <Card className="border-[#dde0d4]/80 shadow-sm animate-fade-in-up stagger-5">
             <CardContent className="p-4 lg:p-6">
               <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-4 lg:mb-5">Actividad reciente</h2>
-              <div className="flex flex-col items-center py-8 text-center">
-                <Activity className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
-                <p className="text-sm text-[#7d8471]">Sin actividad reciente</p>
-              </div>
+              {recentCerts.length === 0 ? (
+                <div className="flex flex-col items-center py-8 text-center">
+                  <Activity className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
+                  <p className="text-sm text-[#7d8471]">Sin actividad reciente</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {recentCerts.map((c) => {
+                    const profile = Array.isArray(c.profiles) ? c.profiles[0] : c.profiles;
+                    const training = Array.isArray(c.trainings) ? c.trainings[0] : c.trainings;
+                    const displayName = profile?.name ?? profile?.email ?? "Colaborador";
+                    const initials = displayName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
+                    const timeAgo = c.issued_at
+                      ? (() => {
+                          const diff = Date.now() - new Date(c.issued_at).getTime();
+                          const mins = Math.floor(diff / 60000);
+                          if (mins < 60) return `hace ${mins}m`;
+                          const hrs = Math.floor(mins / 60);
+                          if (hrs < 24) return `hace ${hrs}h`;
+                          return `hace ${Math.floor(hrs / 24)}d`;
+                        })()
+                      : "";
+                    return (
+                      <div key={c.id} className="flex items-start gap-3">
+                        <div className="h-8 w-8 rounded-full bg-[#f0f2eb] flex items-center justify-center shrink-0">
+                          <span className="text-xs font-semibold text-[#2d4a2b]">{initials}</span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-[#1e2d1c] leading-snug">
+                            <span className="font-medium">{displayName}</span>
+                            {" completó "}
+                            <span className="font-medium">&ldquo;{training?.title ?? "—"}&rdquo;</span>
+                          </p>
+                          <p className="text-xs text-[#a4ac86] mt-0.5">{timeAgo}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
 

@@ -2,6 +2,7 @@
 
 import { use, useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import Topbar from "@/components/layout/Topbar";
 import SedeBadge from "@/components/shared/SedeBadge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,7 +41,6 @@ interface Profile {
 export default function AsignarPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const [selectedSede, setSelectedSede] = useState("global");
   const [targetType, setTargetType] = useState<TargetType | null>(null);
   const [targetSede, setTargetSede] = useState<string | null>(null);
   const [targetArea, setTargetArea] = useState<string | null>(null);
@@ -134,6 +134,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
       return;
     }
 
+    toast.success("Capacitación asignada correctamente");
     router.push(`/admin/capacitaciones/${id}`);
   }
 
@@ -150,7 +151,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
   if (loadError) {
     return (
       <div>
-        <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Asignar" />
+        <Topbar title="Asignar" />
         <div className="p-6 text-sm text-red-600">Error al cargar colaboradores: {loadError}</div>
       </div>
     );
@@ -158,7 +159,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
   return (
     <div>
-      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title={`Asignar: ${trainingTitle}`} />
+      <Topbar title={`Asignar: ${trainingTitle}`} />
 
       <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-4 lg:space-y-6">
         {/* Target Type Selection */}

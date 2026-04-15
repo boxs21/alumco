@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { Leaf, BookOpen, History, LogOut } from "lucide-react";
-import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
+import DarkModeToggle from "@/components/shared/DarkModeToggle";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -57,7 +57,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
               </div>
               <span
                 className="text-sm lg:text-base font-bold text-[#1e2d1c]"
-                style={{ fontFamily: "var(--font-pt-serif)" }}
+                style={{ fontFamily: "var(--font-heading)" }}
               >
                 ALUMCO
               </span>
@@ -87,7 +87,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           {/* Right: settings + user + logout */}
           <div className="flex items-center gap-1 lg:gap-2">
             <FontSizeSwitcher compact />
-            <ThemeSwitcher compact />
+            <DarkModeToggle compact />
 
             <div className="w-px h-5 bg-[#dde0d4] mx-1 hidden sm:block" aria-hidden="true" />
 

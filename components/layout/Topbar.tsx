@@ -1,22 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SEDES } from "@/lib/config";
 import { createClient } from "@/lib/supabase";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
+import DarkModeToggle from "@/components/shared/DarkModeToggle";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 
 interface TopbarProps {
-  selectedSede: string;
-  onSedeChange: (sede: string) => void;
   title?: string;
 }
 
@@ -29,7 +19,7 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProps) {
+export default function Topbar({ title }: TopbarProps) {
   const [userName, setUserName] = useState("");
   const [userInitials, setUserInitials] = useState("--");
 
@@ -57,31 +47,7 @@ export default function Topbar({ selectedSede, onSedeChange, title }: TopbarProp
         {/* Font size + Theme switcher — compact on mobile, hidden on lg (they're in sidebar) */}
         <div className="lg:hidden flex items-center gap-1.5">
           <FontSizeSwitcher compact />
-          <ThemeSwitcher compact />
-        </div>
-
-        {/* Sede selector */}
-        <div className="hidden sm:block">
-          <Select value={selectedSede} onValueChange={onSedeChange}>
-            <SelectTrigger className="w-36 lg:w-48 h-9 lg:h-10 text-sm rounded-xl border-[#dde0d4]">
-              <SelectValue placeholder="Sede" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="global">Todas las sedes</SelectItem>
-              <SelectItem value={SEDES.CONCEPCION.id}>
-                <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-[#2d4a2b]" />
-                  {SEDES.CONCEPCION.nombre}
-                </span>
-              </SelectItem>
-              <SelectItem value={SEDES.COYHAIQUE.id}>
-                <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-[#f9a620]" />
-                  {SEDES.COYHAIQUE.nombre}
-                </span>
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <DarkModeToggle compact />
         </div>
 
         <div className="hidden sm:block h-6 w-px bg-[#dde0d4]" />

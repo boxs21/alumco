@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import Topbar from "@/components/layout/Topbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -52,7 +53,6 @@ interface Question {
 export default function NuevaCapacitacionPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedSede, setSelectedSede] = useState("global");
   const [userId, setUserId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -219,6 +219,7 @@ export default function NuevaCapacitacionPage() {
       }
     }
 
+    toast.success("Capacitación creada correctamente");
     router.push("/admin/capacitaciones");
   }
 
@@ -230,7 +231,7 @@ export default function NuevaCapacitacionPage() {
 
   return (
     <div>
-      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Nueva capacitación" />
+      <Topbar title="Nueva capacitación" />
 
       <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-4 lg:space-y-6">
         {/* Stepper */}
@@ -314,9 +315,9 @@ export default function NuevaCapacitacionPage() {
                   ))}
                   <button
                     type="button"
-                    onClick={() => setArea("Todos")}
+                    onClick={() => setArea("")}
                     className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
-                      area === "Todos"
+                      area === ""
                         ? "border-[#a4ac86] bg-[#f0f2eb] text-[#1e2d1c]"
                         : "border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]/60"
                     }`}

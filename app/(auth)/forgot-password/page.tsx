@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
             </div>
             <span
               className="text-3xl font-bold tracking-tight text-[#1e2d1c]"
-              style={{ fontFamily: "var(--font-pt-serif)" }}
+              style={{ fontFamily: "var(--font-heading)" }}
             >
               ALUMCO
             </span>

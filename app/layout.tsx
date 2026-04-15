@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
-import { PT_Sans, PT_Serif } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import FontSizeProvider from "@/components/providers/FontSizeProvider";
 
-// FreeSans equivalent — clean humanist sans-serif
-const ptSans = PT_Sans({
-  variable: "--font-pt-sans",
+// Inter — closest free equivalent to Neue Haas Grotesk (DESIGN.md: Haas)
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "700"],
-});
-
-// FreeSerif equivalent — sturdy traditional serif
-const ptSerif = PT_Serif({
-  variable: "--font-pt-serif",
-  subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700", "900"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${ptSans.variable} ${ptSerif.variable} h-full antialiased`}>
+    <html lang="es" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <FontSizeProvider>{children}</FontSizeProvider>

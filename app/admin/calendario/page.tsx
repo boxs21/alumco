@@ -340,17 +340,33 @@ export default function CalendarioPage() {
 
   return (
     <div>
-      <Topbar
-        selectedSede={selectedSede}
-        onSedeChange={setSelectedSede}
-        title="Calendario"
-      />
+      <Topbar title="Calendario" />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
         {/* ── Top controls ── */}
         <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Month navigation */}
+          {/* Month navigation + sede filter */}
           <div className="flex items-center gap-2">
+            {/* Sede pills */}
+            <div className="flex rounded-lg bg-[#f0f2eb] p-1 mr-1">
+              {[
+                { key: "global",            label: "Todas" },
+                { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre },
+                { key: SEDES.COYHAIQUE.id,  label: SEDES.COYHAIQUE.nombre },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setSelectedSede(tab.key)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    selectedSede === tab.key
+                      ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
+                      : "text-[#7d8471] hover:text-[#1e2d1c]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
             <button
               onClick={prevMonth}
               className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb] transition-colors"

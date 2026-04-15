@@ -41,7 +41,6 @@ interface SedeStats {
 }
 
 export default function ReportesPage() {
-  const [selectedSede, setSelectedSede] = useState("global");
   const [filterSede, setFilterSede] = useState("ALL");
   const [filterArea, setFilterArea] = useState("ALL");
   const [dateFrom, setDateFrom] = useState("");
@@ -125,9 +124,35 @@ export default function ReportesPage() {
     return { completadas, avg: null as number | null };
   }
 
+  function exportCSV() {
+    const date = new Date().toISOString().slice(0, 10);
+    const headers = ["Nombre", "Email", "Área", "Sede", "Completadas", "Estado"];
+    const rows = filteredProfiles.map((u) => {
+      const { completadas } = userStats(u.id);
+      return [
+        u.name ?? "",
+        u.email ?? "",
+        u.area ?? "",
+        sedeName(u.sede_id) ?? "",
+        completadas.toString(),
+        u.active ? "Activo" : "Inactivo",
+      ];
+    });
+    const csv = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `reporte-alumco-${date}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div>
-      <Topbar selectedSede={selectedSede} onSedeChange={setSelectedSede} title="Reportes" />
+      <Topbar title="Reportes" />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Filters */}
@@ -254,9 +279,13 @@ export default function ReportesPage() {
           <CardContent className="p-4 lg:p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c]">Detalle por colaborador</h2>
-              <button className="inline-flex items-center gap-2 h-9 lg:h-11 px-3 lg:px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors">
+              <button
+                onClick={exportCSV}
+                disabled={filteredProfiles.length === 0}
+                className="inline-flex items-center gap-2 h-9 lg:h-11 px-3 lg:px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
                 <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">Exportar Excel</span>
+                <span className="hidden sm:inline">Exportar CSV</span>
               </button>
             </div>
 
