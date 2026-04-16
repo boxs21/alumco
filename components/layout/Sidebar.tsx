@@ -10,6 +10,7 @@ import {
   Calendar,
   LogOut,
   Leaf,
+  UserCog,
 } from "lucide-react";
 import DarkModeToggle from "@/components/shared/DarkModeToggle";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
@@ -22,6 +23,7 @@ const navItems = [
   { label: "Colaboradores",   href: "/admin/colaboradores",   icon: Users },
   { label: "Reportes",        href: "/admin/reportes",        icon: BarChart3 },
   { label: "Calendario",      href: "/admin/calendario",      icon: Calendar },
+  { label: "Personal",        href: "/admin/personal",        icon: UserCog },
 ];
 
 export default function Sidebar() {

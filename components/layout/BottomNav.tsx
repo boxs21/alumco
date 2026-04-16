@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, BookOpen, Users, BarChart3, Calendar, LogOut } from "lucide-react";
+import { LayoutDashboard, BookOpen, Users, BarChart3, Calendar, LogOut, UserCog } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
 const navItems = [
@@ -12,6 +12,7 @@ const navItems = [
   { label: "Colaboradores",  shortLabel: "Colab.",    href: "/admin/colaboradores",  icon: Users },
   { label: "Reportes",       shortLabel: "Reportes",  href: "/admin/reportes",       icon: BarChart3 },
   { label: "Calendario",     shortLabel: "Agenda",    href: "/admin/calendario",     icon: Calendar },
+  { label: "Personal",       shortLabel: "Personal",  href: "/admin/personal",       icon: UserCog },
 ];
 
 export default function BottomNav() {

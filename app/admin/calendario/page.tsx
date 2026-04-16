@@ -106,10 +106,22 @@ function computeConflictIds(sessions: SessionRow[]): Set<string> {
 
 function sedeStyle(sedeId: string | null) {
   if (sedeId === SEDES.CONCEPCION.id)
-    return { bar: "bg-[#2d4a2b]", pill: "bg-[#f0f2eb] text-[#2d4a2b] border-[#a4ac86]/40" };
+    return {
+      bar: "bg-[#2d4a2b]",
+      pill: "bg-[#2d4a2b]/[0.09] text-[#1a3319] border-[#2d4a2b]/25",
+      dot: "bg-[#2d4a2b]",
+    };
   if (sedeId === SEDES.COYHAIQUE.id)
-    return { bar: "bg-amber-500", pill: "bg-amber-50 text-amber-700 border-amber-200" };
-  return { bar: "bg-[#7d8471]", pill: "bg-[#f0f2eb] text-[#7d8471] border-[#dde0d4]" };
+    return {
+      bar: "bg-amber-500",
+      pill: "bg-amber-500/[0.10] text-amber-900 border-amber-400/30",
+      dot: "bg-amber-500",
+    };
+  return {
+    bar: "bg-[#7d8471]",
+    pill: "bg-[#7d8471]/[0.08] text-[#4a5540] border-[#7d8471]/20",
+    dot: "bg-[#7d8471]",
+  };
 }
 
 function formatDateRange(start: string, end: string): string {
@@ -369,10 +381,10 @@ export default function CalendarioPage() {
             </button>
 
             <div className="w-48 text-center">
-              <span className="text-base font-semibold text-[#1e2d1c]">
+              <span className="text-base font-semibold text-[#1e2d1c] tracking-tight">
                 {MONTHS[month]}
               </span>
-              <span className="ml-2 text-base font-semibold text-[#2d4a2b]">
+              <span className="ml-1.5 text-base font-light text-[#7d8471]">
                 {year}
               </span>
             </div>
@@ -397,11 +409,11 @@ export default function CalendarioPage() {
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-4 text-xs text-[#7d8471]">
               <span className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-sm bg-[#f0f2eb] border border-[#a4ac86]/40" />
+                <span className="h-2 w-2 rounded-full bg-[#2d4a2b]" />
                 Concepción
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-sm bg-amber-50 border border-amber-200" />
+                <span className="h-2 w-2 rounded-full bg-amber-500" />
                 Coyhaique
               </span>
               <span className="flex items-center gap-1.5">
@@ -479,7 +491,19 @@ export default function CalendarioPage() {
                           : "bg-[#faf9f6]/50 cursor-default",
                       )}
                     >
-                      <div className="flex justify-end mb-0.5">
+                      <div className="flex items-start justify-between mb-0.5">
+                        {/* Busy-day dots — one per session type */}
+                        <div className="flex items-center gap-0.5 pt-0.5 pl-0.5">
+                          {daySessions.length > 0 && daySessions.slice(0, 3).map((s) => {
+                            const st = sedeStyle(s.sede_id);
+                            return (
+                              <span
+                                key={s.id}
+                                className={cn("h-1 w-1 rounded-full flex-shrink-0", st.dot)}
+                              />
+                            );
+                          })}
+                        </div>
                         <span
                           className={cn(
                             "text-xs font-medium h-6 w-6 flex items-center justify-center rounded-full",
@@ -509,12 +533,12 @@ export default function CalendarioPage() {
                               }}
                               title={title}
                               className={cn(
-                                "relative h-5 text-[10px] font-medium leading-5 truncate border cursor-pointer transition-opacity hover:opacity-75",
+                                "relative h-5 text-[10px] font-semibold leading-5 truncate border cursor-pointer transition-opacity hover:opacity-80",
                                 style.pill,
                                 isStart && isEnd && "rounded-full px-1.5",
-                                isStart && !isEnd && "rounded-l-full pl-1.5 rounded-r-none pr-0",
-                                !isStart && isEnd && "rounded-r-full pr-1 rounded-l-none pl-0",
-                                !isStart && !isEnd && "rounded-none px-0",
+                                isStart && !isEnd && "rounded-l-full pl-1.5 rounded-r-none border-r-0 pr-0",
+                                !isStart && isEnd && "rounded-r-full pr-1 rounded-l-none border-l-0 pl-0",
+                                !isStart && !isEnd && "rounded-none border-x-0 px-0",
                                 hasConflict && "ring-1 ring-red-400 ring-inset",
                               )}
                             >
@@ -522,14 +546,17 @@ export default function CalendarioPage() {
                                 <span className="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-red-400 flex-shrink-0" />
                               )}
                               {isStart && (
-                                <span className="hidden lg:inline">{title}</span>
+                                <span className="hidden lg:flex items-center gap-0.5 pl-0.5">
+                                  <span className={cn("h-1.5 w-1.5 rounded-full flex-shrink-0 -mt-px", style.dot)} />
+                                  <span className="truncate">{title}</span>
+                                </span>
                               )}
                             </div>
                           );
                         })}
                         {daySessions.length > 2 && (
-                          <p className="text-[10px] text-[#7d8471] pl-1">
-                            +{daySessions.length - 2}
+                          <p className="text-[10px] font-medium text-[#7d8471] pl-1">
+                            +{daySessions.length - 2} más
                           </p>
                         )}
                       </div>
@@ -544,10 +571,14 @@ export default function CalendarioPage() {
         {!loading && visibleSessions.length > 0 && (
           <Card className="border-[#dde0d4] shadow-sm animate-fade-in">
             <CardContent className="p-4 lg:p-5">
-              <h3 className="text-sm font-semibold text-[#1e2d1c] mb-3">
-                {MONTHS[month]} {year} · {visibleSessions.length} sesión
-                {visibleSessions.length !== 1 ? "es" : ""}
-              </h3>
+              <div className="flex items-baseline gap-2 mb-4">
+                <h3 className="text-sm font-semibold text-[#1e2d1c] tracking-tight">
+                  {MONTHS[month]} {year}
+                </h3>
+                <span className="text-xs text-[#a4ac86]">
+                  {visibleSessions.length} sesión{visibleSessions.length !== 1 ? "es" : ""}
+                </span>
+              </div>
               <div className="space-y-2">
                 {visibleSessions.map((s) => {
                   const style = sedeStyle(s.sede_id);
@@ -558,46 +589,59 @@ export default function CalendarioPage() {
                     <div
                       key={s.id}
                       className={cn(
-                        "flex items-center gap-3 p-3 rounded-xl border",
-                        style.pill,
-                        hasConflict && "ring-1 ring-red-300",
+                        "flex items-center gap-3 px-3 py-2.5 rounded-xl border bg-[#faf9f6]",
+                        hasConflict ? "border-red-200 ring-1 ring-red-200" : "border-[#dde0d4]",
                       )}
                     >
-                      <div className={cn("w-1 self-stretch rounded-full flex-shrink-0", style.bar)} />
+                      {/* Sede color accent */}
+                      <div className={cn("w-[3px] self-stretch rounded-full flex-shrink-0", style.bar)} />
+
                       <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <p className="text-sm font-medium text-[#1e2d1c] truncate">
+                        <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
+                          <p className="text-sm font-semibold text-[#1e2d1c] truncate leading-snug">
                             {title}
                           </p>
                           {hasConflict && (
-                            <Badge className="bg-red-100 text-red-600 border-red-200 text-[10px] shrink-0">
+                            <Badge className="bg-red-100 text-red-600 border-red-200 text-[10px] shrink-0 font-medium">
                               Conflicto
                             </Badge>
                           )}
-                          <Badge className={cn("text-[10px] shrink-0", style.pill)}>
-                            {s.modality === "PRESENCIAL" ? "Presencial" : "Online"}
-                          </Badge>
                         </div>
-                        <p className="text-xs text-[#7d8471] mt-0.5">
-                          {formatDateRange(s.start_date, s.end_date)}
-                          {s.sede_id && ` · ${sedeName(s.sede_id)}`}
-                        </p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-xs text-[#7d8471]">
+                            {formatDateRange(s.start_date, s.end_date)}
+                          </p>
+                          {s.sede_id && (
+                            <>
+                              <span className="text-[#dde0d4]">·</span>
+                              <span className="flex items-center gap-1 text-xs text-[#7d8471]">
+                                <span className={cn("h-1.5 w-1.5 rounded-full flex-shrink-0", style.dot)} />
+                                {sedeName(s.sede_id)}
+                              </span>
+                            </>
+                          )}
+                          <span className="text-[#dde0d4]">·</span>
+                          <span className="text-xs text-[#7d8471]">
+                            {s.modality === "PRESENCIAL" ? "Presencial" : "Online"}
+                          </span>
+                        </div>
                         {s.notes && (
-                          <p className="text-xs text-[#7d8471] mt-0.5 italic">
+                          <p className="text-xs text-[#a4ac86] mt-0.5 italic truncate">
                             {s.notes}
                           </p>
                         )}
                       </div>
+
                       <div className="flex items-center gap-1 shrink-0">
                         <button
                           onClick={() => router.push(`/admin/capacitaciones/${s.training_id}`)}
-                          className="h-8 px-2.5 rounded-lg text-xs text-[#2d4a2b] hover:bg-[#f0f2eb] transition-colors font-medium"
+                          className="h-7 px-2.5 rounded-lg text-xs text-[#2d4a2b] hover:bg-[#f0f2eb] transition-colors font-medium"
                         >
                           Ver
                         </button>
                         <button
                           onClick={() => handleDelete(s.id)}
-                          className="h-8 w-8 flex items-center justify-center rounded-lg text-[#a4ac86] hover:text-red-500 hover:bg-red-50 transition-colors"
+                          className="h-7 w-7 flex items-center justify-center rounded-lg text-[#a4ac86] hover:text-red-500 hover:bg-red-50 transition-colors"
                         >
                           <X className="h-3.5 w-3.5" />
                         </button>
@@ -634,7 +678,7 @@ export default function CalendarioPage() {
         <DialogContent className="max-w-md rounded-2xl border-[#dde0d4]">
           <DialogHeader>
             <DialogTitle className="text-[#1e2d1c]">
-              Nueva sesión presencial
+              Nueva sesión
             </DialogTitle>
           </DialogHeader>
 
