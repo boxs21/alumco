@@ -63,7 +63,10 @@ export default function CapacitacionesPage() {
   async function handleDelete() {
     if (!deleteTarget) return;
     setDeleting(true);
+    setFormDeleteError(null);
     const supabase = createClient();
+
+    // 1. Limpiar asignaciones
     const { error: e1 } = await supabase.from("assignments").delete().eq("training_id", deleteTarget.id);
     if (e1) {
       console.error("[capacitaciones] delete assignments error:", e1.message);
@@ -71,13 +74,31 @@ export default function CapacitacionesPage() {
       setDeleting(false);
       return;
     }
+
+    // 2. Limpiar sesiones (ignora error si no existen)
+    await supabase.from("sessions").delete().eq("training_id", deleteTarget.id);
+    
+    // 3. Limpiar archivos (ignora error si no existen)
+    await supabase.from("files").delete().eq("training_id", deleteTarget.id);
+
+    // 4. Limpiar certificados (AQUÍ ATRAPAMOS EL ERROR REAL)
+    const { error: certError } = await supabase.from("certificates").delete().eq("training_id", deleteTarget.id);
+    if (certError) {
+      console.error("[capacitaciones] delete certificates error:", certError.message);
+      setFormDeleteError(`Error en DB de Certificados: ${certError.message}`);
+      setDeleting(false);
+      return; // Detenemos el proceso para que no choque en el siguiente paso
+    }
+
+    // 5. Borrar la capacitación final
     const { error: e2 } = await supabase.from("trainings").delete().eq("id", deleteTarget.id);
     if (e2) {
       console.error("[capacitaciones] delete training error:", e2.message);
-      setFormDeleteError("No se pudo eliminar la capacitación. Intenta de nuevo.");
+      setFormDeleteError(`Error en Capacitación: ${e2.message}`);
       setDeleting(false);
       return;
     }
+
     const deleted = deleteTarget.title;
     setTrainings((prev) => prev.filter((t) => t.id !== deleteTarget.id));
     setAssignments((prev) => prev.filter((a) => a.training_id !== deleteTarget.id));
@@ -197,7 +218,7 @@ export default function CapacitacionesPage() {
         open={!!deleteTarget}
         onOpenChange={(open) => { if (!open && !deleting) { setDeleteTarget(null); setFormDeleteError(null); } }}
       >
-        <DialogContent className="max-w-sm rounded-2xl border-[#dde0d4]">
+        <DialogContent className="max-w-sm rounded-2xl border-[#dde0d4]" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle className="text-[#1e2d1c] flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
@@ -213,7 +234,7 @@ export default function CapacitacionesPage() {
               ? Esta acción también eliminará todas sus asignaciones y no se puede deshacer.
             </p>
             {formDeleteError && (
-              <p className="text-sm text-red-600">{formDeleteError}</p>
+              <p className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">{formDeleteError}</p>
             )}
             <div className="flex gap-2">
               <button
