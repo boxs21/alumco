@@ -84,7 +84,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f5f4f0] px-4 relative overflow-hidden">
+    <div
+      className="min-h-screen flex items-center justify-center bg-[#f5f4f0] px-4 relative overflow-hidden"
+      style={{
+        "--card": "#ffffff",
+        "--card-foreground": "#2a3a4a",
+        "--foreground": "#2a3a4a",
+        "--border": "#d4e1ed",
+        "--input": "#d4e1ed",
+        "--background": "#fafbfc",
+        "--secondary": "#e8eff7",
+        "--muted-foreground": "#4a6a80",
+      } as React.CSSProperties}
+    >
       {/* Subtle grain texture — aria-hidden, purely decorative */}
       <div
         aria-hidden="true"
