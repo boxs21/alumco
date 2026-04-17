@@ -19,9 +19,9 @@ interface TrainingCardProps {
 }
 
 const statusConfig = {
-  DRAFT:     { label: "Borrador",  className: "bg-[#f0f2eb] text-[#7d8471] hover:bg-[#f0f2eb]" },
-  PUBLISHED: { label: "Publicado", className: "bg-[#f0f2eb] text-[#4a7c59] hover:bg-[#f0f2eb]" },
-  ARCHIVED:  { label: "Archivado", className: "bg-[#fdf0ec] text-[#b74729] hover:bg-[#fdf0ec]" },
+  DRAFT:     { label: "Borrador",  className: "bg-[#EEF2FF] text-[#6B7AB0] hover:bg-[#EEF2FF]" },
+  PUBLISHED: { label: "Publicado", className: "bg-[#EEF2FF] text-[#2B4BA8] hover:bg-[#EEF2FF]" },
+  ARCHIVED:  { label: "Archivado", className: "bg-[#FEF0F2] text-[#E8445A] hover:bg-[#FEF0F2]" },
 };
 
 export default function TrainingCard({
@@ -47,19 +47,19 @@ export default function TrainingCard({
       className="block group animate-fade-in-up"
       style={{ animationDelay: `${delay * 0.08}s` }}
     >
-      <Card className="border-[#dde0d4]/80 shadow-sm card-hover h-full overflow-hidden">
+      <Card className="border-[#C8D4EC]/80 shadow-sm card-hover h-full overflow-hidden">
         <div className={`h-[2px] ${
-          status === "PUBLISHED" ? "bg-[#4a7c59]" :
-          status === "DRAFT" ? "bg-[#dde0d4]" :
-          "bg-[#b74729]"
+          status === "PUBLISHED" ? "bg-[#2B4BA8]" :
+          status === "DRAFT" ? "bg-[#C8D4EC]" :
+          "bg-[#E8445A]"
         } opacity-70`} />
         <CardContent className="p-5 flex flex-col gap-4">
           <div className="flex items-start justify-between gap-2">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f0f2eb]">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF2FF]">
               {status === "DRAFT" ? (
-                <FileEdit className="h-5 w-5 text-[#6b7260]" />
+                <FileEdit className="h-5 w-5 text-[#4A5C8A]" />
               ) : (
-                <BookOpen className="h-5 w-5 text-[#2d4a2b]" />
+                <BookOpen className="h-5 w-5 text-[#2B4BA8]" />
               )}
             </div>
             <div className="flex items-center gap-1.5">
@@ -67,7 +67,7 @@ export default function TrainingCard({
               {onDelete && (
                 <button
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(); }}
-                  className="h-7 w-7 flex items-center justify-center rounded-lg text-[#a4ac86] hover:text-red-500 hover:bg-red-50 transition-colors"
+                  className="h-7 w-7 flex items-center justify-center rounded-lg text-[#8A9BC8] hover:text-red-500 hover:bg-red-50 transition-colors"
                   aria-label="Eliminar capacitación"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -77,10 +77,10 @@ export default function TrainingCard({
           </div>
 
           <div>
-            <h3 className="text-base font-semibold text-[#1e2d1c] leading-tight group-hover:text-[#4a7c59] transition-colors duration-200">
+            <h3 className="text-base font-semibold text-[#1A2F6B] leading-tight group-hover:text-[#2B4BA8] transition-colors duration-200">
               {title}
             </h3>
-            <p className="text-sm text-[#7d8471] mt-1">&Aacute;rea: {area}</p>
+            <p className="text-sm text-[#6B7AB0] mt-1">&Aacute;rea: {area}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -90,16 +90,16 @@ export default function TrainingCard({
           {asignados > 0 && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-[#7d8471]">Cumplimiento</span>
-                <span className="font-semibold text-[#1e2d1c]">{progress}%</span>
+                <span className="text-[#6B7AB0]">Cumplimiento</span>
+                <span className="font-semibold text-[#1A2F6B]">{progress}%</span>
               </div>
-              <div className="h-2 w-full rounded-full bg-[#f0f2eb]">
+              <div className="h-2 w-full rounded-full bg-[#EEF2FF]">
                 <div
-                  className="h-2 rounded-full bg-[#2d4a2b] animate-progress"
+                  className="h-2 rounded-full bg-[#2B4BA8] animate-progress"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="text-xs text-[#6b7260]">
+              <p className="text-xs text-[#4A5C8A]">
                 {completados} de {asignados} completados
               </p>
             </div>

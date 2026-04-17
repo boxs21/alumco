@@ -56,25 +56,25 @@ export default function HistorialPage() {
   return (
     <div className="space-y-4 lg:space-y-6">
       <div>
-        <h1 className="text-xl lg:text-2xl font-semibold text-[#1e2d1c]">Historial</h1>
-        <p className="text-sm text-[#6b7260] mt-1">Capacitaciones completadas y certificados obtenidos</p>
+        <h1 className="text-xl lg:text-2xl font-semibold text-[#1A2F6B]">Historial</h1>
+        <p className="text-sm text-[#4A5C8A] mt-1">Capacitaciones completadas y certificados obtenidos</p>
       </div>
 
-      <Card className="border-[#dde0d4] shadow-sm">
+      <Card className="border-[#C8D4EC] shadow-sm">
         <CardContent className="p-0">
           {loading ? (
-            <div className="py-12 text-center text-sm text-[#7d8471]">Cargando...</div>
+            <div className="py-12 text-center text-sm text-[#6B7AB0]">Cargando...</div>
           ) : certs.length > 0 ? (
             <>
               {/* Desktop Table */}
               <div className="hidden sm:block overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-[#faf9f6]">
-                      <TableHead className="text-sm font-medium text-[#6b7260]">Capacitaci&oacute;n</TableHead>
-                      <TableHead className="text-sm font-medium text-[#6b7260]">Nota</TableHead>
-                      <TableHead className="text-sm font-medium text-[#6b7260]">Fecha</TableHead>
-                      <TableHead className="text-sm font-medium text-[#6b7260] text-right">Certificado</TableHead>
+                    <TableRow className="bg-[#FAFBFF]">
+                      <TableHead className="text-sm font-medium text-[#4A5C8A]">Capacitaci&oacute;n</TableHead>
+                      <TableHead className="text-sm font-medium text-[#4A5C8A]">Nota</TableHead>
+                      <TableHead className="text-sm font-medium text-[#4A5C8A]">Fecha</TableHead>
+                      <TableHead className="text-sm font-medium text-[#4A5C8A] text-right">Certificado</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -82,17 +82,17 @@ export default function HistorialPage() {
                       const score = getScore(c);
                       return (
                         <TableRow key={c.id}>
-                          <TableCell className="text-sm font-medium text-[#1e2d1c]">{getTitle(c)}</TableCell>
+                          <TableCell className="text-sm font-medium text-[#1A2F6B]">{getTitle(c)}</TableCell>
                           <TableCell>
                             {score != null ? (
-                              <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb]">
+                              <Badge className="bg-[#EEF2FF] text-[#2B4BA8] hover:bg-[#EEF2FF]">
                                 {score}%
                               </Badge>
                             ) : (
-                              <span className="text-sm text-[#6b7260]">—</span>
+                              <span className="text-sm text-[#4A5C8A]">—</span>
                             )}
                           </TableCell>
-                          <TableCell className="text-sm text-[#6b7260] whitespace-nowrap">
+                          <TableCell className="text-sm text-[#4A5C8A] whitespace-nowrap">
                             {c.issued_at ? new Date(c.issued_at).toLocaleDateString("es-CL") : "—"}
                           </TableCell>
                           <TableCell className="text-right">
@@ -102,13 +102,13 @@ export default function HistorialPage() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={`Descargar certificado de ${getTitle(c)}`}
-                                className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors"
+                                className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-sm font-medium text-[#1A2F6B] hover:bg-[#EEF2FF] transition-colors"
                               >
                                 <Download className="h-4 w-4" aria-hidden="true" />
                                 Descargar
                               </a>
                             ) : (
-                              <span className="text-sm text-[#6b7260]">Sin PDF</span>
+                              <span className="text-sm text-[#4A5C8A]">Sin PDF</span>
                             )}
                           </TableCell>
                         </TableRow>
@@ -119,21 +119,21 @@ export default function HistorialPage() {
               </div>
 
               {/* Mobile Cards */}
-              <div className="sm:hidden divide-y divide-[#dde0d4]">
+              <div className="sm:hidden divide-y divide-[#C8D4EC]">
                 {certs.map((c) => {
                   const score = getScore(c);
                   return (
                     <div key={c.id} className="p-4 space-y-2">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-semibold text-[#1e2d1c]">{getTitle(c)}</p>
+                        <p className="text-sm font-semibold text-[#1A2F6B]">{getTitle(c)}</p>
                         {score != null && (
-                          <Badge className="bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb] shrink-0">
+                          <Badge className="bg-[#EEF2FF] text-[#2B4BA8] hover:bg-[#EEF2FF] shrink-0">
                             {score}%
                           </Badge>
                         )}
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-[#6b7260]">
+                        <span className="text-xs text-[#4A5C8A]">
                           {c.issued_at ? new Date(c.issued_at).toLocaleDateString("es-CL") : "—"}
                         </span>
                         {c.pdf_url ? (
@@ -142,12 +142,12 @@ export default function HistorialPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={`Descargar certificado de ${getTitle(c)}`}
-                            className="text-xs font-medium text-[#2d4a2b] hover:text-[#1e2d1c] transition-colors"
+                            className="text-xs font-medium text-[#2B4BA8] hover:text-[#1A2F6B] transition-colors"
                           >
                             Descargar certificado →
                           </a>
                         ) : (
-                          <span className="text-xs text-[#6b7260]">Sin certificado</span>
+                          <span className="text-xs text-[#4A5C8A]">Sin certificado</span>
                         )}
                       </div>
                     </div>
@@ -157,9 +157,9 @@ export default function HistorialPage() {
             </>
           ) : (
             <div className="flex flex-col items-center py-16 text-center">
-              <History className="h-10 w-10 text-[#dde0d4] mb-3" aria-hidden="true" />
-              <p className="text-sm font-medium text-[#1e2d1c]">Sin historial todav&iacute;a</p>
-              <p className="text-xs text-[#6b7260] mt-1">Completa capacitaciones para ver tu historial aqu&iacute;</p>
+              <History className="h-10 w-10 text-[#C8D4EC] mb-3" aria-hidden="true" />
+              <p className="text-sm font-medium text-[#1A2F6B]">Sin historial todav&iacute;a</p>
+              <p className="text-xs text-[#4A5C8A] mt-1">Completa capacitaciones para ver tu historial aqu&iacute;</p>
             </div>
           )}
         </CardContent>

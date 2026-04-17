@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Get role from profiles
-  let role: "ADMIN" | "COLLABORATOR" | undefined;
+  let role: "ADMIN" | "COLLABORATOR" | "PROFESOR" | undefined;
   try {
     const { data: profile, error } = await supabase
       .from("profiles")
@@ -54,8 +54,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // /admin/** → requires ADMIN role
-  if (pathname.startsWith("/admin") && role !== "ADMIN") {
+  // /admin/personal → ADMIN only (PROFESOR is blocked)
+  if (pathname.startsWith("/admin/personal") && role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+  }
+
+  // /admin/** → requires ADMIN or PROFESOR
+  if (pathname.startsWith("/admin") && role !== "ADMIN" && role !== "PROFESOR") {
     return NextResponse.redirect(new URL("/portal", request.url));
   }
 
@@ -64,9 +69,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 
+  // /profesor/** → requires PROFESOR role
+  if (pathname.startsWith("/profesor") && role !== "PROFESOR") {
+    const dest = role === "ADMIN" ? "/admin/dashboard" : "/portal";
+    return NextResponse.redirect(new URL(dest, request.url));
+  }
+
   return response;
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/portal/:path*"],
+  matcher: ["/admin/:path*", "/portal/:path*", "/profesor/:path*"],
 };

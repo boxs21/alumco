@@ -1,0 +1,331 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Topbar from "@/components/layout/Topbar";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SEDES, AREAS } from "@/lib/config";
+import { createClient } from "@/lib/supabase";
+import { Check, Upload, FileText, Plus, Trash2, ArrowLeft, ArrowRight, Video, Link as LinkIcon, X, Loader2 } from "lucide-react";
+
+function getEmbedUrl(url: string): string | null {
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  const gd = url.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if (gd) return `https://drive.google.com/file/d/${gd[1]}/preview`;
+  return null;
+}
+
+function detectVideoSource(url: string): "youtube" | "gdrive" | null {
+  if (/youtube\.com|youtu\.be/.test(url)) return "youtube";
+  if (/drive\.google\.com/.test(url)) return "gdrive";
+  return null;
+}
+
+const steps = [
+  { number: 1, label: "Información básica" },
+  { number: 2, label: "Material formativo" },
+  { number: 3, label: "Evaluación" },
+];
+
+interface VideoLink { id: string; url: string; embedUrl: string; source: "youtube" | "gdrive" }
+interface Question {
+  id: string; text: string;
+  options: { id: string; text: string; isCorrect: boolean }[];
+}
+
+export default function ProfesorNuevaCapacitacionPage() {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [area, setArea] = useState("");
+  const [sedeSelection, setSedeSelection] = useState<string | null>(null);
+  const [step1Error, setStep1Error] = useState<string | null>(null);
+
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videoLinks, setVideoLinks] = useState<VideoLink[]>([]);
+  const previewEmbed = videoUrl.trim() ? getEmbedUrl(videoUrl.trim()) : null;
+
+  const [hasQuiz, setHasQuiz] = useState(false);
+  const [passingScore, setPassingScore] = useState(60);
+  const [questions, setQuestions] = useState<Question[]>([{
+    id: "new-1", text: "",
+    options: [{ id: "no-1", text: "", isCorrect: false }, { id: "no-2", text: "", isCorrect: false }],
+  }]);
+
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data: { user } }) => setUserId(user?.id ?? null));
+  }, []);
+
+  function addVideoLink() {
+    const embed = getEmbedUrl(videoUrl.trim());
+    const source = detectVideoSource(videoUrl.trim());
+    if (!embed || !source) return;
+    setVideoLinks([...videoLinks, { id: `v-${Date.now()}`, url: videoUrl.trim(), embedUrl: embed, source }]);
+    setVideoUrl("");
+  }
+
+  function addQuestion() {
+    const qId = `new-${Date.now()}`;
+    setQuestions([...questions, { id: qId, text: "", options: [{ id: `no-${Date.now()}-1`, text: "", isCorrect: false }, { id: `no-${Date.now()}-2`, text: "", isCorrect: false }] }]);
+  }
+
+  function removeQuestion(qId: string) { setQuestions(questions.filter((q) => q.id !== qId)); }
+  function addOption(qId: string) {
+    setQuestions(questions.map((q) => q.id === qId ? { ...q, options: [...q.options, { id: `no-${Date.now()}`, text: "", isCorrect: false }] } : q));
+  }
+
+  function goToStep2() {
+    if (!title.trim()) { setStep1Error("El título es requerido"); return; }
+    setStep1Error(null); setCurrentStep(2);
+  }
+
+  async function handleSave() {
+    setSaving(true); setSaveError(null);
+    const supabase = createClient();
+    const sedeId = !sedeSelection || sedeSelection === "global" ? null : sedeSelection;
+    const trainingId = crypto.randomUUID();
+
+    const { error: trainingError } = await supabase.from("trainings").insert({
+      id: trainingId, title: title.trim(), description: description.trim() || null,
+      target_area: area || null, status: "DRAFT", sede_id: sedeId, created_by: userId,
+    });
+    if (trainingError) { setSaveError(`Error: ${trainingError.message}`); setSaving(false); return; }
+
+    if (videoLinks.length > 0) {
+      await supabase.from("files").insert(videoLinks.map((v, i) => ({
+        training_id: trainingId,
+        name: v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive",
+        type: "VIDEO", url: v.url, order: i + 1,
+      })));
+    }
+
+    if (hasQuiz) {
+      const validQuestions = questions.filter((q) => q.text.trim());
+      if (validQuestions.length > 0) {
+        const quizId = crypto.randomUUID();
+        const { error: quizError } = await supabase.from("quizzes").insert({ id: quizId, training_id: trainingId, passing_score: passingScore, max_attempts: null });
+        if (!quizError) {
+          for (let qi = 0; qi < validQuestions.length; qi++) {
+            const q = validQuestions[qi];
+            const questionId = crypto.randomUUID();
+            await supabase.from("questions").insert({ id: questionId, quiz_id: quizId, text: q.text.trim(), points: 1, order: qi + 1 });
+            const optionRows = q.options.filter((o) => o.text.trim()).map((o) => ({ id: crypto.randomUUID(), question_id: questionId, text: o.text.trim(), is_correct: o.isCorrect }));
+            if (optionRows.length > 0) await supabase.from("options").insert(optionRows);
+          }
+        }
+      }
+    }
+
+    toast.success("Capacitación creada correctamente");
+    router.push("/profesor/capacitaciones");
+  }
+
+  const sedeOptions = [
+    { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre, color: "border-[#8A9BC8] bg-[#EEF2FF]", activeRing: "ring-[#2B4BA8]" },
+    { key: SEDES.COYHAIQUE.id,  label: SEDES.COYHAIQUE.nombre,  color: "border-amber-300 bg-amber-50",   activeRing: "ring-amber-500" },
+    { key: "global",            label: "Ambas sedes",           color: "border-[#C8D4EC] bg-[#FAFBFF]",  activeRing: "ring-[#6B7AB0]" },
+  ];
+
+  return (
+    <div>
+      <Topbar title="Nueva capacitación" />
+      <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-4 lg:space-y-6">
+        <div className="flex items-center justify-center gap-1 sm:gap-2">
+          {steps.map((step, i) => (
+            <div key={step.number} className="flex items-center gap-1 sm:gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className={`flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-sm font-medium transition-colors shrink-0 ${currentStep >= step.number ? "bg-[#2B4BA8] text-white" : "bg-[#EEF2FF] text-[#8A9BC8]"}`}>
+                  {currentStep > step.number ? <Check className="h-3.5 w-3.5" /> : step.number}
+                </div>
+                <span className={`hidden sm:inline text-sm font-medium ${currentStep >= step.number ? "text-[#1A2F6B]" : "text-[#8A9BC8]"}`}>{step.label}</span>
+              </div>
+              {i < steps.length - 1 && <div className={`w-8 sm:w-16 h-px ${currentStep > step.number ? "bg-[#2B4BA8]" : "bg-[#C8D4EC]"}`} />}
+            </div>
+          ))}
+        </div>
+
+        {/* Step 1 */}
+        {currentStep === 1 && (
+          <Card className="border-[#C8D4EC] shadow-sm">
+            <CardContent className="p-6 space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-sm font-medium text-[#1A2F6B]">Título <span className="text-red-500">*</span></Label>
+                <Input id="title" placeholder="Ej: Protocolo de Higiene Personal" value={title}
+                  onChange={(e) => { setTitle(e.target.value); if (step1Error) setStep1Error(null); }}
+                  className={`h-11 text-base ${step1Error ? "border-red-400" : ""}`} />
+                {step1Error && <p className="text-xs text-red-500">{step1Error}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-sm font-medium text-[#1A2F6B]">Descripción</Label>
+                <textarea id="description" placeholder="Describe brevemente el contenido..." value={description}
+                  onChange={(e) => setDescription(e.target.value)} rows={3}
+                  className="w-full rounded-lg border border-[#C8D4EC] px-3 py-2 text-base text-[#1A2F6B] placeholder:text-[#8A9BC8] focus:outline-none focus:ring-2 focus:ring-[#2B4BA8] focus:border-transparent" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-[#1A2F6B]">Área</Label>
+                <div className="flex flex-wrap gap-2">
+                  {[...AREAS, ""].map((a) => (
+                    <button key={a || "todos"} type="button" onClick={() => setArea(a)}
+                      className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${area === a ? "border-[#8A9BC8] bg-[#EEF2FF] text-[#1A2F6B]" : "border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF]/60"}`}
+                    >{a || "Todos"}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-[#1A2F6B]">Sede</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  {sedeOptions.map((opt) => (
+                    <button key={opt.key} type="button" onClick={() => setSedeSelection(opt.key)}
+                      className={`p-4 rounded-xl border-2 text-center text-sm font-medium transition-all ${sedeSelection === opt.key ? `${opt.color} ring-2 ${opt.activeRing}` : "border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF]/60"}`}
+                    >{opt.label}</button>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Step 2 */}
+        {currentStep === 2 && (
+          <Card className="border-[#C8D4EC] shadow-sm">
+            <CardContent className="p-6 space-y-5">
+              <div className="border-2 border-dashed border-[#C8D4EC] rounded-xl p-8 text-center hover:border-[#6B7AB0] hover:bg-[#EEF2FF]/30 transition-colors cursor-pointer">
+                <Upload className="h-10 w-10 text-[#8A9BC8] mx-auto mb-3" />
+                <p className="text-sm font-medium text-[#1A2F6B]">Arrastra archivos aquí o haz clic</p>
+                <p className="text-xs text-[#6B7AB0] mt-1">PDF o presentaciones (máx. 50MB)</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-px bg-[#C8D4EC]" />
+                <span className="text-xs text-[#8A9BC8] font-medium">o agregar link de video</span>
+                <div className="flex-1 h-px bg-[#C8D4EC]" />
+              </div>
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8A9BC8]" />
+                    <Input placeholder="Pegar link de YouTube o Google Drive..." value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && previewEmbed && addVideoLink()}
+                      className="h-11 pl-9 text-sm" />
+                  </div>
+                  <button type="button" onClick={addVideoLink} disabled={!previewEmbed}
+                    className="h-11 px-4 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors disabled:opacity-40 shrink-0"
+                  >Agregar</button>
+                </div>
+                {videoUrl.trim() && (
+                  <div className="rounded-lg border border-[#C8D4EC] overflow-hidden bg-[#FAFBFF]">
+                    {previewEmbed ? (
+                      <iframe src={previewEmbed} title="Vista previa" className="w-full aspect-video" allowFullScreen />
+                    ) : (
+                      <div className="flex items-center gap-2 p-3 text-sm text-[#8A9BC8]"><Video className="h-4 w-4" /><span>Link no reconocido.</span></div>
+                    )}
+                  </div>
+                )}
+              </div>
+              {videoLinks.length > 0 ? (
+                <div className="space-y-2">
+                  {videoLinks.map((v) => (
+                    <div key={v.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EEF2FF] shrink-0"><Video className="h-4 w-4 text-[#4A5C8A]" /></div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[#1A2F6B] truncate">{v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive"}</p>
+                        <p className="text-xs text-[#6B7AB0] truncate">{v.url}</p>
+                      </div>
+                      <button type="button" onClick={() => setVideoLinks(videoLinks.filter((x) => x.id !== v.id))} className="text-[#8A9BC8] hover:text-red-500 transition-colors"><X className="h-4 w-4" /></button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center py-4 text-center"><FileText className="h-8 w-8 text-[#C8D4EC] mb-2" /><p className="text-sm text-[#6B7AB0]">Sin material cargado.</p></div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Step 3 */}
+        {currentStep === 3 && (
+          <Card className="border-[#C8D4EC] shadow-sm">
+            <CardContent className="p-6 space-y-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-[#1A2F6B]">Incluir evaluación</p>
+                  <p className="text-xs text-[#6B7AB0] mt-0.5">Los colaboradores deberán aprobar para certificarse</p>
+                </div>
+                <button type="button" onClick={() => setHasQuiz(!hasQuiz)}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${hasQuiz ? "bg-[#2B4BA8]" : "bg-[#C8D4EC]"}`}>
+                  <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-[#FAFBFF] shadow transition-transform ${hasQuiz ? "translate-x-5" : ""}`} />
+                </button>
+              </div>
+              {hasQuiz && (
+                <>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-[#1A2F6B]">Nota mínima (%)</Label>
+                    <Input type="number" min={1} max={100} value={passingScore} onChange={(e) => setPassingScore(Number(e.target.value))} className="h-11 text-base w-32" />
+                  </div>
+                  <div className="space-y-4">
+                    {questions.map((q, qi) => (
+                      <div key={q.id} className="p-4 rounded-lg border border-[#C8D4EC] space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-[#1A2F6B]">Pregunta {qi + 1}</span>
+                          {questions.length > 1 && <button type="button" onClick={() => removeQuestion(q.id)} className="text-[#8A9BC8] hover:text-red-500"><Trash2 className="h-4 w-4" /></button>}
+                        </div>
+                        <Input placeholder="Escribe la pregunta..." value={q.text}
+                          onChange={(e) => setQuestions(questions.map((qq) => qq.id === q.id ? { ...qq, text: e.target.value } : qq))}
+                          className="h-11 text-base" />
+                        <div className="space-y-2">
+                          {q.options.map((opt, oi) => (
+                            <div key={opt.id} className="flex items-center gap-2">
+                              <button type="button"
+                                onClick={() => setQuestions(questions.map((qq) => qq.id === q.id ? { ...qq, options: qq.options.map((o, idx) => ({ ...o, isCorrect: idx === oi })) } : qq))}
+                                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${opt.isCorrect ? "border-[#2B4BA8] bg-[#2B4BA8]" : "border-[#C8D4EC] hover:border-slate-400"}`}
+                              >{opt.isCorrect && <Check className="h-3 w-3 text-white" />}</button>
+                              <Input placeholder={`Opción ${oi + 1}`} value={opt.text}
+                                onChange={(e) => setQuestions(questions.map((qq) => qq.id === q.id ? { ...qq, options: qq.options.map((o) => o.id === opt.id ? { ...o, text: e.target.value } : o) } : qq))}
+                                className="h-10 text-sm flex-1" />
+                            </div>
+                          ))}
+                          <button type="button" onClick={() => addOption(q.id)} className="text-sm text-[#2B4BA8] hover:text-[#1A2F6B] font-medium">+ Agregar opción</button>
+                        </div>
+                      </div>
+                    ))}
+                    <button type="button" onClick={addQuestion} className="flex items-center gap-2 text-sm text-[#2B4BA8] hover:text-[#1A2F6B] font-medium">
+                      <Plus className="h-4 w-4" /> Agregar pregunta
+                    </button>
+                  </div>
+                </>
+              )}
+              {saveError && <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{saveError}</p>}
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="flex items-center justify-between">
+          <button type="button" disabled={saving}
+            onClick={() => currentStep > 1 ? setCurrentStep(currentStep - 1) : router.back()}
+            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-sm font-medium text-[#1A2F6B] hover:bg-[#EEF2FF] transition-colors disabled:opacity-50"
+          ><ArrowLeft className="h-4 w-4" />{currentStep > 1 ? "Anterior" : "Cancelar"}</button>
+
+          {currentStep < 3 && (
+            <button type="button" onClick={currentStep === 1 ? goToStep2 : () => setCurrentStep(3)}
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors"
+            >Siguiente <ArrowRight className="h-4 w-4" /></button>
+          )}
+          {currentStep === 3 && (
+            <button type="button" onClick={handleSave} disabled={saving}
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors disabled:opacity-60"
+            >{saving ? <><Loader2 className="h-4 w-4 animate-spin" />Guardando...</> : "Guardar capacitación"}</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -105,15 +105,15 @@ export default function ColaboradoresPage() {
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Sede Tabs */}
-        <div className="flex rounded-lg bg-[#f0f2eb] p-1 w-fit">
+        <div className="flex rounded-lg bg-[#EEF2FF] p-1 w-fit">
           {sedeTabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setSedeTab(tab.key)}
               className={`px-3 lg:px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 sedeTab === tab.key
-                  ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
-                  : "text-[#7d8471] hover:text-[#1e2d1c]"
+                  ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
+                  : "text-[#6B7AB0] hover:text-[#1A2F6B]"
               }`}
             >
               {tab.label}
@@ -122,7 +122,7 @@ export default function ColaboradoresPage() {
         </div>
 
         {loading ? (
-          <div className="text-sm text-[#7d8471] py-8 text-center">Cargando...</div>
+          <div className="text-sm text-[#6B7AB0] py-8 text-center">Cargando...</div>
         ) : filtered.length === 0 ? (
           <EmptyState
             icon={Users}
@@ -132,16 +132,16 @@ export default function ColaboradoresPage() {
         ) : (
           <>
             {/* Desktop Table */}
-            <div className="hidden md:block rounded-xl border border-[#dde0d4] bg-[#faf9f6] shadow-sm overflow-hidden">
+            <div className="hidden md:block rounded-xl border border-[#C8D4EC] bg-[#FAFBFF] shadow-sm overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[#faf9f6]">
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Colaborador</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Área</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Sede</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Estado</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471]">Progreso</TableHead>
-                    <TableHead className="text-sm font-medium text-[#7d8471] text-right">Acción</TableHead>
+                  <TableRow className="bg-[#FAFBFF]">
+                    <TableHead className="text-sm font-medium text-[#6B7AB0]">Colaborador</TableHead>
+                    <TableHead className="text-sm font-medium text-[#6B7AB0]">Área</TableHead>
+                    <TableHead className="text-sm font-medium text-[#6B7AB0]">Sede</TableHead>
+                    <TableHead className="text-sm font-medium text-[#6B7AB0]">Estado</TableHead>
+                    <TableHead className="text-sm font-medium text-[#6B7AB0]">Progreso</TableHead>
+                    <TableHead className="text-sm font-medium text-[#6B7AB0] text-right">Acción</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -154,17 +154,17 @@ export default function ColaboradoresPage() {
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9">
-                              <AvatarFallback className="bg-[#f0f2eb] text-[#1e2d1c] text-xs font-medium">
+                              <AvatarFallback className="bg-[#EEF2FF] text-[#1A2F6B] text-xs font-medium">
                                 {getInitials(name)}
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="text-sm font-medium text-[#1e2d1c]">{name}</p>
-                              <p className="text-xs text-[#7d8471]">{user.email ?? "—"}</p>
+                              <p className="text-sm font-medium text-[#1A2F6B]">{name}</p>
+                              <p className="text-xs text-[#6B7AB0]">{user.email ?? "—"}</p>
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="text-sm text-[#1e2d1c]">{user.area ?? "—"}</TableCell>
+                        <TableCell className="text-sm text-[#1A2F6B]">{user.area ?? "—"}</TableCell>
                         <TableCell>
                           <SedeBadge sedeId={user.sede_id} sedeName={sedeNameLocal(user.sede_id)} size="sm" />
                         </TableCell>
@@ -172,8 +172,8 @@ export default function ColaboradoresPage() {
                           <Badge
                             className={
                               user.active
-                                ? "bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb]"
-                                : "bg-[#f0f2eb] text-[#7d8471] hover:bg-[#f0f2eb]"
+                                ? "bg-[#EEF2FF] text-[#2B4BA8] hover:bg-[#EEF2FF]"
+                                : "bg-[#EEF2FF] text-[#6B7AB0] hover:bg-[#EEF2FF]"
                             }
                           >
                             {user.active ? "Activo" : "Inactivo"}
@@ -181,19 +181,19 @@ export default function ColaboradoresPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <div className="h-2 w-20 rounded-full bg-[#f0f2eb]">
+                            <div className="h-2 w-20 rounded-full bg-[#EEF2FF]">
                               <div
-                                className="h-2 rounded-full bg-[#2d4a2b]"
+                                className="h-2 rounded-full bg-[#2B4BA8]"
                                 style={{ width: total > 0 ? `${Math.min((done / total) * 100, 100)}%` : "0%" }}
                               />
                             </div>
-                            <span className="text-xs text-[#7d8471]">{done}/{total}</span>
+                            <span className="text-xs text-[#6B7AB0]">{done}/{total}</span>
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
                           <Link
                             href={`/admin/colaboradores/${user.id}`}
-                            className="inline-flex items-center h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors"
+                            className="inline-flex items-center h-9 px-4 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-sm font-medium text-[#1A2F6B] hover:bg-[#EEF2FF] transition-colors"
                           >
                             Ver perfil
                           </Link>
@@ -212,24 +212,24 @@ export default function ColaboradoresPage() {
                 const done = completadas(user.id);
                 const total = totalAsignadas(user.id);
                 return (
-                  <div key={user.id} className="rounded-xl border border-[#dde0d4] bg-[#faf9f6] p-4 shadow-sm">
+                  <div key={user.id} className="rounded-xl border border-[#C8D4EC] bg-[#FAFBFF] p-4 shadow-sm">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
-                          <AvatarFallback className="bg-[#f0f2eb] text-[#1e2d1c] text-sm font-medium">
+                          <AvatarFallback className="bg-[#EEF2FF] text-[#1A2F6B] text-sm font-medium">
                             {getInitials(name)}
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="text-sm font-semibold text-[#1e2d1c]">{name}</p>
-                          <p className="text-xs text-[#7d8471]">{user.email ?? "—"}</p>
+                          <p className="text-sm font-semibold text-[#1A2F6B]">{name}</p>
+                          <p className="text-xs text-[#6B7AB0]">{user.email ?? "—"}</p>
                         </div>
                       </div>
                       <Badge
                         className={
                           user.active
-                            ? "bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb] shrink-0"
-                            : "bg-[#f0f2eb] text-[#7d8471] hover:bg-[#f0f2eb] shrink-0"
+                            ? "bg-[#EEF2FF] text-[#2B4BA8] hover:bg-[#EEF2FF] shrink-0"
+                            : "bg-[#EEF2FF] text-[#6B7AB0] hover:bg-[#EEF2FF] shrink-0"
                         }
                       >
                         {user.active ? "Activo" : "Inactivo"}
@@ -237,23 +237,23 @@ export default function ColaboradoresPage() {
                     </div>
                     <div className="mt-3 flex items-center gap-3 flex-wrap">
                       {user.area && (
-                        <span className="text-xs text-[#7d8471] bg-[#f0f2eb] px-2 py-1 rounded-md">{user.area}</span>
+                        <span className="text-xs text-[#6B7AB0] bg-[#EEF2FF] px-2 py-1 rounded-md">{user.area}</span>
                       )}
                       <SedeBadge sedeId={user.sede_id} sedeName={sedeNameLocal(user.sede_id)} size="sm" />
                     </div>
                     <div className="mt-3 flex items-center justify-between">
                       <div className="flex items-center gap-2 flex-1">
-                        <div className="h-2 flex-1 max-w-[120px] rounded-full bg-[#f0f2eb]">
+                        <div className="h-2 flex-1 max-w-[120px] rounded-full bg-[#EEF2FF]">
                           <div
-                            className="h-2 rounded-full bg-[#2d4a2b]"
+                            className="h-2 rounded-full bg-[#2B4BA8]"
                             style={{ width: total > 0 ? `${Math.min((done / total) * 100, 100)}%` : "0%" }}
                           />
                         </div>
-                        <span className="text-xs text-[#7d8471]">{done}/{total} cursos</span>
+                        <span className="text-xs text-[#6B7AB0]">{done}/{total} cursos</span>
                       </div>
                       <Link
                         href={`/admin/colaboradores/${user.id}`}
-                        className="text-xs font-medium text-[#2d4a2b] hover:text-[#1e2d1c] transition-colors"
+                        className="text-xs font-medium text-[#2B4BA8] hover:text-[#1A2F6B] transition-colors"
                       >
                         Ver perfil →
                       </Link>

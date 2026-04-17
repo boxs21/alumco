@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
-import { Leaf, BookOpen, History, LogOut, CalendarDays } from "lucide-react";
+import { BookOpen, History, LogOut, CalendarDays } from "lucide-react";
+import Image from "next/image";
 import DarkModeToggle from "@/components/shared/DarkModeToggle";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -47,21 +48,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div className="min-h-screen bg-[#faf9f6]">
-      <header className="sticky top-0 z-30 border-b border-[#dde0d4] bg-[#faf9f6]/95 backdrop-blur-sm">
+    <div className="min-h-screen bg-[#FAFBFF]">
+      <header className="sticky top-0 z-30 border-b border-[#C8D4EC] bg-[#FAFBFF]/95 backdrop-blur-sm">
         <div className="mx-auto max-w-5xl flex h-14 lg:h-16 items-center justify-between px-4 lg:px-6">
           {/* Left: logo + nav */}
           <div className="flex items-center gap-3 lg:gap-6">
-            <Link href="/portal" className="flex items-center gap-2" aria-label="ALUMCO — inicio">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2d4a2b]">
-                <Leaf className="h-4 w-4 text-[#a4ac86]" aria-hidden="true" />
-              </div>
-              <span
-                className="text-sm lg:text-base font-bold text-[#1e2d1c]"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                ALUMCO
-              </span>
+            <Link href="/portal" aria-label="ALUMCO — inicio">
+              <Image src="/logo.png" alt="ALUMCO" width={110} height={34} className="object-contain" priority />
             </Link>
 
             <nav aria-label="Navegación portal" className="hidden sm:flex items-center gap-1">
@@ -73,11 +66,11 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                     href={item.href}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? "bg-[#2d4a2b] text-white"
-                        : "text-[#7d8471] hover:bg-[#f0f2eb] hover:text-[#1e2d1c]"
+                        ? "bg-[#2B4BA8] text-white"
+                        : "text-[#6B7AB0] hover:bg-[#EEF2FF] hover:text-[#1A2F6B]"
                     }`}
                   >
-                    <item.icon className={`h-4 w-4 ${isActive ? "text-[#a4ac86]" : "text-[#a4ac86]"}`} aria-hidden="true" />
+                    <item.icon className={`h-4 w-4 ${isActive ? "text-[#8A9BC8]" : "text-[#8A9BC8]"}`} aria-hidden="true" />
                     {item.label}
                   </Link>
                 );
@@ -90,17 +83,17 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
             <FontSizeSwitcher compact />
             <DarkModeToggle compact />
 
-            <div className="w-px h-5 bg-[#dde0d4] mx-1 hidden sm:block" aria-hidden="true" />
+            <div className="w-px h-5 bg-[#C8D4EC] mx-1 hidden sm:block" aria-hidden="true" />
 
             {/* User avatar + name — only on sm+ */}
             <div className="hidden sm:flex items-center gap-2">
               <Avatar className="h-7 w-7 lg:h-8 lg:w-8">
-                <AvatarFallback className="bg-[#f0f2eb] text-[#2d4a2b] text-xs font-semibold">
+                <AvatarFallback className="bg-[#EEF2FF] text-[#2B4BA8] text-xs font-semibold">
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
               {userName && (
-                <span className="hidden lg:block text-sm font-medium text-[#1e2d1c] max-w-[120px] truncate">
+                <span className="hidden lg:block text-sm font-medium text-[#1A2F6B] max-w-[120px] truncate">
                   {userName}
                 </span>
               )}
@@ -110,7 +103,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
               onClick={handleSignOut}
               aria-label="Cerrar sesión"
               title="Cerrar sesión"
-              className="flex items-center justify-center h-8 w-8 rounded-lg text-[#7d8471] hover:bg-[#f0f2eb] hover:text-[#1e2d1c] transition-colors"
+              className="flex items-center justify-center h-8 w-8 rounded-lg text-[#6B7AB0] hover:bg-[#EEF2FF] hover:text-[#1A2F6B] transition-colors"
             >
               <LogOut className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -125,7 +118,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       {/* Mobile bottom nav */}
       <nav
         aria-label="Navegación móvil"
-        className="fixed bottom-0 left-0 right-0 z-40 flex sm:hidden border-t border-[#dde0d4] bg-[#faf9f6]/95 backdrop-blur-sm"
+        className="fixed bottom-0 left-0 right-0 z-40 flex sm:hidden border-t border-[#C8D4EC] bg-[#FAFBFF]/95 backdrop-blur-sm"
       >
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -134,10 +127,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
               key={item.href}
               href={item.href}
               className={`flex flex-1 flex-col items-center justify-center gap-1 py-2.5 transition-colors ${
-                isActive ? "text-[#2d4a2b]" : "text-[#a4ac86]"
+                isActive ? "text-[#2B4BA8]" : "text-[#8A9BC8]"
               }`}
             >
-              <item.icon className={`h-[22px] w-[22px] ${isActive ? "text-[#2d4a2b]" : "text-[#a4ac86]"}`} aria-hidden="true" />
+              <item.icon className={`h-[22px] w-[22px] ${isActive ? "text-[#2B4BA8]" : "text-[#8A9BC8]"}`} aria-hidden="true" />
               <span className="text-[10px] font-medium leading-none">{item.shortLabel}</span>
             </Link>
           );
@@ -145,7 +138,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         <button
           onClick={handleSignOut}
           aria-label="Cerrar sesión"
-          className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[#a4ac86]"
+          className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[#8A9BC8]"
         >
           <LogOut className="h-[22px] w-[22px]" aria-hidden="true" />
           <span className="text-[10px] font-medium leading-none">Salir</span>

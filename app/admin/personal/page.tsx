@@ -190,7 +190,7 @@ export default function PersonalPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             {/* Sede tabs */}
-            <div className="flex rounded-lg bg-[#f0f2eb] p-1">
+            <div className="flex rounded-lg bg-[#EEF2FF] p-1">
               {[
                 { key: "ALL",                label: "Todos" },
                 { key: SEDES.CONCEPCION.id,  label: "Concepción" },
@@ -202,8 +202,8 @@ export default function PersonalPage() {
                   className={cn(
                     "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
                     sedeTab === tab.key
-                      ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
-                      : "text-[#7d8471] hover:text-[#1e2d1c]",
+                      ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
+                      : "text-[#6B7AB0] hover:text-[#1A2F6B]",
                   )}
                 >
                   {tab.label}
@@ -217,8 +217,8 @@ export default function PersonalPage() {
               className={cn(
                 "h-9 px-3 rounded-lg border text-sm font-medium transition-colors",
                 showInactive
-                  ? "border-[#2d4a2b] bg-[#f0f2eb] text-[#2d4a2b]"
-                  : "border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]",
+                  ? "border-[#2B4BA8] bg-[#EEF2FF] text-[#2B4BA8]"
+                  : "border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF]",
               )}
             >
               {showInactive ? "Mostrando inactivos" : "Ver inactivos"}
@@ -227,7 +227,7 @@ export default function PersonalPage() {
 
           <button
             onClick={() => { resetForm(); setShowModal(true); }}
-            className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
+            className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors"
           >
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">Nuevo usuario</span>
@@ -243,39 +243,39 @@ export default function PersonalPage() {
         )}
 
         {/* ── Table ── */}
-        <Card className="border-[#dde0d4] shadow-sm animate-fade-in overflow-hidden">
+        <Card className="border-[#C8D4EC] shadow-sm animate-fade-in overflow-hidden">
           <CardContent className="p-0">
             {loading ? (
-              <div className="py-20 text-center text-sm text-[#7d8471]">
+              <div className="py-20 text-center text-sm text-[#6B7AB0]">
                 Cargando personal...
               </div>
             ) : visible.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="h-12 w-12 rounded-2xl bg-[#f0f2eb] flex items-center justify-center mb-3">
-                  <UserCog className="h-6 w-6 text-[#a4ac86]" />
+                <div className="h-12 w-12 rounded-2xl bg-[#EEF2FF] flex items-center justify-center mb-3">
+                  <UserCog className="h-6 w-6 text-[#8A9BC8]" />
                 </div>
-                <p className="text-sm font-medium text-[#1e2d1c]">Sin usuarios</p>
-                <p className="text-xs text-[#7d8471] mt-1">
+                <p className="text-sm font-medium text-[#1A2F6B]">Sin usuarios</p>
+                <p className="text-xs text-[#6B7AB0] mt-1">
                   Haz clic en &quot;Nuevo usuario&quot; para agregar uno.
                 </p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[#f0f2eb] hover:bg-[#f0f2eb] border-b border-[#dde0d4]">
-                    <TableHead className="text-[11px] font-semibold text-[#7d8471] uppercase tracking-wider">
+                  <TableRow className="bg-[#EEF2FF] hover:bg-[#EEF2FF] border-b border-[#C8D4EC]">
+                    <TableHead className="text-[11px] font-semibold text-[#6B7AB0] uppercase tracking-wider">
                       Usuario
                     </TableHead>
-                    <TableHead className="text-[11px] font-semibold text-[#7d8471] uppercase tracking-wider hidden md:table-cell">
+                    <TableHead className="text-[11px] font-semibold text-[#6B7AB0] uppercase tracking-wider hidden md:table-cell">
                       Rol
                     </TableHead>
-                    <TableHead className="text-[11px] font-semibold text-[#7d8471] uppercase tracking-wider hidden lg:table-cell">
+                    <TableHead className="text-[11px] font-semibold text-[#6B7AB0] uppercase tracking-wider hidden lg:table-cell">
                       Sede
                     </TableHead>
-                    <TableHead className="text-[11px] font-semibold text-[#7d8471] uppercase tracking-wider hidden lg:table-cell">
+                    <TableHead className="text-[11px] font-semibold text-[#6B7AB0] uppercase tracking-wider hidden lg:table-cell">
                       Área
                     </TableHead>
-                    <TableHead className="text-[11px] font-semibold text-[#7d8471] uppercase tracking-wider">
+                    <TableHead className="text-[11px] font-semibold text-[#6B7AB0] uppercase tracking-wider">
                       Estado
                     </TableHead>
                     <TableHead className="w-16" />
@@ -285,20 +285,20 @@ export default function PersonalPage() {
                   {visible.map((p) => (
                     <TableRow
                       key={p.id}
-                      className="border-b border-[#dde0d4] hover:bg-[#f0f2eb]/40 transition-colors"
+                      className="border-b border-[#C8D4EC] hover:bg-[#EEF2FF]/40 transition-colors"
                     >
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8 flex-shrink-0">
-                            <AvatarFallback className="text-xs font-semibold bg-[#f0f2eb] text-[#2d4a2b]">
+                            <AvatarFallback className="text-xs font-semibold bg-[#EEF2FF] text-[#2B4BA8]">
                               {getInitials(p.name)}
                             </AvatarFallback>
                           </Avatar>
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-[#1e2d1c] truncate">
+                            <p className="text-sm font-medium text-[#1A2F6B] truncate">
                               {p.name ?? "—"}
                             </p>
-                            <p className="text-xs text-[#7d8471] truncate">
+                            <p className="text-xs text-[#6B7AB0] truncate">
                               {p.email ?? "—"}
                             </p>
                           </div>
@@ -309,34 +309,34 @@ export default function PersonalPage() {
                           className={cn(
                             "text-[10px] font-medium border",
                             p.role === "ADMIN"
-                              ? "bg-[#2d4a2b]/10 text-[#2d4a2b] border-[#2d4a2b]/20"
-                              : "bg-[#f0f2eb] text-[#7d8471] border-[#dde0d4]",
+                              ? "bg-[#2B4BA8]/10 text-[#2B4BA8] border-[#2B4BA8]/20"
+                              : "bg-[#EEF2FF] text-[#6B7AB0] border-[#C8D4EC]",
                           )}
                         >
                           {p.role === "ADMIN" ? "Admin" : "Colaborador"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-[#7d8471] hidden lg:table-cell">
+                      <TableCell className="text-sm text-[#6B7AB0] hidden lg:table-cell">
                         {sedeName(p.sede_id) ?? (
-                          <span className="text-[#a4ac86]">—</span>
+                          <span className="text-[#8A9BC8]">—</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-sm text-[#7d8471] hidden lg:table-cell">
-                        {p.area ?? <span className="text-[#a4ac86]">—</span>}
+                      <TableCell className="text-sm text-[#6B7AB0] hidden lg:table-cell">
+                        {p.area ?? <span className="text-[#8A9BC8]">—</span>}
                       </TableCell>
                       <TableCell>
                         <span
                           className={cn(
                             "inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full",
                             p.active
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-[#f0f2eb] text-[#a4ac86]",
+                              ? "bg-[#EDFAE0] text-[#4D7A28]"
+                              : "bg-[#EEF2FF] text-[#8A9BC8]",
                           )}
                         >
                           <span
                             className={cn(
                               "h-1.5 w-1.5 rounded-full",
-                              p.active ? "bg-emerald-500" : "bg-[#a4ac86]",
+                              p.active ? "bg-[#7DC352]" : "bg-[#8A9BC8]",
                             )}
                           />
                           {p.active ? "Activo" : "Inactivo"}
@@ -348,7 +348,7 @@ export default function PersonalPage() {
                             onClick={() =>
                               router.push(`/admin/colaboradores/${p.id}`)
                             }
-                            className="h-7 px-2.5 rounded-lg text-xs text-[#2d4a2b] hover:bg-[#f0f2eb] transition-colors font-medium"
+                            className="h-7 px-2.5 rounded-lg text-xs text-[#2B4BA8] hover:bg-[#EEF2FF] transition-colors font-medium"
                           >
                             Ver
                           </button>
@@ -364,7 +364,7 @@ export default function PersonalPage() {
 
         {/* ── Footer count ── */}
         {!loading && visible.length > 0 && (
-          <p className="text-xs text-[#a4ac86] text-right">
+          <p className="text-xs text-[#8A9BC8] text-right">
             {visible.length} usuario{visible.length !== 1 ? "s" : ""}
           </p>
         )}
@@ -377,15 +377,15 @@ export default function PersonalPage() {
           if (!open) { setShowModal(false); resetForm(); }
         }}
       >
-        <DialogContent className="max-w-md rounded-2xl border-[#dde0d4]">
+        <DialogContent className="max-w-md rounded-2xl border-[#C8D4EC]">
           <DialogHeader>
-            <DialogTitle className="text-[#1e2d1c]">Nuevo usuario</DialogTitle>
+            <DialogTitle className="text-[#1A2F6B]">Nuevo usuario</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 pt-1">
             {/* Name */}
             <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-[#1e2d1c]">
+              <Label className="text-sm font-medium text-[#1A2F6B]">
                 Nombre completo
               </Label>
               <Input
@@ -395,13 +395,13 @@ export default function PersonalPage() {
                   setFormName(e.target.value);
                   if (formError) setFormError(null);
                 }}
-                className="h-10 rounded-xl border-[#dde0d4]"
+                className="h-10 rounded-xl border-[#C8D4EC]"
               />
             </div>
 
             {/* Email */}
             <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-[#1e2d1c]">
+              <Label className="text-sm font-medium text-[#1A2F6B]">
                 Correo electrónico
               </Label>
               <Input
@@ -412,13 +412,13 @@ export default function PersonalPage() {
                   setFormEmail(e.target.value);
                   if (formError) setFormError(null);
                 }}
-                className="h-10 rounded-xl border-[#dde0d4]"
+                className="h-10 rounded-xl border-[#C8D4EC]"
               />
             </div>
 
             {/* Password */}
             <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-[#1e2d1c]">
+              <Label className="text-sm font-medium text-[#1A2F6B]">
                 Contraseña temporal
               </Label>
               <div className="relative">
@@ -430,12 +430,12 @@ export default function PersonalPage() {
                     setFormPassword(e.target.value);
                     if (formError) setFormError(null);
                   }}
-                  className="h-10 rounded-xl border-[#dde0d4] pr-10"
+                  className="h-10 rounded-xl border-[#C8D4EC] pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a4ac86] hover:text-[#7d8471] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A9BC8] hover:text-[#6B7AB0] transition-colors"
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -449,14 +449,14 @@ export default function PersonalPage() {
 
             {/* Role */}
             <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-[#1e2d1c]">Rol</Label>
+              <Label className="text-sm font-medium text-[#1A2F6B]">Rol</Label>
               <Select
                 value={formRole}
                 onValueChange={(v) =>
                   setFormRole(v as "COLLABORATOR" | "ADMIN")
                 }
               >
-                <SelectTrigger className="h-10 rounded-xl border-[#dde0d4]">
+                <SelectTrigger className="h-10 rounded-xl border-[#C8D4EC]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl">
@@ -469,21 +469,21 @@ export default function PersonalPage() {
             {/* Sede + Area */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-[#1e2d1c]">Sede</Label>
+                <Label className="text-sm font-medium text-[#1A2F6B]">Sede</Label>
                 <Select value={formSedeId} onValueChange={setFormSedeId}>
-                  <SelectTrigger className="h-10 rounded-xl border-[#dde0d4]">
+                  <SelectTrigger className="h-10 rounded-xl border-[#C8D4EC]">
                     <SelectValue placeholder="Sin sede" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
                     <SelectItem value={SEDES.CONCEPCION.id}>
                       <span className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-[#2d4a2b]" />
+                        <span className="h-2 w-2 rounded-full bg-[#2B4BA8]" />
                         Concepción
                       </span>
                     </SelectItem>
                     <SelectItem value={SEDES.COYHAIQUE.id}>
                       <span className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-amber-500" />
+                        <span className="h-2 w-2 rounded-full bg-[#F5A623]" />
                         Coyhaique
                       </span>
                     </SelectItem>
@@ -492,9 +492,9 @@ export default function PersonalPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-[#1e2d1c]">Área</Label>
+                <Label className="text-sm font-medium text-[#1A2F6B]">Área</Label>
                 <Select value={formArea} onValueChange={setFormArea}>
-                  <SelectTrigger className="h-10 rounded-xl border-[#dde0d4]">
+                  <SelectTrigger className="h-10 rounded-xl border-[#C8D4EC]">
                     <SelectValue placeholder="Sin área" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -520,14 +520,14 @@ export default function PersonalPage() {
             <div className="flex gap-2 pt-1">
               <button
                 onClick={() => { setShowModal(false); resetForm(); }}
-                className="flex-1 h-10 rounded-xl border border-[#dde0d4] bg-[#faf9f6] text-sm text-[#7d8471] hover:bg-[#f0f2eb] transition-colors"
+                className="flex-1 h-10 rounded-xl border border-[#C8D4EC] bg-[#FAFBFF] text-sm text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleCreate}
                 disabled={saving}
-                className="flex-1 h-10 rounded-xl bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 h-10 rounded-xl bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
               >
                 {saving ? (
                   <>

@@ -34,10 +34,10 @@ export default function Topbar({ title }: TopbarProps) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 lg:h-16 items-center justify-between border-b border-[#dde0d4]/80 bg-[#faf9f6]/95 backdrop-blur-sm px-4 lg:px-6">
+    <header className="sticky top-0 z-20 flex h-14 lg:h-16 items-center justify-between border-b border-[#C8D4EC]/80 bg-[#FAFBFF]/95 backdrop-blur-sm px-4 lg:px-6">
       <div className="flex items-center gap-4">
         {title && (
-          <h1 className="text-lg lg:text-xl font-semibold text-[#1e2d1c] tracking-tight animate-fade-in">
+          <h1 className="text-lg lg:text-xl font-semibold text-[#1A2F6B] tracking-tight animate-fade-in">
             {title}
           </h1>
         )}
@@ -50,17 +50,17 @@ export default function Topbar({ title }: TopbarProps) {
           <DarkModeToggle compact />
         </div>
 
-        <div className="hidden sm:block h-6 w-px bg-[#dde0d4]" />
+        <div className="hidden sm:block h-6 w-px bg-[#C8D4EC]" />
 
         <div className="flex items-center gap-2 lg:gap-3">
-          <Avatar className="h-8 w-8 lg:h-9 lg:w-9 ring-2 ring-[#f0f2eb]">
-            <AvatarFallback className="bg-[#f0f2eb] text-[#2d4a2b] text-xs lg:text-sm font-semibold">
+          <Avatar className="h-8 w-8 lg:h-9 lg:w-9 ring-2 ring-[#EEF2FF]">
+            <AvatarFallback className="bg-[#EEF2FF] text-[#2B4BA8] text-xs lg:text-sm font-semibold">
               {userInitials}
             </AvatarFallback>
           </Avatar>
           <div className="hidden lg:block">
-            <p className="text-sm font-medium text-[#1e2d1c] leading-tight">{userName || "—"}</p>
-            <p className="text-xs text-[#a4ac86]">Administrador</p>
+            <p className="text-sm font-medium text-[#1A2F6B] leading-tight">{userName || "—"}</p>
+            <p className="text-xs text-[#8A9BC8]">Administrador</p>
           </div>
         </div>
       </div>

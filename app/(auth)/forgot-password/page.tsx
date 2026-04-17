@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f5f4f0] px-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-[#F0F4FF] px-4 relative overflow-hidden">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
@@ -56,11 +56,11 @@ export default function ForgotPasswordPage() {
         {/* Wordmark */}
         <div className="flex flex-col items-center mb-10 animate-fade-in-up">
           <div className="flex items-center gap-2.5 mb-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2d4a2b]">
-              <Leaf className="h-4 w-4 text-[#a4ac86]" aria-hidden="true" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2B4BA8]">
+              <Leaf className="h-4 w-4 text-[#8A9BC8]" aria-hidden="true" />
             </div>
             <span
-              className="text-3xl font-bold tracking-tight text-[#1e2d1c]"
+              className="text-3xl font-bold tracking-tight text-[#1A2F6B]"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               ALUMCO
@@ -68,20 +68,20 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
 
-        <Card className="border-[#dde0d4] shadow-sm animate-fade-in-up stagger-2 bg-white">
+        <Card className="border-[#C8D4EC] shadow-sm animate-fade-in-up stagger-2 bg-white">
           <CardContent className="p-8">
             {sent ? (
               <div className="flex flex-col items-center text-center gap-4 py-2">
-                <CheckCircle2 className="h-10 w-10 text-[#4a7c59]" aria-hidden="true" />
+                <CheckCircle2 className="h-10 w-10 text-[#2B4BA8]" aria-hidden="true" />
                 <div>
-                  <p className="text-sm font-semibold text-[#1e2d1c]">Revisa tu correo</p>
-                  <p className="text-sm text-[#7d8471] mt-1">
+                  <p className="text-sm font-semibold text-[#1A2F6B]">Revisa tu correo</p>
+                  <p className="text-sm text-[#6B7AB0] mt-1">
                     Si existe una cuenta con ese correo, recibirás un enlace para restablecer tu contraseña.
                   </p>
                 </div>
                 <Link
                   href="/login"
-                  className="text-sm text-[#4a7c59] hover:text-[#2d4a2b] font-medium transition-colors flex items-center gap-1.5 mt-1"
+                  className="text-sm text-[#2B4BA8] hover:text-[#2B4BA8] font-medium transition-colors flex items-center gap-1.5 mt-1"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
                   Volver al inicio de sesión
@@ -90,15 +90,15 @@ export default function ForgotPasswordPage() {
             ) : (
               <div className="space-y-5">
                 <div>
-                  <h1 className="text-base font-semibold text-[#1e2d1c]">Restablecer contraseña</h1>
-                  <p className="text-sm text-[#7d8471] mt-1">
+                  <h1 className="text-base font-semibold text-[#1A2F6B]">Restablecer contraseña</h1>
+                  <p className="text-sm text-[#6B7AB0] mt-1">
                     Ingresa tu correo y te enviaremos un enlace para crear una nueva contraseña.
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-sm font-medium text-[#1e2d1c]">
+                    <Label htmlFor="email" className="text-sm font-medium text-[#1A2F6B]">
                       Correo electrónico
                     </Label>
                     <Input
@@ -113,7 +113,7 @@ export default function ForgotPasswordPage() {
                       }}
                       aria-describedby={emailError ? "email-error" : undefined}
                       aria-invalid={!!emailError}
-                      className="h-11 text-sm rounded-lg border-[#dde0d4] focus:border-[#4a7c59] focus:ring-[#a4ac86] transition-colors"
+                      className="h-11 text-sm rounded-lg border-[#C8D4EC] focus:border-[#2B4BA8] focus:ring-[#8A9BC8] transition-colors"
                       required
                     />
                     {emailError && <FormError id="email-error">{emailError}</FormError>}
@@ -122,7 +122,7 @@ export default function ForgotPasswordPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-11 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full h-11 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <>
@@ -137,7 +137,7 @@ export default function ForgotPasswordPage() {
 
                 <Link
                   href="/login"
-                  className="flex items-center gap-1.5 text-sm text-[#7d8471] hover:text-[#1e2d1c] transition-colors"
+                  className="flex items-center gap-1.5 text-sm text-[#6B7AB0] hover:text-[#1A2F6B] transition-colors"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
                   Volver al inicio de sesión
@@ -147,7 +147,7 @@ export default function ForgotPasswordPage() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-[#a4ac86] mt-8 animate-fade-in stagger-4">
+        <p className="text-center text-xs text-[#8A9BC8] mt-8 animate-fade-in stagger-4">
           ALUMCO &copy; {new Date().getFullYear()}
         </p>
       </div>

@@ -14,7 +14,7 @@ const defaultOptions = [
 
 export default function SedeFilter({ value, onChange, options = defaultOptions }: SedeFilterProps) {
   return (
-    <div className="flex rounded-lg bg-[#f0f2eb] p-1 w-fit" role="tablist" aria-label="Filtrar por sede">
+    <div className="flex rounded-lg bg-[#EEF2FF] p-1 w-fit" role="tablist" aria-label="Filtrar por sede">
       {options.map((tab) => (
         <button
           key={tab.key}
@@ -23,8 +23,8 @@ export default function SedeFilter({ value, onChange, options = defaultOptions }
           onClick={() => onChange(tab.key)}
           className={`px-3 lg:px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
             value === tab.key
-              ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
-              : "text-[#6b7260] hover:text-[#1e2d1c]"
+              ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
+              : "text-[#4A5C8A] hover:text-[#1A2F6B]"
           }`}
         >
           {tab.label}

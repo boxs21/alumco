@@ -56,7 +56,6 @@ interface Assignment {
   id: string;
   user_id: string;
   status: string;
-  // Supabase returns embedded relations as arrays even for many-to-one
   profiles: AssignmentProfile[] | AssignmentProfile | null;
 }
 
@@ -72,7 +71,7 @@ const statusConfig = {
   ARCHIVED:  { label: "Archivado", className: "bg-[#FEF0F2] text-[#E8445A]" },
 };
 
-export default function CapacitacionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function ProfesorCapacitacionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [training, setTraining] = useState<Training | null>(null);
   const [quiz, setQuiz] = useState<Quiz | null>(null);
@@ -108,7 +107,6 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
       setQuiz(quizData ?? null);
       setAssignments(((assignmentsData ?? []) as unknown) as Assignment[]);
 
-      // Count questions for the quiz
       if (quizData?.id) {
         const { count } = await supabase
           .from("questions")
@@ -162,16 +160,14 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
       <Topbar title="" />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
-        {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-[#4A5C8A]">
-          <Link href="/admin/capacitaciones" className="hover:text-[#1A2F6B] transition-colors">
+          <Link href="/profesor/capacitaciones" className="hover:text-[#1A2F6B] transition-colors">
             Capacitaciones
           </Link>
           <ChevronRight className="h-3.5 w-3.5" />
           <span className="text-[#1A2F6B] font-medium truncate max-w-[200px] sm:max-w-none">{training.title}</span>
         </nav>
 
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2 lg:gap-3">
@@ -184,7 +180,6 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {/* Publish / Unpublish toggle */}
             <button
               type="button"
               onClick={handleToggleStatus}
@@ -201,7 +196,7 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
               }
             </button>
             <Link
-              href={`/admin/capacitaciones/${id}/asignar`}
+              href={`/profesor/capacitaciones/${id}/asignar`}
               className="inline-flex items-center justify-center gap-2 h-10 lg:h-11 px-4 lg:px-5 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors"
             >
               <UserPlus className="h-4 w-4" />
@@ -211,14 +206,12 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
           </div>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 lg:gap-4">
           <StatCard title="Asignados" value={total} icon={Users} />
           <StatCard title="Completados" value={completed} icon={CheckCircle} />
           <StatCard title="Cumplimiento" value={`${progress}%`} icon={TrendingUp} />
         </div>
 
-        {/* Material + Quiz */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
           <Card className="border-[#C8D4EC] shadow-sm">
             <CardContent className="p-4 lg:p-6">
@@ -290,7 +283,6 @@ export default function CapacitacionDetailPage({ params }: { params: Promise<{ i
           </Card>
         </div>
 
-        {/* Assigned Users */}
         <Card className="border-[#C8D4EC] shadow-sm">
           <CardContent className="p-4 lg:p-6">
             <h2 className="text-sm lg:text-base font-semibold text-[#1A2F6B] mb-3 lg:mb-4">Colaboradores asignados</h2>

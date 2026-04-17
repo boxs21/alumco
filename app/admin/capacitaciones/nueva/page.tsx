@@ -224,9 +224,9 @@ export default function NuevaCapacitacionPage() {
   }
 
   const sedeOptions = [
-    { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre, color: "border-[#a4ac86] bg-[#f0f2eb]", activeRing: "ring-[#2d4a2b]" },
+    { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre, color: "border-[#8A9BC8] bg-[#EEF2FF]", activeRing: "ring-[#2B4BA8]" },
     { key: SEDES.COYHAIQUE.id,  label: SEDES.COYHAIQUE.nombre,  color: "border-amber-300 bg-amber-50",   activeRing: "ring-amber-500" },
-    { key: "global",            label: "Ambas sedes",           color: "border-[#dde0d4] bg-[#faf9f6]",  activeRing: "ring-[#7d8471]" },
+    { key: "global",            label: "Ambas sedes",           color: "border-[#C8D4EC] bg-[#FAFBFF]",  activeRing: "ring-[#6B7AB0]" },
   ];
 
   return (
@@ -241,35 +241,35 @@ export default function NuevaCapacitacionPage() {
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <div
                   className={`flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-sm font-medium transition-colors shrink-0 ${
-                    currentStep >= step.number ? "bg-[#2d4a2b] text-white" : "bg-[#f0f2eb] text-[#a4ac86]"
+                    currentStep >= step.number ? "bg-[#2B4BA8] text-white" : "bg-[#EEF2FF] text-[#8A9BC8]"
                   }`}
                 >
                   {currentStep > step.number ? <Check className="h-3.5 w-3.5" /> : step.number}
                 </div>
                 <span
                   className={`hidden sm:inline text-sm font-medium ${
-                    currentStep >= step.number ? "text-[#1e2d1c]" : "text-[#a4ac86]"
+                    currentStep >= step.number ? "text-[#1A2F6B]" : "text-[#8A9BC8]"
                   }`}
                 >
                   {step.label}
                 </span>
               </div>
               {i < steps.length - 1 && (
-                <div className={`w-8 sm:w-16 h-px ${currentStep > step.number ? "bg-[#2d4a2b]" : "bg-[#dde0d4]"}`} />
+                <div className={`w-8 sm:w-16 h-px ${currentStep > step.number ? "bg-[#2B4BA8]" : "bg-[#C8D4EC]"}`} />
               )}
             </div>
           ))}
         </div>
-        <p className="sm:hidden text-center text-sm font-medium text-[#1e2d1c]">
+        <p className="sm:hidden text-center text-sm font-medium text-[#1A2F6B]">
           Paso {currentStep}: {steps[currentStep - 1].label}
         </p>
 
         {/* Step 1: Basic Info */}
         {currentStep === 1 && (
-          <Card className="border-[#dde0d4] shadow-sm">
+          <Card className="border-[#C8D4EC] shadow-sm">
             <CardContent className="p-6 space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-sm font-medium text-[#1e2d1c]">
+                <Label htmlFor="title" className="text-sm font-medium text-[#1A2F6B]">
                   Título de la capacitación <span className="text-red-500">*</span>
                 </Label>
                 <Input
@@ -283,7 +283,7 @@ export default function NuevaCapacitacionPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description" className="text-sm font-medium text-[#1e2d1c]">
+                <Label htmlFor="description" className="text-sm font-medium text-[#1A2F6B]">
                   Descripción
                 </Label>
                 <textarea
@@ -292,12 +292,12 @@ export default function NuevaCapacitacionPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
-                  className="w-full rounded-lg border border-[#dde0d4] px-3 py-2 text-base text-[#1e2d1c] placeholder:text-[#a4ac86] focus:outline-none focus:ring-2 focus:ring-[#2d4a2b] focus:border-transparent"
+                  className="w-full rounded-lg border border-[#C8D4EC] px-3 py-2 text-base text-[#1A2F6B] placeholder:text-[#8A9BC8] focus:outline-none focus:ring-2 focus:ring-[#2B4BA8] focus:border-transparent"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-[#1e2d1c]">Área</Label>
+                <Label className="text-sm font-medium text-[#1A2F6B]">Área</Label>
                 <div className="flex flex-wrap gap-2">
                   {AREAS.map((a) => (
                     <button
@@ -306,8 +306,8 @@ export default function NuevaCapacitacionPage() {
                       onClick={() => setArea(a)}
                       className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                         area === a
-                          ? "border-[#a4ac86] bg-[#f0f2eb] text-[#1e2d1c]"
-                          : "border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]/60"
+                          ? "border-[#8A9BC8] bg-[#EEF2FF] text-[#1A2F6B]"
+                          : "border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF]/60"
                       }`}
                     >
                       {a}
@@ -318,8 +318,8 @@ export default function NuevaCapacitacionPage() {
                     onClick={() => setArea("")}
                     className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                       area === ""
-                        ? "border-[#a4ac86] bg-[#f0f2eb] text-[#1e2d1c]"
-                        : "border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]/60"
+                        ? "border-[#8A9BC8] bg-[#EEF2FF] text-[#1A2F6B]"
+                        : "border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF]/60"
                     }`}
                   >
                     Todos
@@ -328,7 +328,7 @@ export default function NuevaCapacitacionPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-[#1e2d1c]">Sede</Label>
+                <Label className="text-sm font-medium text-[#1A2F6B]">Sede</Label>
                 <div className="grid grid-cols-3 gap-3">
                   {sedeOptions.map((opt) => (
                     <button
@@ -338,7 +338,7 @@ export default function NuevaCapacitacionPage() {
                       className={`p-4 rounded-xl border-2 text-center text-sm font-medium transition-all ${
                         sedeSelection === opt.key
                           ? `${opt.color} ring-2 ${opt.activeRing}`
-                          : "border-[#dde0d4] bg-[#faf9f6] text-[#7d8471] hover:bg-[#f0f2eb]/60"
+                          : "border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF]/60"
                       }`}
                     >
                       {opt.label}
@@ -352,29 +352,29 @@ export default function NuevaCapacitacionPage() {
 
         {/* Step 2: Material */}
         {currentStep === 2 && (
-          <Card className="border-[#dde0d4] shadow-sm">
+          <Card className="border-[#C8D4EC] shadow-sm">
             <CardContent className="p-6 space-y-5">
               {/* File dropzone */}
-              <div className="border-2 border-dashed border-[#dde0d4] rounded-xl p-8 text-center hover:border-[#7d8471] hover:bg-[#f0f2eb]/30 transition-colors cursor-pointer">
-                <Upload className="h-10 w-10 text-[#a4ac86] mx-auto mb-3" />
-                <p className="text-sm font-medium text-[#1e2d1c]">
+              <div className="border-2 border-dashed border-[#C8D4EC] rounded-xl p-8 text-center hover:border-[#6B7AB0] hover:bg-[#EEF2FF]/30 transition-colors cursor-pointer">
+                <Upload className="h-10 w-10 text-[#8A9BC8] mx-auto mb-3" />
+                <p className="text-sm font-medium text-[#1A2F6B]">
                   Arrastra archivos aquí o haz clic para seleccionar
                 </p>
-                <p className="text-xs text-[#7d8471] mt-1">PDF o presentaciones (máx. 50MB)</p>
+                <p className="text-xs text-[#6B7AB0] mt-1">PDF o presentaciones (máx. 50MB)</p>
               </div>
 
               {/* Divider */}
               <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-[#dde0d4]" />
-                <span className="text-xs text-[#a4ac86] font-medium">o agregar link de video</span>
-                <div className="flex-1 h-px bg-[#dde0d4]" />
+                <div className="flex-1 h-px bg-[#C8D4EC]" />
+                <span className="text-xs text-[#8A9BC8] font-medium">o agregar link de video</span>
+                <div className="flex-1 h-px bg-[#C8D4EC]" />
               </div>
 
               {/* Video URL input */}
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#a4ac86]" aria-hidden="true" />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8A9BC8]" aria-hidden="true" />
                     <Input
                       placeholder="Pegar link de YouTube o Google Drive..."
                       value={videoUrl}
@@ -387,14 +387,14 @@ export default function NuevaCapacitacionPage() {
                     type="button"
                     onClick={addVideoLink}
                     disabled={!previewEmbed}
-                    className="h-11 px-4 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                    className="h-11 px-4 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
                   >
                     Agregar
                   </button>
                 </div>
 
                 {videoUrl.trim() && (
-                  <div className="rounded-lg border border-[#dde0d4] overflow-hidden bg-[#faf9f6]">
+                  <div className="rounded-lg border border-[#C8D4EC] overflow-hidden bg-[#FAFBFF]">
                     {previewEmbed ? (
                       <iframe
                         src={previewEmbed}
@@ -404,7 +404,7 @@ export default function NuevaCapacitacionPage() {
                         allowFullScreen
                       />
                     ) : (
-                      <div className="flex items-center gap-2 p-3 text-sm text-[#a4ac86]">
+                      <div className="flex items-center gap-2 p-3 text-sm text-[#8A9BC8]">
                         <Video className="h-4 w-4 shrink-0" />
                         <span>Link no reconocido. Usa YouTube o Google Drive.</span>
                       </div>
@@ -416,21 +416,21 @@ export default function NuevaCapacitacionPage() {
               {videoLinks.length > 0 ? (
                 <div className="space-y-2">
                   {videoLinks.map((v) => (
-                    <div key={v.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#dde0d4] bg-[#faf9f6]">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f0f2eb] shrink-0">
-                        <Video className="h-4 w-4 text-[#6b7260]" aria-hidden="true" />
+                    <div key={v.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EEF2FF] shrink-0">
+                        <Video className="h-4 w-4 text-[#4A5C8A]" aria-hidden="true" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#1e2d1c] truncate">
+                        <p className="text-sm font-medium text-[#1A2F6B] truncate">
                           {v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive"}
                         </p>
-                        <p className="text-xs text-[#7d8471] truncate">{v.url}</p>
+                        <p className="text-xs text-[#6B7AB0] truncate">{v.url}</p>
                       </div>
                       <button
                         type="button"
                         onClick={() => removeVideoLink(v.id)}
                         aria-label="Eliminar video"
-                        className="text-[#a4ac86] hover:text-red-500 transition-colors shrink-0"
+                        className="text-[#8A9BC8] hover:text-red-500 transition-colors shrink-0"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -439,8 +439,8 @@ export default function NuevaCapacitacionPage() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center py-4 text-center">
-                  <FileText className="h-8 w-8 text-[#dde0d4] mb-2" aria-hidden="true" />
-                  <p className="text-sm text-[#7d8471]">No hay material cargado todavía.</p>
+                  <FileText className="h-8 w-8 text-[#C8D4EC] mb-2" aria-hidden="true" />
+                  <p className="text-sm text-[#6B7AB0]">No hay material cargado todavía.</p>
                 </div>
               )}
             </CardContent>
@@ -449,22 +449,22 @@ export default function NuevaCapacitacionPage() {
 
         {/* Step 3: Quiz */}
         {currentStep === 3 && (
-          <Card className="border-[#dde0d4] shadow-sm">
+          <Card className="border-[#C8D4EC] shadow-sm">
             <CardContent className="p-6 space-y-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[#1e2d1c]">Incluir evaluación</p>
-                  <p className="text-xs text-[#7d8471] mt-0.5">
+                  <p className="text-sm font-medium text-[#1A2F6B]">Incluir evaluación</p>
+                  <p className="text-xs text-[#6B7AB0] mt-0.5">
                     Los colaboradores deberán aprobar para obtener su certificado
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setHasQuiz(!hasQuiz)}
-                  className={`relative w-11 h-6 rounded-full transition-colors ${hasQuiz ? "bg-[#2d4a2b]" : "bg-[#dde0d4]"}`}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${hasQuiz ? "bg-[#2B4BA8]" : "bg-[#C8D4EC]"}`}
                 >
                   <span
-                    className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-[#faf9f6] shadow transition-transform ${
+                    className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-[#FAFBFF] shadow transition-transform ${
                       hasQuiz ? "translate-x-5" : ""
                     }`}
                   />
@@ -474,7 +474,7 @@ export default function NuevaCapacitacionPage() {
               {hasQuiz && (
                 <>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-[#1e2d1c]">
+                    <Label className="text-sm font-medium text-[#1A2F6B]">
                       Nota mínima de aprobación (%)
                     </Label>
                     <Input
@@ -489,14 +489,14 @@ export default function NuevaCapacitacionPage() {
 
                   <div className="space-y-4">
                     {questions.map((q, qi) => (
-                      <div key={q.id} className="p-4 rounded-lg border border-[#dde0d4] space-y-3">
+                      <div key={q.id} className="p-4 rounded-lg border border-[#C8D4EC] space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-semibold text-[#1e2d1c]">Pregunta {qi + 1}</span>
+                          <span className="text-sm font-semibold text-[#1A2F6B]">Pregunta {qi + 1}</span>
                           {questions.length > 1 && (
                             <button
                               type="button"
                               onClick={() => removeQuestion(q.id)}
-                              className="text-[#a4ac86] hover:text-red-500 transition-colors"
+                              className="text-[#8A9BC8] hover:text-red-500 transition-colors"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -525,7 +525,7 @@ export default function NuevaCapacitacionPage() {
                                   )
                                 }
                                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                                  opt.isCorrect ? "border-[#2d4a2b] bg-[#2d4a2b]" : "border-[#dde0d4] hover:border-slate-400"
+                                  opt.isCorrect ? "border-[#2B4BA8] bg-[#2B4BA8]" : "border-[#C8D4EC] hover:border-slate-400"
                                 }`}
                               >
                                 {opt.isCorrect && <Check className="h-3 w-3 text-white" />}
@@ -549,7 +549,7 @@ export default function NuevaCapacitacionPage() {
                           <button
                             type="button"
                             onClick={() => addOption(q.id)}
-                            className="text-sm text-[#2d4a2b] hover:text-[#1e2d1c] font-medium"
+                            className="text-sm text-[#2B4BA8] hover:text-[#1A2F6B] font-medium"
                           >
                             + Agregar opción
                           </button>
@@ -559,7 +559,7 @@ export default function NuevaCapacitacionPage() {
                     <button
                       type="button"
                       onClick={addQuestion}
-                      className="flex items-center gap-2 text-sm text-[#2d4a2b] hover:text-[#1e2d1c] font-medium"
+                      className="flex items-center gap-2 text-sm text-[#2B4BA8] hover:text-[#1A2F6B] font-medium"
                     >
                       <Plus className="h-4 w-4" />
                       Agregar pregunta
@@ -583,7 +583,7 @@ export default function NuevaCapacitacionPage() {
             type="button"
             disabled={saving}
             onClick={() => (currentStep > 1 ? setCurrentStep(currentStep - 1) : router.back())}
-            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-sm font-medium text-[#1A2F6B] hover:bg-[#EEF2FF] transition-colors disabled:opacity-50"
           >
             <ArrowLeft className="h-4 w-4" />
             {currentStep > 1 ? "Anterior" : "Cancelar"}
@@ -593,7 +593,7 @@ export default function NuevaCapacitacionPage() {
             <button
               type="button"
               onClick={goToStep2}
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors"
             >
               Siguiente
               <ArrowRight className="h-4 w-4" />
@@ -604,7 +604,7 @@ export default function NuevaCapacitacionPage() {
             <button
               type="button"
               onClick={() => setCurrentStep(3)}
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors"
             >
               Siguiente
               <ArrowRight className="h-4 w-4" />
@@ -616,7 +616,7 @@ export default function NuevaCapacitacionPage() {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {saving ? (
                 <>

@@ -156,16 +156,16 @@ export default function ReportesPage() {
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Filters */}
-        <Card className="border-[#dde0d4] shadow-sm">
+        <Card className="border-[#C8D4EC] shadow-sm">
           <CardContent className="p-4 lg:p-5">
             <div className="flex items-center gap-2 mb-3 lg:mb-4">
-              <Filter className="h-4 w-4 text-[#a4ac86]" />
-              <span className="text-sm font-semibold text-[#1e2d1c]">Filtros</span>
+              <Filter className="h-4 w-4 text-[#8A9BC8]" />
+              <span className="text-sm font-semibold text-[#1A2F6B]">Filtros</span>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-[#1e2d1c]">Sede</Label>
-                <div className="flex rounded-lg bg-[#f0f2eb] p-1">
+                <Label className="text-sm font-medium text-[#1A2F6B]">Sede</Label>
+                <div className="flex rounded-lg bg-[#EEF2FF] p-1">
                   {[
                     { key: "ALL",        label: "Todas" },
                     { key: "CONCEPCION", label: "Conc." },
@@ -176,8 +176,8 @@ export default function ReportesPage() {
                       onClick={() => setFilterSede(opt.key)}
                       className={`flex-1 px-1.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                         filterSede === opt.key
-                          ? "bg-[#faf9f6] text-[#1e2d1c] shadow-sm"
-                          : "text-[#7d8471] hover:text-[#1e2d1c]"
+                          ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
+                          : "text-[#6B7AB0] hover:text-[#1A2F6B]"
                       }`}
                     >
                       {opt.label}
@@ -186,30 +186,30 @@ export default function ReportesPage() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-[#1e2d1c]">Área</Label>
+                <Label className="text-sm font-medium text-[#1A2F6B]">Área</Label>
                 <select
                   value={filterArea}
                   onChange={(e) => setFilterArea(e.target.value)}
-                  className="w-full h-10 rounded-lg border border-[#dde0d4] px-2 text-sm text-[#1e2d1c] bg-[#faf9f6] focus:outline-none focus:ring-2 focus:ring-[#2d4a2b]"
+                  className="w-full h-10 rounded-lg border border-[#C8D4EC] px-2 text-sm text-[#1A2F6B] bg-[#FAFBFF] focus:outline-none focus:ring-2 focus:ring-[#2B4BA8]"
                 >
                   <option value="ALL">Todas las áreas</option>
                   {AREAS.map((a) => <option key={a} value={a}>{a}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-[#1e2d1c]">Desde</Label>
+                <Label className="text-sm font-medium text-[#1A2F6B]">Desde</Label>
                 <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-10 text-sm" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-[#1e2d1c]">Hasta</Label>
+                <Label className="text-sm font-medium text-[#1A2F6B]">Hasta</Label>
                 <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-10 text-sm" />
               </div>
             </div>
-            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#dde0d4]">
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#C8D4EC]">
               <button
                 type="button"
                 onClick={() => { setAppliedFrom(dateFrom); setAppliedTo(dateTo); }}
-                className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#2d4a2b] text-white text-sm font-medium hover:bg-[#1e3a1c] transition-colors"
+                className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors"
               >
                 <Filter className="h-3.5 w-3.5" />
                 Aplicar filtros
@@ -218,13 +218,13 @@ export default function ReportesPage() {
                 <button
                   type="button"
                   onClick={() => { setDateFrom(""); setDateTo(""); setAppliedFrom(""); setAppliedTo(""); }}
-                  className="inline-flex items-center h-9 px-4 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm text-[#7d8471] hover:bg-[#f0f2eb] transition-colors"
+                  className="inline-flex items-center h-9 px-4 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-sm text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors"
                 >
                   Limpiar
                 </button>
               )}
               {(appliedFrom || appliedTo) && (
-                <span className="text-xs text-[#7d8471]">
+                <span className="text-xs text-[#6B7AB0]">
                   Filtrando por fecha
                   {appliedFrom && ` desde ${appliedFrom}`}
                   {appliedTo   && ` hasta ${appliedTo}`}
@@ -241,20 +241,20 @@ export default function ReportesPage() {
         )}
 
         {/* Comparativa */}
-        <Card className="border-[#dde0d4] shadow-sm">
+        <Card className="border-[#C8D4EC] shadow-sm">
           <CardContent className="p-4 lg:p-6">
-            <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c] mb-4 lg:mb-5">
+            <h2 className="text-sm lg:text-base font-semibold text-[#1A2F6B] mb-4 lg:mb-5">
               Comparativa: {SEDES.CONCEPCION.nombre} vs {SEDES.COYHAIQUE.nombre}
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               {[
-                { sede: SEDES.CONCEPCION, s: concStats, dotColor: "bg-[#2d4a2b]", bg: "bg-[#f0f2eb]" },
+                { sede: SEDES.CONCEPCION, s: concStats, dotColor: "bg-[#2B4BA8]", bg: "bg-[#EEF2FF]" },
                 { sede: SEDES.COYHAIQUE,  s: coyStats,  dotColor: "bg-amber-500",  bg: "bg-amber-50" },
               ].map(({ sede, s, dotColor, bg }) => (
                 <div key={sede.id} className="space-y-4">
                   <div className="flex items-center gap-2">
                     <span className={`h-3 w-3 rounded-full ${dotColor}`} />
-                    <span className="text-sm font-semibold text-[#1e2d1c]">{sede.nombre}</span>
+                    <span className="text-sm font-semibold text-[#1A2F6B]">{sede.nombre}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {[
@@ -263,8 +263,8 @@ export default function ReportesPage() {
                       { label: "Capacitaciones", value: s.capacitaciones },
                     ].map(({ label, value }) => (
                       <div key={label} className={`p-3 rounded-lg ${bg}`}>
-                        <p className="text-xl font-semibold text-[#1e2d1c]">{value}</p>
-                        <p className="text-xs text-[#7d8471]">{label}</p>
+                        <p className="text-xl font-semibold text-[#1A2F6B]">{value}</p>
+                        <p className="text-xs text-[#6B7AB0]">{label}</p>
                       </div>
                     ))}
                   </div>
@@ -275,14 +275,14 @@ export default function ReportesPage() {
         </Card>
 
         {/* Detail Table */}
-        <Card className="border-[#dde0d4] shadow-sm">
+        <Card className="border-[#C8D4EC] shadow-sm">
           <CardContent className="p-4 lg:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm lg:text-base font-semibold text-[#1e2d1c]">Detalle por colaborador</h2>
+              <h2 className="text-sm lg:text-base font-semibold text-[#1A2F6B]">Detalle por colaborador</h2>
               <button
                 onClick={exportCSV}
                 disabled={filteredProfiles.length === 0}
-                className="inline-flex items-center gap-2 h-9 lg:h-11 px-3 lg:px-5 rounded-lg border border-[#dde0d4] bg-[#faf9f6] text-sm font-medium text-[#1e2d1c] hover:bg-[#f0f2eb] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 h-9 lg:h-11 px-3 lg:px-5 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-sm font-medium text-[#1A2F6B] hover:bg-[#EEF2FF] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline">Exportar CSV</span>
@@ -290,7 +290,7 @@ export default function ReportesPage() {
             </div>
 
             {loading ? (
-              <div className="text-sm text-[#7d8471] py-6 text-center">Cargando...</div>
+              <div className="text-sm text-[#6B7AB0] py-6 text-center">Cargando...</div>
             ) : filteredProfiles.length === 0 ? (
               <EmptyState
                 icon={Users}
@@ -298,16 +298,16 @@ export default function ReportesPage() {
                 description="No hay colaboradores que coincidan con los filtros seleccionados."
               />
             ) : (
-              <div className="rounded-xl border border-[#dde0d4] overflow-x-auto">
+              <div className="rounded-xl border border-[#C8D4EC] overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-[#faf9f6]">
-                      <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Colaborador</TableHead>
-                      <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Área</TableHead>
-                      <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Sede</TableHead>
-                      <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Completadas</TableHead>
-                      <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Nota prom.</TableHead>
-                      <TableHead className="text-sm font-medium text-[#7d8471] whitespace-nowrap">Estado</TableHead>
+                    <TableRow className="bg-[#FAFBFF]">
+                      <TableHead className="text-sm font-medium text-[#6B7AB0] whitespace-nowrap">Colaborador</TableHead>
+                      <TableHead className="text-sm font-medium text-[#6B7AB0] whitespace-nowrap">Área</TableHead>
+                      <TableHead className="text-sm font-medium text-[#6B7AB0] whitespace-nowrap">Sede</TableHead>
+                      <TableHead className="text-sm font-medium text-[#6B7AB0] whitespace-nowrap">Completadas</TableHead>
+                      <TableHead className="text-sm font-medium text-[#6B7AB0] whitespace-nowrap">Nota prom.</TableHead>
+                      <TableHead className="text-sm font-medium text-[#6B7AB0] whitespace-nowrap">Estado</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -315,21 +315,21 @@ export default function ReportesPage() {
                       const { completadas, avg } = userStats(user.id);
                       return (
                         <TableRow key={user.id}>
-                          <TableCell className="text-sm font-medium text-[#1e2d1c] whitespace-nowrap">
+                          <TableCell className="text-sm font-medium text-[#1A2F6B] whitespace-nowrap">
                             {user.name ?? user.email ?? "—"}
                           </TableCell>
-                          <TableCell className="text-sm text-[#1e2d1c] whitespace-nowrap">{user.area ?? "—"}</TableCell>
+                          <TableCell className="text-sm text-[#1A2F6B] whitespace-nowrap">{user.area ?? "—"}</TableCell>
                           <TableCell>
                             <SedeBadge sedeId={user.sede_id} sedeName={sedeName(user.sede_id)} size="sm" />
                           </TableCell>
-                          <TableCell className="text-sm text-[#1e2d1c]">{completadas}</TableCell>
-                          <TableCell className="text-sm text-[#1e2d1c]">{avg != null ? `${avg}%` : "—"}</TableCell>
+                          <TableCell className="text-sm text-[#1A2F6B]">{completadas}</TableCell>
+                          <TableCell className="text-sm text-[#1A2F6B]">{avg != null ? `${avg}%` : "—"}</TableCell>
                           <TableCell>
                             <Badge
                               className={
                                 user.active
-                                  ? "bg-[#f0f2eb] text-[#2d4a2b] hover:bg-[#f0f2eb]"
-                                  : "bg-[#f0f2eb] text-[#7d8471] hover:bg-[#f0f2eb]"
+                                  ? "bg-[#EEF2FF] text-[#2B4BA8] hover:bg-[#EEF2FF]"
+                                  : "bg-[#EEF2FF] text-[#6B7AB0] hover:bg-[#EEF2FF]"
                               }
                             >
                               {user.active ? "Activo" : "Inactivo"}

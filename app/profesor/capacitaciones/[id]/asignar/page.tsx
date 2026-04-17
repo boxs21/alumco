@@ -26,7 +26,7 @@ const targetOptions: { key: TargetType; label: string; description: string; icon
   { key: "ALL",        label: "Todos los colaboradores", description: "Asignar a todas las sedes", icon: Users },
   { key: "SEDE",       label: "Una sede completa",       description: "Todos los de una sede",      icon: Building2 },
   { key: "AREA",       label: "Por área o cargo",        description: "Un área específica",         icon: Briefcase },
-  { key: "INDIVIDUAL", label: "Colaboradores específicos", description: "Seleccionar manually",  icon: UserCheck },
+  { key: "INDIVIDUAL", label: "Colaboradores específicos", description: "Seleccionar manualmente",  icon: UserCheck },
 ];
 
 interface Profile {
@@ -38,7 +38,7 @@ interface Profile {
   active: boolean;
 }
 
-export default function AsignarPage({ params }: { params: Promise<{ id: string }> }) {
+export default function ProfesorAsignarPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const [targetType, setTargetType] = useState<TargetType | null>(null);
@@ -49,10 +49,9 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
   const [search, setSearch] = useState("");
   const [trainingTitle, setTrainingTitle] = useState("");
   const [collaborators, setCollaborators] = useState<Profile[]>([]);
-  const [loadError, setLoadError]   = useState<string | null>(null);
-  const [saving,    setSaving]      = useState(false);
-  const [saveError, setSaveError]   = useState<string | null>(null);
-  
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -104,7 +103,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
     let error: { message: string } | null = null;
 
     if (targetType === "INDIVIDUAL") {
-      // One row per selected user
       const rows = [...selectedUsers].map((userId) => ({
         training_id:  id,
         target_type:  "INDIVIDUAL",
@@ -115,7 +113,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
       const res = await supabase.from("assignments").insert(rows);
       error = res.error;
     } else {
-      // One row for the group target
       const row: Record<string, unknown> = {
         training_id:  id,
         target_type:  targetType,
@@ -135,7 +132,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
     }
 
     toast.success("Capacitación asignada correctamente");
-    router.push(`/admin/capacitaciones/${id}`);
+    router.push(`/profesor/capacitaciones/${id}`);
   }
 
   function toggleUser(userId: string) {
@@ -146,7 +143,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
       return next;
     });
   }
-
 
   if (loadError) {
     return (
@@ -162,7 +158,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
       <Topbar title={`Asignar: ${trainingTitle}`} />
 
       <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-4 lg:space-y-6">
-        {/* Target Type Selection */}
         <div className="space-y-3">
           <Label className="text-sm font-medium text-[#1A2F6B]">Tipo de asignación</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -194,7 +189,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
           </div>
         </div>
 
-        {/* Sede selector */}
         {targetType === "SEDE" && (
           <Card className="border-[#C8D4EC] shadow-sm">
             <CardContent className="p-5 space-y-3">
@@ -219,7 +213,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
           </Card>
         )}
 
-        {/* Area selector */}
         {targetType === "AREA" && (
           <Card className="border-[#C8D4EC] shadow-sm">
             <CardContent className="p-5 space-y-3">
@@ -244,7 +237,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
           </Card>
         )}
 
-        {/* Individual selector */}
         {targetType === "INDIVIDUAL" && (
           <Card className="border-[#C8D4EC] shadow-sm">
             <CardContent className="p-5 space-y-3">
@@ -293,7 +285,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
           </Card>
         )}
 
-        {/* Due date */}
         {targetType && (
           <Card className="border-[#C8D4EC] shadow-sm">
             <CardContent className="p-5">
@@ -316,7 +307,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
           </Card>
         )}
 
-        {/* Summary & Submit */}
         {targetType && (
           <Card className="border-[#C8D4EC] bg-[#EEF2FF]/50 shadow-sm">
             <CardContent className="p-5 space-y-3">
@@ -344,7 +334,6 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
           </Card>
         )}
 
-        {/* Back */}
         <button
           type="button"
           onClick={() => router.back()}

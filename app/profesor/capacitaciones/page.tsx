@@ -9,12 +9,7 @@ import EmptyState from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase";
 import { SEDES, sedeName } from "@/lib/config";
 import { Plus, BookOpen, AlertCircle } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface Training {
   id: string;
@@ -24,12 +19,9 @@ interface Training {
   sede_id: string | null;
 }
 
-interface Assignment {
-  training_id: string;
-  status: string;
-}
+interface Assignment { training_id: string; status: string }
 
-export default function CapacitacionesPage() {
+export default function ProfesorCapacitacionesPage() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [sedeTab, setSedeTab] = useState("ALL");
   const [trainings, setTrainings] = useState<Training[]>([]);
@@ -47,12 +39,7 @@ export default function CapacitacionesPage() {
         supabase.from("trainings").select("id, title, target_area, status, sede_id").order("created_at", { ascending: false }),
         supabase.from("assignments").select("training_id, status"),
       ]);
-      if (e1 ?? e2) {
-        console.error("[capacitaciones] load error:", (e1 ?? e2)?.message);
-        setLoadError("No se pudieron cargar las capacitaciones.");
-        setLoading(false);
-        return;
-      }
+      if (e1 ?? e2) { setLoadError("No se pudieron cargar las capacitaciones."); setLoading(false); return; }
       setTrainings((trainingsData as Training[]) ?? []);
       setAssignments(assignmentsData ?? []);
       setLoading(false);
@@ -65,40 +52,14 @@ export default function CapacitacionesPage() {
     setDeleting(true);
     setFormDeleteError(null);
     const supabase = createClient();
-
-    // 1. Limpiar asignaciones
     const { error: e1 } = await supabase.from("assignments").delete().eq("training_id", deleteTarget.id);
-    if (e1) {
-      console.error("[capacitaciones] delete assignments error:", e1.message);
-      setFormDeleteError("No se pudieron eliminar las asignaciones. Intenta de nuevo.");
-      setDeleting(false);
-      return;
-    }
-
-    // 2. Limpiar sesiones (ignora error si no existen)
+    if (e1) { setFormDeleteError("No se pudieron eliminar las asignaciones."); setDeleting(false); return; }
     await supabase.from("sessions").delete().eq("training_id", deleteTarget.id);
-    
-    // 3. Limpiar archivos (ignora error si no existen)
     await supabase.from("files").delete().eq("training_id", deleteTarget.id);
-
-    // 4. Limpiar certificados (AQUÍ ATRAPAMOS EL ERROR REAL)
     const { error: certError } = await supabase.from("certificates").delete().eq("training_id", deleteTarget.id);
-    if (certError) {
-      console.error("[capacitaciones] delete certificates error:", certError.message);
-      setFormDeleteError(`Error en DB de Certificados: ${certError.message}`);
-      setDeleting(false);
-      return; // Detenemos el proceso para que no choque en el siguiente paso
-    }
-
-    // 5. Borrar la capacitación final
+    if (certError) { setFormDeleteError(`Error en certificados: ${certError.message}`); setDeleting(false); return; }
     const { error: e2 } = await supabase.from("trainings").delete().eq("id", deleteTarget.id);
-    if (e2) {
-      console.error("[capacitaciones] delete training error:", e2.message);
-      setFormDeleteError(`Error en Capacitación: ${e2.message}`);
-      setDeleting(false);
-      return;
-    }
-
+    if (e2) { setFormDeleteError(`Error: ${e2.message}`); setDeleting(false); return; }
     const deleted = deleteTarget.title;
     setTrainings((prev) => prev.filter((t) => t.id !== deleteTarget.id));
     setAssignments((prev) => prev.filter((a) => a.training_id !== deleteTarget.id));
@@ -109,77 +70,55 @@ export default function CapacitacionesPage() {
 
   const filtered = trainings.filter((t) => {
     if (sedeTab === "CONCEPCION" && t.sede_id !== SEDES.CONCEPCION.id && t.sede_id !== null) return false;
-    if (sedeTab === "COYHAIQUE" && t.sede_id !== SEDES.COYHAIQUE.id && t.sede_id !== null) return false;
+    if (sedeTab === "COYHAIQUE"  && t.sede_id !== SEDES.COYHAIQUE.id  && t.sede_id !== null) return false;
     if (statusFilter !== "ALL" && t.status !== statusFilter) return false;
     return true;
   });
 
-  const sedeTabs = [
-    { key: "ALL",        label: "Todas" },
-    { key: "CONCEPCION", label: SEDES.CONCEPCION.nombre },
-    { key: "COYHAIQUE",  label: SEDES.COYHAIQUE.nombre },
-  ];
-
-  const statusOptions = [
-    { key: "ALL",       label: "Todos" },
-    { key: "PUBLISHED", label: "Publicado" },
-    { key: "DRAFT",     label: "Borrador" },
-  ];
-
   return (
     <div>
       <Topbar title="Capacitaciones" />
-
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
-        {/* Header with filters + action */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <div className="flex flex-wrap items-center gap-2 flex-1">
             <div className="flex rounded-lg bg-[#EEF2FF] p-1">
-              {sedeTabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setSedeTab(tab.key)}
+              {[
+                { key: "ALL",        label: "Todas" },
+                { key: "CONCEPCION", label: SEDES.CONCEPCION.nombre },
+                { key: "COYHAIQUE",  label: SEDES.COYHAIQUE.nombre },
+              ].map((tab) => (
+                <button key={tab.key} onClick={() => setSedeTab(tab.key)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    sedeTab === tab.key
-                      ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
-                      : "text-[#6B7AB0] hover:text-[#1A2F6B]"
+                    sedeTab === tab.key ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm" : "text-[#6B7AB0] hover:text-[#1A2F6B]"
                   }`}
-                >
-                  {tab.label}
-                </button>
+                >{tab.label}</button>
               ))}
             </div>
-
             <div className="flex rounded-lg bg-[#EEF2FF] p-1">
-              {statusOptions.map((opt) => (
-                <button
-                  key={opt.key}
-                  onClick={() => setStatusFilter(opt.key)}
+              {[
+                { key: "ALL",       label: "Todos" },
+                { key: "PUBLISHED", label: "Publicado" },
+                { key: "DRAFT",     label: "Borrador" },
+              ].map((opt) => (
+                <button key={opt.key} onClick={() => setStatusFilter(opt.key)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    statusFilter === opt.key
-                      ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
-                      : "text-[#6B7AB0] hover:text-[#1A2F6B]"
+                    statusFilter === opt.key ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm" : "text-[#6B7AB0] hover:text-[#1A2F6B]"
                   }`}
-                >
-                  {opt.label}
-                </button>
+                >{opt.label}</button>
               ))}
             </div>
           </div>
-
           <Link
-            href="/admin/capacitaciones/nueva"
+            href="/profesor/capacitaciones/nueva"
             className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors shadow-sm shrink-0"
           >
             <Plus className="h-4 w-4" />
-            Nueva capacitaci&oacute;n
+            Nueva capacitación
           </Link>
         </div>
 
         {loadError && (
-          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
-            {loadError}
-          </div>
+          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">{loadError}</div>
         )}
 
         {loading ? (
@@ -192,6 +131,7 @@ export default function CapacitacionesPage() {
                 <TrainingCard
                   key={t.id}
                   id={t.id}
+                  href={`/profesor/capacitaciones/${t.id}`}
                   title={t.title}
                   area={t.target_area}
                   status={t.status}
@@ -206,18 +146,11 @@ export default function CapacitacionesPage() {
             })}
           </div>
         ) : (
-          <EmptyState
-            icon={BookOpen}
-            title="Sin capacitaciones"
-            description="No hay capacitaciones que coincidan con los filtros seleccionados."
-          />
+          <EmptyState icon={BookOpen} title="Sin capacitaciones" description="No hay capacitaciones que coincidan con los filtros." />
         )}
       </div>
-      {/* ── Delete confirmation modal ── */}
-      <Dialog
-        open={!!deleteTarget}
-        onOpenChange={(open) => { if (!open && !deleting) { setDeleteTarget(null); setFormDeleteError(null); } }}
-      >
+
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open && !deleting) { setDeleteTarget(null); setFormDeleteError(null); } }}>
         <DialogContent className="max-w-sm rounded-2xl border-[#C8D4EC]" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle className="text-[#1A2F6B] flex items-center gap-2">
@@ -227,30 +160,17 @@ export default function CapacitacionesPage() {
           </DialogHeader>
           <div className="space-y-4 pt-1">
             <p className="text-sm text-[#6B7AB0]">
-              ¿Estás seguro de que quieres eliminar{" "}
-              <span className="font-semibold text-[#1A2F6B]">
-                {deleteTarget?.title}
-              </span>
-              ? Esta acción también eliminará todas sus asignaciones y no se puede deshacer.
+              ¿Estás seguro de eliminar{" "}
+              <span className="font-semibold text-[#1A2F6B]">{deleteTarget?.title}</span>? Esta acción no se puede deshacer.
             </p>
-            {formDeleteError && (
-              <p className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">{formDeleteError}</p>
-            )}
+            {formDeleteError && <p className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">{formDeleteError}</p>}
             <div className="flex gap-2">
-              <button
-                onClick={() => setDeleteTarget(null)}
-                disabled={deleting}
+              <button onClick={() => setDeleteTarget(null)} disabled={deleting}
                 className="flex-1 h-10 rounded-xl border border-[#C8D4EC] bg-[#FAFBFF] text-sm text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors disabled:opacity-50"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
+              >Cancelar</button>
+              <button onClick={handleDelete} disabled={deleting}
                 className="flex-1 h-10 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
-              >
-                {deleting ? "Eliminando..." : "Eliminar"}
-              </button>
+              >{deleting ? "Eliminando..." : "Eliminar"}</button>
             </div>
           </div>
         </DialogContent>
