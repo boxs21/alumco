@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
-import { Leaf, BookOpen, History, LogOut } from "lucide-react";
+import { Leaf, BookOpen, History, LogOut, CalendarDays } from "lucide-react";
 import DarkModeToggle from "@/components/shared/DarkModeToggle";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 const navItems = [
   { label: "Mis capacitaciones", shortLabel: "Capac.", href: "/portal", icon: BookOpen },
   { label: "Historial", shortLabel: "Historial", href: "/portal/historial", icon: History },
+  { label: "Calendario", shortLabel: "Agenda", href: "/portal/calendario", icon: CalendarDays },
 ];
 
 function getInitials(name: string): string {
