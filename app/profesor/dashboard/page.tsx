@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Topbar from "@/components/layout/Topbar";
 import StatCard from "@/components/shared/StatCard";
 import { Card, CardContent } from "@/components/ui/card";
@@ -94,12 +95,23 @@ export default function ProfesorDashboardPage() {
 
   return (
     <div>
-      <Topbar title="Dashboard" />
+      <Topbar
+        title="Dashboard"
+        sub="Esto es lo que está pasando hoy."
+        right={
+          <Link
+            href="/profesor/capacitaciones/nueva"
+            className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#ff7c6b] hover:bg-[#e86154] text-white text-[13px] font-[600] transition-colors"
+          >
+            <span className="text-base leading-none">+</span> Nueva capacitación
+          </Link>
+        }
+      />
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {loadError && (
-          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">{loadError}</div>
+          <div className="px-4 py-3 rounded-xl rounded-xl bg-[#ffe6e1] border border-[#ffccc5] text-[13px] text-[#e86154]">{loadError}</div>
         )}
-        <div className="flex rounded-lg bg-[#EEF2FF] p-1 w-fit">
+        <div className="flex rounded-lg bg-[#eaf0fb] p-1 w-fit">
           {[
             { key: "global",            label: "Todas" },
             { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre },
@@ -107,53 +119,53 @@ export default function ProfesorDashboardPage() {
           ].map((tab) => (
             <button key={tab.key} onClick={() => setSelectedSede(tab.key)}
               className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                selectedSede === tab.key ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm" : "text-[#6B7AB0] hover:text-[#1A2F6B]"
+                selectedSede === tab.key ? "bg-[#f6f3ee] text-[#15182b] shadow-sm" : "text-[#6b7185] hover:text-[#15182b]"
               }`}
             >{tab.label}</button>
           ))}
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-          <StatCard title="Colaboradores activos"    value={stats.colaboradores}  icon={Users}     delay={0} />
-          <StatCard title="Capacitaciones publicadas" value={stats.capacitaciones} icon={BookOpen}  delay={1} />
-          <StatCard title="Cumplimiento"             value={`${stats.cumplimiento}%`} icon={TrendingUp} delay={2} />
-          <StatCard title="Certificados emitidos"    value={stats.certificados}   icon={Award}     delay={3} />
+          <StatCard title="Colaboradores activos"    value={stats.colaboradores}      icon={Users}     delay={0} variant="navy" />
+          <StatCard title="Capacitaciones publicadas" value={stats.capacitaciones}    icon={BookOpen}  delay={1} variant="default" />
+          <StatCard title="Cumplimiento"             value={`${stats.cumplimiento}%`} icon={TrendingUp} delay={2} variant="coral" />
+          <StatCard title="Certificados emitidos"    value={stats.certificados}       icon={Award}     delay={3} variant="mustard" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-          <Card className="border-[#C8D4EC]/80 shadow-sm animate-fade-in-up stagger-4">
+          <Card className="border-[#e8e4dc]/80 shadow-sm animate-fade-in-up stagger-4">
             <CardContent className="p-4 lg:p-6">
-              <h2 className="text-sm lg:text-base font-semibold text-[#1A2F6B] mb-4 lg:mb-5">Comparativa por sede</h2>
+              <h2 className="text-sm lg:text-base font-semibold text-[#15182b] mb-4 lg:mb-5">Comparativa por sede</h2>
               <div className="space-y-5 lg:space-y-6">
                 {[
-                  { sede: SEDES.CONCEPCION, s: concStats, color: "bg-[#2B4BA8]", barColor: "bg-[#2B4BA8]" },
-                  { sede: SEDES.COYHAIQUE,  s: coyStats,  color: "bg-[#f9a620]",  barColor: "bg-[#f9a620]" },
+                  { sede: SEDES.CONCEPCION, s: concStats, color: "bg-[#2d4a8a]", barColor: "bg-[#2d4a8a]" },
+                  { sede: SEDES.COYHAIQUE,  s: coyStats,  color: "bg-[#f2b544]",  barColor: "bg-[#f2b544]" },
                 ].map(({ sede, s, color, barColor }) => (
                   <div key={sede.id} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className={`h-3 w-3 rounded-full ${color}`} />
-                        <span className="text-sm font-medium text-[#1A2F6B]">{sede.nombre}</span>
+                        <span className="text-sm font-medium text-[#15182b]">{sede.nombre}</span>
                       </div>
-                      <span className="text-sm font-bold text-[#1A2F6B]">{s.cumplimiento}%</span>
+                      <span className="text-sm font-bold text-[#15182b]">{s.cumplimiento}%</span>
                     </div>
-                    <div className="h-3 w-full rounded-full bg-[#EEF2FF] overflow-hidden">
+                    <div className="h-3 w-full rounded-full bg-[#eaf0fb] overflow-hidden">
                       <div className={`h-3 rounded-full ${barColor}`} style={{ width: `${s.cumplimiento}%` }} />
                     </div>
-                    <p className="text-xs text-[#4A5C8A]">{s.colaboradores} colaboradores &middot; {s.certificados} certificados</p>
+                    <p className="text-xs text-[#6b7185]">{s.colaboradores} colaboradores &middot; {s.certificados} certificados</p>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-[#C8D4EC]/80 shadow-sm animate-fade-in-up stagger-5">
+          <Card className="border-[#e8e4dc]/80 shadow-sm animate-fade-in-up stagger-5">
             <CardContent className="p-4 lg:p-6">
-              <h2 className="text-sm lg:text-base font-semibold text-[#1A2F6B] mb-4 lg:mb-5">Actividad reciente</h2>
+              <h2 className="text-sm lg:text-base font-semibold text-[#15182b] mb-4 lg:mb-5">Actividad reciente</h2>
               {recentCerts.length === 0 ? (
                 <div className="flex flex-col items-center py-8 text-center">
-                  <Activity className="h-8 w-8 text-[#C8D4EC] mb-2" />
-                  <p className="text-sm text-[#6B7AB0]">Sin actividad reciente</p>
+                  <Activity className="h-8 w-8 text-[#e8e4dc] mb-2" />
+                  <p className="text-sm text-[#6b7185]">Sin actividad reciente</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -170,17 +182,24 @@ export default function ProfesorDashboardPage() {
                       if (hrs < 24) return `hace ${hrs}h`;
                       return `hace ${Math.floor(hrs / 24)}d`;
                     })() : "";
+                    const PALETTES = [
+                      { bg: "bg-[#ff7c6b]", text: "text-white" },
+                      { bg: "bg-[#2d4a8a]", text: "text-white" },
+                      { bg: "bg-[#f2b544]", text: "text-[#4a3410]" },
+                      { bg: "bg-[#3c9d70]", text: "text-white" },
+                    ];
+                    const pal = PALETTES[[...displayName].reduce((s, ch) => s + ch.charCodeAt(0), 0) % PALETTES.length];
                     return (
                       <div key={c.id} className="flex items-start gap-3">
-                        <div className="h-8 w-8 rounded-full bg-[#EEF2FF] flex items-center justify-center shrink-0">
-                          <span className="text-xs font-semibold text-[#2B4BA8]">{initials}</span>
+                        <div className={`h-8 w-8 rounded-[10px] flex items-center justify-center shrink-0 ${pal.bg}`}>
+                          <span className={`text-[11px] font-[700] ${pal.text}`}>{initials}</span>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm text-[#1A2F6B] leading-snug">
+                          <p className="text-sm text-[#15182b] leading-snug">
                             <span className="font-medium">{displayName}</span>{" completó "}
                             <span className="font-medium">&ldquo;{training?.title ?? "—"}&rdquo;</span>
                           </p>
-                          <p className="text-xs text-[#8A9BC8] mt-0.5">{timeAgo}</p>
+                          <p className="text-xs text-[#a5a9b8] mt-0.5">{timeAgo}</p>
                         </div>
                       </div>
                     );
@@ -190,27 +209,27 @@ export default function ProfesorDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-[#C8D4EC]/80 shadow-sm animate-fade-in-up stagger-6">
+          <Card className="border-[#e8e4dc]/80 shadow-sm animate-fade-in-up stagger-6">
             <CardContent className="p-4 lg:p-6">
-              <h2 className="text-sm lg:text-base font-semibold text-[#1A2F6B] mb-4 lg:mb-5">Progreso por área</h2>
+              <h2 className="text-sm lg:text-base font-semibold text-[#15182b] mb-4 lg:mb-5">Progreso por área</h2>
               {areaProgress.length > 0 ? (
                 <div className="space-y-4 lg:space-y-6">
                   {areaProgress.map((item) => (
                     <div key={item.area} className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-[#1A2F6B]">{item.area}</span>
-                        <span className="text-sm font-bold text-[#1A2F6B]">{item.progreso}%</span>
+                        <span className="text-sm font-medium text-[#15182b]">{item.area}</span>
+                        <span className="text-sm font-bold text-[#15182b]">{item.progreso}%</span>
                       </div>
-                      <div className="h-3 w-full rounded-full bg-[#EEF2FF] overflow-hidden">
-                        <div className="h-3 rounded-full bg-[#2B4BA8]" style={{ width: `${item.progreso}%` }} />
+                      <div className="h-3 w-full rounded-full bg-[#eaf0fb] overflow-hidden">
+                        <div className="h-3 rounded-full bg-[#2d4a8a]" style={{ width: `${item.progreso}%` }} />
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="flex flex-col items-center py-8 text-center">
-                  <TrendingUp className="h-8 w-8 text-[#C8D4EC] mb-2" />
-                  <p className="text-sm text-[#6B7AB0]">Sin datos de progreso</p>
+                  <TrendingUp className="h-8 w-8 text-[#e8e4dc] mb-2" />
+                  <p className="text-sm text-[#6b7185]">Sin datos de progreso</p>
                 </div>
               )}
             </CardContent>

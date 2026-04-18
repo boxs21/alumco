@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import Topbar from "@/components/layout/Topbar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -106,22 +105,10 @@ function computeConflictIds(sessions: SessionRow[]): Set<string> {
 
 function sedeStyle(sedeId: string | null) {
   if (sedeId === SEDES.CONCEPCION.id)
-    return {
-      bar: "bg-[#2B4BA8]",
-      pill: "bg-[#2B4BA8]/[0.09] text-[#1A2F6B] border-[#2B4BA8]/25",
-      dot: "bg-[#2B4BA8]",
-    };
+    return { bar: "#2d4a8a", chipBg: "#eaf0fb", chipText: "#2d4a8a",  dotBg: "#2d4a8a",  dateBox: "#2d4a8a" };
   if (sedeId === SEDES.COYHAIQUE.id)
-    return {
-      bar: "bg-amber-500",
-      pill: "bg-amber-500/[0.10] text-amber-900 border-amber-400/30",
-      dot: "bg-amber-500",
-    };
-  return {
-    bar: "bg-[#6B7AB0]",
-    pill: "bg-[#6B7AB0]/[0.08] text-[#1A2F6B] border-[#6B7AB0]/20",
-    dot: "bg-[#6B7AB0]",
-  };
+    return { bar: "#f2b544",  chipBg: "#fdf1d8", chipText: "#8a6410",  dotBg: "#f2b544",  dateBox: "#f2b544" };
+  return   { bar: "#6b7185",  chipBg: "#f0ece4", chipText: "#6b7185",  dotBg: "#6b7185",  dateBox: "#6b7185" };
 }
 
 function formatDateRange(start: string, end: string): string {
@@ -349,12 +336,20 @@ export default function CalendarioPage() {
 
   return (
     <div>
-      <Topbar title="Calendario" />
+      <Topbar
+        title="Calendario"
+        sub="Sesiones y eventos programados"
+        right={
+          <button className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#ff7c6b] hover:bg-[#e86154] text-white text-[13px] font-[600] transition-colors">
+            <span className="text-base leading-none">+</span> Nueva sesión
+          </button>
+        }
+      />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <div className="flex rounded-lg bg-[#EEF2FF] p-1 mr-1">
+            <div className="flex rounded-lg bg-[#eaf0fb] p-1 mr-1">
               {[
                 { key: "global",            label: "Todas" },
                 { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre },
@@ -365,8 +360,8 @@ export default function CalendarioPage() {
                   onClick={() => setSelectedSede(tab.key)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     selectedSede === tab.key
-                      ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
-                      : "text-[#6B7AB0] hover:text-[#1A2F6B]"
+                      ? "bg-[#f6f3ee] text-[#15182b] shadow-sm"
+                      : "text-[#6b7185] hover:text-[#15182b]"
                   }`}
                 >
                   {tab.label}
@@ -375,23 +370,23 @@ export default function CalendarioPage() {
             </div>
             <button
               onClick={prevMonth}
-              className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors"
+              className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-[#6b7185] hover:bg-[#eaf0fb] transition-colors"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
 
             <div className="w-48 text-center">
-              <span className="text-base font-semibold text-[#1A2F6B] tracking-tight">
+              <span className="text-base font-semibold text-[#15182b] tracking-tight">
                 {MONTHS[month]}
               </span>
-              <span className="ml-1.5 text-base font-light text-[#6B7AB0]">
+              <span className="ml-1.5 text-base font-light text-[#6b7185]">
                 {year}
               </span>
             </div>
 
             <button
               onClick={nextMonth}
-              className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors"
+              className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-[#6b7185] hover:bg-[#eaf0fb] transition-colors"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -399,7 +394,7 @@ export default function CalendarioPage() {
             {(year !== today.getFullYear() || month !== today.getMonth()) && (
               <button
                 onClick={goToday}
-                className="h-9 px-3 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-sm text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors"
+                className="h-9 px-3 rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-sm text-[#6b7185] hover:bg-[#eaf0fb] transition-colors"
               >
                 Hoy
               </button>
@@ -407,9 +402,9 @@ export default function CalendarioPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-4 text-xs text-[#6B7AB0]">
+            <div className="hidden sm:flex items-center gap-4 text-xs text-[#6b7185]">
               <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-[#2B4BA8]" />
+                <span className="h-2 w-2 rounded-full bg-[#2d4a8a]" />
                 Concepción
               </span>
               <span className="flex items-center gap-1.5">
@@ -423,7 +418,7 @@ export default function CalendarioPage() {
             </div>
             <button
               onClick={() => openModal()}
-              className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors"
+              className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] transition-colors"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Nueva sesión</span>
@@ -432,14 +427,14 @@ export default function CalendarioPage() {
         </div>
 
         {loadError && (
-          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl rounded-xl bg-[#ffe6e1] border border-[#ffccc5] text-[13px] text-[#e86154]">
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
             {loadError}
           </div>
         )}
 
         {visibleConflictCount > 0 && (
-          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 animate-fade-in">
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl rounded-xl bg-[#ffe6e1] border border-[#ffccc5] text-[13px] text-[#e86154] animate-fade-in">
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
             <span>
               {visibleConflictCount} sesión
@@ -449,30 +444,26 @@ export default function CalendarioPage() {
           </div>
         )}
 
-        <Card className="border-[#C8D4EC] shadow-sm overflow-hidden animate-fade-in">
+        <Card className="border-[#e8e4dc] shadow-sm overflow-hidden animate-fade-in">
           <CardContent className="p-0">
-            <div className="grid grid-cols-7 bg-[#EEF2FF] border-b border-[#C8D4EC]">
+            {/* Week day headers */}
+            <div className="grid grid-cols-7 border-b border-[#e8e4dc]" style={{ background: "#f7f5f0" }}>
               {WEEK_DAYS.map((d) => (
-                <div
-                  key={d}
-                  className="py-2 text-center text-[11px] font-semibold text-[#6B7AB0] uppercase tracking-wider"
-                >
+                <div key={d} className="py-[14px] text-center text-[10.5px] font-[700] text-[#a5a9b8] uppercase tracking-[0.14em]">
                   {d}
                 </div>
               ))}
             </div>
 
             {loading ? (
-              <div className="py-20 text-center text-sm text-[#6B7AB0]">
-                Cargando calendario...
-              </div>
+              <div className="py-20 text-center text-[13px] text-[#6b7185]">Cargando calendario...</div>
             ) : (
               <div className="grid grid-cols-7">
                 {gridDays.map((day, idx) => {
                   const dateStr = toDateStr(day);
                   const inMonth = day.getMonth() === month;
                   const isToday = dateStr === todayStr;
-                  const daySessions = sessionsForDay(dateStr, visibleSessions);
+                  const daySessions = sessionsForDay(dateStr, visibleSessions).filter((s) => s.start_date === dateStr);
                   const isLastRow = idx >= 35;
                   const isLastCol = (idx + 1) % 7 === 0;
 
@@ -481,84 +472,49 @@ export default function CalendarioPage() {
                       key={dateStr}
                       onClick={() => inMonth && openModal(dateStr)}
                       className={cn(
-                        "min-h-[76px] lg:min-h-[96px] p-1 lg:p-1.5",
-                        "border-b border-r border-[#C8D4EC]",
-                        !isLastRow && "border-b",
+                        "min-h-[108px] p-2.5",
+                        "border-b border-r border-[#f0ece4]",
                         isLastRow && "border-b-0",
                         isLastCol && "border-r-0",
-                        inMonth
-                          ? "bg-[#FAFBFF] cursor-pointer hover:bg-[#EEF2FF]/50 transition-colors"
-                          : "bg-[#FAFBFF]/50 cursor-default",
+                        inMonth ? "bg-white cursor-pointer hover:bg-[#eaf0fb]/30 transition-colors" : "cursor-default",
                       )}
+                      style={!inMonth ? { background: "#f7f5f0" } : undefined}
                     >
-                      <div className="flex items-start justify-between mb-0.5">
-                        {/* Busy-day dots — one per session type */}
-                        <div className="flex items-center gap-0.5 pt-0.5 pl-0.5">
-                          {daySessions.length > 0 && daySessions.slice(0, 3).map((s) => {
-                            const st = sedeStyle(s.sede_id);
-                            return (
-                              <span
-                                key={s.id}
-                                className={cn("h-1 w-1 rounded-full flex-shrink-0", st.dot)}
-                              />
-                            );
-                          })}
-                        </div>
-                        <span
-                          className={cn(
-                            "text-xs font-medium h-6 w-6 flex items-center justify-center rounded-full",
-                            isToday && "bg-[#2B4BA8] text-white",
-                            !isToday && inMonth && "text-[#1A2F6B]",
-                            !isToday && !inMonth && "text-[#8A9BC8]",
-                          )}
+                      {/* Day number */}
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="text-[12px] font-[700]"
+                          style={isToday
+                            ? { background: "#ff7c6b", color: "white", borderRadius: "50%", width: 24, height: 24, display: "inline-flex", alignItems: "center", justifyContent: "center" }
+                            : { color: inMonth ? "#15182b" : "#a5a9b8" }
+                          }
                         >
                           {day.getDate()}
                         </span>
+                        {daySessions.length > 2 && (
+                          <span className="text-[10px] text-[#a5a9b8]">+{daySessions.length - 2}</span>
+                        )}
                       </div>
 
-                      <div className="space-y-0.5">
+                      {/* Event chips */}
+                      <div className="space-y-[5px]">
                         {daySessions.slice(0, 2).map((s) => {
-                          const style = sedeStyle(s.sede_id);
+                          const st = sedeStyle(s.sede_id);
                           const hasConflict = conflictIds.has(s.id);
-                          const isStart = s.start_date === dateStr;
-                          const isEnd = s.end_date === dateStr;
                           const title = sessionTitle(s);
-
                           return (
                             <div
                               key={s.id}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                router.push(`/admin/capacitaciones/${s.training_id}`);
-                              }}
+                              onClick={(e) => { e.stopPropagation(); router.push(`/admin/capacitaciones/${s.training_id}`); }}
                               title={title}
-                              className={cn(
-                                "relative h-5 text-[10px] font-semibold leading-5 truncate border cursor-pointer transition-opacity hover:opacity-80",
-                                style.pill,
-                                isStart && isEnd && "rounded-full px-1.5",
-                                isStart && !isEnd && "rounded-l-full pl-1.5 rounded-r-none border-r-0 pr-0",
-                                !isStart && isEnd && "rounded-r-full pr-1 rounded-l-none border-l-0 pl-0",
-                                !isStart && !isEnd && "rounded-none border-x-0 px-0",
-                                hasConflict && "ring-1 ring-red-400 ring-inset",
-                              )}
+                              className="flex items-center gap-[5px] px-[7px] py-[3px] rounded-[6px] text-[10.5px] font-[600] overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                              style={{ background: hasConflict ? "#fee2e2" : st.chipBg, color: hasConflict ? "#dc2626" : st.chipText }}
                             >
-                              {hasConflict && (
-                                <span className="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-red-400 flex-shrink-0" />
-                              )}
-                              {isStart && (
-                                <span className="hidden lg:flex items-center gap-0.5 pl-0.5">
-                                  <span className={cn("h-1.5 w-1.5 rounded-full flex-shrink-0 -mt-px", style.dot)} />
-                                  <span className="truncate">{title}</span>
-                                </span>
-                              )}
+                              <span className="w-[3px] h-[10px] rounded-[2px] flex-shrink-0"
+                                style={{ background: hasConflict ? "#dc2626" : st.bar }} />
+                              <span className="truncate">{title}</span>
                             </div>
                           );
                         })}
-                        {daySessions.length > 2 && (
-                          <p className="text-[10px] font-medium text-[#6B7AB0] pl-1">
-                            +{daySessions.length - 2} más
-                          </p>
-                        )}
                       </div>
                     </div>
                   );
@@ -569,79 +525,76 @@ export default function CalendarioPage() {
         </Card>
 
         {!loading && visibleSessions.length > 0 && (
-          <Card className="border-[#C8D4EC] shadow-sm animate-fade-in">
+          <Card className="border-[#e8e4dc] shadow-sm animate-fade-in">
             <CardContent className="p-4 lg:p-5">
-              <div className="flex items-baseline gap-2 mb-4">
-                <h3 className="text-sm font-semibold text-[#1A2F6B] tracking-tight">
-                  {MONTHS[month]} {year}
-                </h3>
-                <span className="text-xs text-[#8A9BC8]">
-                  {visibleSessions.length} sesión{visibleSessions.length !== 1 ? "es" : ""}
+              <h3 className="text-[13px] font-[700] text-[#15182b] uppercase tracking-[0.05em] mb-3">
+                Próximas sesiones
+                <span className="ml-2 text-[11px] font-[500] text-[#a5a9b8] normal-case tracking-normal">
+                  {visibleSessions.length} en {MONTHS[month]}
                 </span>
-              </div>
+              </h3>
               <div className="space-y-2">
                 {visibleSessions.map((s) => {
-                  const style = sedeStyle(s.sede_id);
+                  const st = sedeStyle(s.sede_id);
                   const hasConflict = conflictIds.has(s.id);
                   const title = sessionTitle(s);
+                  const startDate = parseLocalDate(s.start_date);
+                  const dayAbbr = startDate.toLocaleDateString("es-CL", { weekday: "short" }).toUpperCase().replace(".", "").slice(0, 3);
+                  const dayNum  = startDate.getDate();
 
                   return (
                     <div
                       key={s.id}
                       className={cn(
-                        "flex items-center gap-3 px-3 py-2.5 rounded-xl border bg-[#FAFBFF]",
-                        hasConflict ? "border-red-200 ring-1 ring-red-200" : "border-[#C8D4EC]",
+                        "flex items-center gap-3 px-3 py-[10px] rounded-[12px] border",
+                        hasConflict ? "border-red-200 bg-red-50" : "border-[#e8e4dc] bg-[#f7f5f0]",
                       )}
                     >
-                      {/* Sede color accent */}
-                      <div className={cn("w-[3px] self-stretch rounded-full flex-shrink-0", style.bar)} />
+                      {/* Colored date box */}
+                      <div
+                        className="w-11 h-11 rounded-[12px] flex flex-col items-center justify-center shrink-0"
+                        style={{ background: hasConflict ? "#dc2626" : st.dateBox, color: (st.dateBox === "#f2b544") ? "#4a3410" : "white" }}
+                      >
+                        <span className="text-[9px] font-[700] uppercase tracking-[0.1em] leading-none">{dayAbbr}</span>
+                        <span className="text-[17px] font-[800] leading-tight tabular-nums">{dayNum}</span>
+                      </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
-                          <p className="text-sm font-semibold text-[#1A2F6B] truncate leading-snug">
-                            {title}
-                          </p>
+                          <p className="text-[13.5px] font-[600] text-[#15182b] truncate leading-snug">{title}</p>
                           {hasConflict && (
-                            <Badge className="bg-red-100 text-red-600 border-red-200 text-[10px] shrink-0 font-medium">
-                              Conflicto
-                            </Badge>
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-[700] bg-red-100 text-red-600">Conflicto</span>
                           )}
                         </div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-xs text-[#6B7AB0]">
-                            {formatDateRange(s.start_date, s.end_date)}
-                          </p>
+                          <span className="text-[11.5px] text-[#6b7185]">{s.modality === "PRESENCIAL" ? "Presencial" : "Online"}</span>
                           {s.sede_id && (
                             <>
-                              <span className="text-[#C8D4EC]">·</span>
-                              <span className="flex items-center gap-1 text-xs text-[#6B7AB0]">
-                                <span className={cn("h-1.5 w-1.5 rounded-full flex-shrink-0", style.dot)} />
+                              <span className="text-[#e8e4dc]">·</span>
+                              <span className="inline-flex items-center gap-1 text-[11.5px] font-[600]"
+                                style={{ color: st.chipText }}>
+                                <span className="h-1.5 w-1.5 rounded-full" style={{ background: st.bar }} />
                                 {sedeName(s.sede_id)}
                               </span>
                             </>
                           )}
-                          <span className="text-[#C8D4EC]">·</span>
-                          <span className="text-xs text-[#6B7AB0]">
-                            {s.modality === "PRESENCIAL" ? "Presencial" : "Online"}
-                          </span>
+                          {s.notes && (
+                            <><span className="text-[#e8e4dc]">·</span>
+                            <span className="text-[11.5px] text-[#a5a9b8] italic truncate">{s.notes}</span></>
+                          )}
                         </div>
-                        {s.notes && (
-                          <p className="text-xs text-[#8A9BC8] mt-0.5 italic truncate">
-                            {s.notes}
-                          </p>
-                        )}
                       </div>
 
                       <div className="flex items-center gap-1 shrink-0">
                         <button
                           onClick={() => router.push(`/admin/capacitaciones/${s.training_id}`)}
-                          className="h-7 px-2.5 rounded-lg text-xs text-[#2B4BA8] hover:bg-[#EEF2FF] transition-colors font-medium"
+                          className="h-7 px-2.5 rounded-[8px] text-[12px] font-[600] text-[#2d4a8a] hover:bg-[#eaf0fb] transition-colors border border-[#e8e4dc] bg-white"
                         >
                           Ver
                         </button>
                         <button
                           onClick={() => handleDelete(s.id)}
-                          className="h-7 w-7 flex items-center justify-center rounded-lg text-[#8A9BC8] hover:text-red-500 hover:bg-red-50 transition-colors"
+                          className="h-7 w-7 flex items-center justify-center rounded-[8px] text-[#a5a9b8] hover:text-red-500 hover:bg-red-50 transition-colors"
                         >
                           <X className="h-3.5 w-3.5" />
                         </button>
@@ -656,13 +609,13 @@ export default function CalendarioPage() {
 
         {!loading && visibleSessions.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in">
-            <div className="h-12 w-12 rounded-2xl bg-[#EEF2FF] flex items-center justify-center mb-3">
-              <Calendar className="h-6 w-6 text-[#8A9BC8]" />
+            <div className="h-12 w-12 rounded-2xl bg-[#eaf0fb] flex items-center justify-center mb-3">
+              <Calendar className="h-6 w-6 text-[#a5a9b8]" />
             </div>
-            <p className="text-sm font-medium text-[#1A2F6B]">
+            <p className="text-sm font-medium text-[#15182b]">
               Sin sesiones en {MONTHS[month]}
             </p>
-            <p className="text-xs text-[#6B7AB0] mt-1">
+            <p className="text-xs text-[#6b7185] mt-1">
               Haz clic en un día o en &quot;Nueva sesión&quot; para agregar una.
             </p>
           </div>
@@ -675,16 +628,16 @@ export default function CalendarioPage() {
           if (!open) { setShowModal(false); resetForm(); }
         }}
       >
-        <DialogContent className="max-w-md rounded-2xl border-[#C8D4EC]">
+        <DialogContent className="max-w-md rounded-2xl border-[#e8e4dc]">
           <DialogHeader>
-            <DialogTitle className="text-[#1A2F6B]">
+            <DialogTitle className="text-[#15182b]">
               Nueva sesión
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 pt-1">
             <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-[#1A2F6B]">
+              <Label className="text-sm font-medium text-[#15182b]">
                 Capacitación
               </Label>
               <Select
@@ -695,7 +648,7 @@ export default function CalendarioPage() {
                 }}
               >
                 {/* LA LÍNEA MÁGICA DE CSS ESTÁ JUSTO AQUÍ ABAJO 👇 */}
-                <SelectTrigger className="h-10 w-full max-w-full overflow-hidden rounded-xl border-[#C8D4EC] [&>span]:truncate [&>span]:text-left">
+                <SelectTrigger className="h-10 w-full max-w-full overflow-hidden rounded-xl border-[#e8e4dc] [&>span]:truncate [&>span]:text-left">
                   <SelectValue placeholder="Selecciona una capacitación" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl max-h-60">
@@ -709,15 +662,15 @@ export default function CalendarioPage() {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-[#1A2F6B]">Sede</Label>
+              <Label className="text-sm font-medium text-[#15182b]">Sede</Label>
               <Select value={formSedeId} onValueChange={setFormSedeId}>
-                <SelectTrigger className="h-10 rounded-xl border-[#C8D4EC]">
+                <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
                   <SelectValue placeholder="Selecciona sede" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl">
                   <SelectItem value={SEDES.CONCEPCION.id}>
                     <span className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[#2B4BA8]" />
+                      <span className="h-2 w-2 rounded-full bg-[#2d4a8a]" />
                       Concepción
                     </span>
                   </SelectItem>
@@ -729,7 +682,7 @@ export default function CalendarioPage() {
                   </SelectItem>
                   <SelectItem value="AMBAS">
                     <span className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[#6B7AB0]" />
+                      <span className="h-2 w-2 rounded-full bg-[#6b7185]" />
                       Ambas sedes
                     </span>
                   </SelectItem>
@@ -739,7 +692,7 @@ export default function CalendarioPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-[#1A2F6B]">
+                <Label className="text-sm font-medium text-[#15182b]">
                   Fecha inicio
                 </Label>
                 <Input
@@ -749,11 +702,11 @@ export default function CalendarioPage() {
                     setFormStart(e.target.value);
                     if (formError) setFormError(null);
                   }}
-                  className="h-10 rounded-xl border-[#C8D4EC]"
+                  className="h-10 rounded-xl border-[#e8e4dc]"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-[#1A2F6B]">
+                <Label className="text-sm font-medium text-[#15182b]">
                   Fecha fin
                 </Label>
                 <Input
@@ -764,20 +717,20 @@ export default function CalendarioPage() {
                     setFormEnd(e.target.value);
                     if (formError) setFormError(null);
                   }}
-                  className="h-10 rounded-xl border-[#C8D4EC]"
+                  className="h-10 rounded-xl border-[#e8e4dc]"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-[#1A2F6B]">
-                Notas <span className="font-normal text-[#6B7AB0]">(opcional)</span>
+              <Label className="text-sm font-medium text-[#15182b]">
+                Notas <span className="font-normal text-[#6b7185]">(opcional)</span>
               </Label>
               <Input
                 placeholder="Sala, instructor, requisitos..."
                 value={formNotes}
                 onChange={(e) => setFormNotes(e.target.value)}
-                className="h-10 rounded-xl border-[#C8D4EC]"
+                className="h-10 rounded-xl border-[#e8e4dc]"
               />
             </div>
 
@@ -805,14 +758,14 @@ export default function CalendarioPage() {
             <div className="flex gap-2 pt-1">
               <button
                 onClick={() => { setShowModal(false); resetForm(); }}
-                className="flex-1 h-10 rounded-xl border border-[#C8D4EC] bg-[#FAFBFF] text-sm text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors"
+                className="flex-1 h-10 rounded-xl border border-[#e8e4dc] bg-[#f6f3ee] text-sm text-[#6b7185] hover:bg-[#eaf0fb] transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 h-10 rounded-xl bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] disabled:opacity-50 transition-colors"
+                className="flex-1 h-10 rounded-xl bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] disabled:opacity-50 transition-colors"
               >
                 {saving ? "Guardando..." : "Guardar sesión"}
               </button>

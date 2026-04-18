@@ -1,68 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import DarkModeToggle from "@/components/shared/DarkModeToggle";
-import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
+import { Bell, Settings, Search } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface TopbarProps {
-  title?: string;
+  title?: ReactNode;
+  sub?: string;
+  right?: ReactNode;
 }
 
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
-
-export default function Topbar({ title }: TopbarProps) {
-  const [userName, setUserName] = useState("");
-  const [userInitials, setUserInitials] = useState("--");
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return;
-      const name = user.user_metadata?.full_name ?? user.email ?? "Usuario";
-      setUserName(name);
-      setUserInitials(getInitials(name));
-    });
-  }, []);
-
+export default function Topbar({ title, sub, right }: TopbarProps) {
   return (
-    <header className="sticky top-0 z-20 flex h-14 lg:h-16 items-center justify-between border-b border-[#C8D4EC]/80 bg-[#FAFBFF]/95 backdrop-blur-sm px-4 lg:px-6">
-      <div className="flex items-center gap-4">
+    <header className="sticky top-0 z-20 flex items-end justify-between border-b border-[#e8e4dc] bg-[#f6f3ee]/95 backdrop-blur-sm px-6 py-5 gap-4 flex-wrap">
+      <div>
         {title && (
-          <h1 className="text-lg lg:text-xl font-semibold text-[#1A2F6B] tracking-tight animate-fade-in">
+          <h1 className="text-[26px] font-[800] leading-none tracking-[-0.025em] text-[#15182b]">
             {title}
           </h1>
         )}
+        {sub && (
+          <p className="mt-1.5 text-[13px] text-[#6b7185]">{sub}</p>
+        )}
       </div>
 
-      <div className="flex items-center gap-2 lg:gap-4">
-        {/* Font size + Theme switcher — compact on mobile, hidden on lg (they're in sidebar) */}
-        <div className="lg:hidden flex items-center gap-1.5">
-          <FontSizeSwitcher compact />
-          <DarkModeToggle compact />
+      <div className="flex items-center gap-2">
+        {/* Search */}
+        <div className="hidden lg:flex items-center gap-2 bg-white border border-[#e8e4dc] px-3 py-[7px] rounded-full min-w-[260px] text-[#a5a9b8]">
+          <Search className="h-3.5 w-3.5 shrink-0" />
+          <input
+            className="flex-1 bg-transparent border-0 outline-none text-[12.5px] text-[#15182b] placeholder:text-[#a5a9b8]"
+            placeholder="Buscar capacitaciones, personas…"
+          />
         </div>
 
-        <div className="hidden sm:block h-6 w-px bg-[#C8D4EC]" />
+        {/* Bell */}
+        <button
+          className="relative w-9 h-9 bg-white border border-[#e8e4dc] text-[#6b7185] rounded-[10px] grid place-items-center hover:bg-[#f7f5f0] hover:text-[#15182b] transition-colors"
+          aria-label="Notificaciones"
+        >
+          <Bell className="h-4 w-4" />
+          <span className="absolute top-[7px] right-[7px] w-[7px] h-[7px] bg-[#ff7c6b] rounded-full border-2 border-white" />
+        </button>
 
-        <div className="flex items-center gap-2 lg:gap-3">
-          <Avatar className="h-8 w-8 lg:h-9 lg:w-9 ring-2 ring-[#EEF2FF]">
-            <AvatarFallback className="bg-[#EEF2FF] text-[#2B4BA8] text-xs lg:text-sm font-semibold">
-              {userInitials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="hidden lg:block">
-            <p className="text-sm font-medium text-[#1A2F6B] leading-tight">{userName || "—"}</p>
-            <p className="text-xs text-[#8A9BC8]">Administrador</p>
-          </div>
-        </div>
+        {/* Settings */}
+        <button
+          className="w-9 h-9 bg-white border border-[#e8e4dc] text-[#6b7185] rounded-[10px] grid place-items-center hover:bg-[#f7f5f0] hover:text-[#15182b] transition-colors"
+          aria-label="Configuración"
+        >
+          <Settings className="h-4 w-4" />
+        </button>
+
+        {right}
       </div>
     </header>
   );

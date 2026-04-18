@@ -130,62 +130,65 @@ export default function ProfesorNuevaCapacitacionPage() {
   }
 
   const sedeOptions = [
-    { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre, color: "border-[#8A9BC8] bg-[#EEF2FF]", activeRing: "ring-[#2B4BA8]" },
+    { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre, color: "border-[#a5a9b8] bg-[#eaf0fb]", activeRing: "ring-[#2d4a8a]" },
     { key: SEDES.COYHAIQUE.id,  label: SEDES.COYHAIQUE.nombre,  color: "border-amber-300 bg-amber-50",   activeRing: "ring-amber-500" },
-    { key: "global",            label: "Ambas sedes",           color: "border-[#C8D4EC] bg-[#FAFBFF]",  activeRing: "ring-[#6B7AB0]" },
+    { key: "global",            label: "Ambas sedes",           color: "border-[#e8e4dc] bg-[#f6f3ee]",  activeRing: "ring-[#6b7185]" },
   ];
 
   return (
     <div>
-      <Topbar title="Nueva capacitación" />
+      <Topbar
+        title="Nueva capacitación"
+        sub="Completa los datos para crear y publicar una nueva capacitación."
+      />
       <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-4 lg:space-y-6">
         <div className="flex items-center justify-center gap-1 sm:gap-2">
           {steps.map((step, i) => (
             <div key={step.number} className="flex items-center gap-1 sm:gap-2">
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className={`flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-sm font-medium transition-colors shrink-0 ${currentStep >= step.number ? "bg-[#2B4BA8] text-white" : "bg-[#EEF2FF] text-[#8A9BC8]"}`}>
+                <div className={`flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-sm font-medium transition-colors shrink-0 ${currentStep >= step.number ? "bg-[#2d4a8a] text-white" : "bg-[#eaf0fb] text-[#a5a9b8]"}`}>
                   {currentStep > step.number ? <Check className="h-3.5 w-3.5" /> : step.number}
                 </div>
-                <span className={`hidden sm:inline text-sm font-medium ${currentStep >= step.number ? "text-[#1A2F6B]" : "text-[#8A9BC8]"}`}>{step.label}</span>
+                <span className={`hidden sm:inline text-sm font-medium ${currentStep >= step.number ? "text-[#15182b]" : "text-[#a5a9b8]"}`}>{step.label}</span>
               </div>
-              {i < steps.length - 1 && <div className={`w-8 sm:w-16 h-px ${currentStep > step.number ? "bg-[#2B4BA8]" : "bg-[#C8D4EC]"}`} />}
+              {i < steps.length - 1 && <div className={`w-8 sm:w-16 h-px ${currentStep > step.number ? "bg-[#2d4a8a]" : "bg-[#e8e4dc]"}`} />}
             </div>
           ))}
         </div>
 
         {/* Step 1 */}
         {currentStep === 1 && (
-          <Card className="border-[#C8D4EC] shadow-sm">
+          <Card className="border-[#e8e4dc] shadow-sm">
             <CardContent className="p-6 space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-sm font-medium text-[#1A2F6B]">Título <span className="text-red-500">*</span></Label>
+                <Label htmlFor="title" className="text-sm font-medium text-[#15182b]">Título <span className="text-red-500">*</span></Label>
                 <Input id="title" placeholder="Ej: Protocolo de Higiene Personal" value={title}
                   onChange={(e) => { setTitle(e.target.value); if (step1Error) setStep1Error(null); }}
                   className={`h-11 text-base ${step1Error ? "border-red-400" : ""}`} />
                 {step1Error && <p className="text-xs text-red-500">{step1Error}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description" className="text-sm font-medium text-[#1A2F6B]">Descripción</Label>
+                <Label htmlFor="description" className="text-sm font-medium text-[#15182b]">Descripción</Label>
                 <textarea id="description" placeholder="Describe brevemente el contenido..." value={description}
                   onChange={(e) => setDescription(e.target.value)} rows={3}
-                  className="w-full rounded-lg border border-[#C8D4EC] px-3 py-2 text-base text-[#1A2F6B] placeholder:text-[#8A9BC8] focus:outline-none focus:ring-2 focus:ring-[#2B4BA8] focus:border-transparent" />
+                  className="w-full rounded-lg border border-[#e8e4dc] px-3 py-2 text-base text-[#15182b] placeholder:text-[#a5a9b8] focus:outline-none focus:ring-2 focus:ring-[#2d4a8a] focus:border-transparent" />
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-[#1A2F6B]">Área</Label>
+                <Label className="text-sm font-medium text-[#15182b]">Área</Label>
                 <div className="flex flex-wrap gap-2">
                   {[...AREAS, ""].map((a) => (
                     <button key={a || "todos"} type="button" onClick={() => setArea(a)}
-                      className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${area === a ? "border-[#8A9BC8] bg-[#EEF2FF] text-[#1A2F6B]" : "border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF]/60"}`}
+                      className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${area === a ? "border-[#a5a9b8] bg-[#eaf0fb] text-[#15182b]" : "border-[#e8e4dc] bg-[#f6f3ee] text-[#6b7185] hover:bg-[#eaf0fb]/60"}`}
                     >{a || "Todos"}</button>
                   ))}
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-[#1A2F6B]">Sede</Label>
+                <Label className="text-sm font-medium text-[#15182b]">Sede</Label>
                 <div className="grid grid-cols-3 gap-3">
                   {sedeOptions.map((opt) => (
                     <button key={opt.key} type="button" onClick={() => setSedeSelection(opt.key)}
-                      className={`p-4 rounded-xl border-2 text-center text-sm font-medium transition-all ${sedeSelection === opt.key ? `${opt.color} ring-2 ${opt.activeRing}` : "border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF]/60"}`}
+                      className={`p-4 rounded-xl border-2 text-center text-sm font-medium transition-all ${sedeSelection === opt.key ? `${opt.color} ring-2 ${opt.activeRing}` : "border-[#e8e4dc] bg-[#f6f3ee] text-[#6b7185] hover:bg-[#eaf0fb]/60"}`}
                     >{opt.label}</button>
                   ))}
                 </div>
@@ -196,37 +199,37 @@ export default function ProfesorNuevaCapacitacionPage() {
 
         {/* Step 2 */}
         {currentStep === 2 && (
-          <Card className="border-[#C8D4EC] shadow-sm">
+          <Card className="border-[#e8e4dc] shadow-sm">
             <CardContent className="p-6 space-y-5">
-              <div className="border-2 border-dashed border-[#C8D4EC] rounded-xl p-8 text-center hover:border-[#6B7AB0] hover:bg-[#EEF2FF]/30 transition-colors cursor-pointer">
-                <Upload className="h-10 w-10 text-[#8A9BC8] mx-auto mb-3" />
-                <p className="text-sm font-medium text-[#1A2F6B]">Arrastra archivos aquí o haz clic</p>
-                <p className="text-xs text-[#6B7AB0] mt-1">PDF o presentaciones (máx. 50MB)</p>
+              <div className="border-2 border-dashed border-[#e8e4dc] rounded-xl p-8 text-center hover:border-[#6b7185] hover:bg-[#eaf0fb]/30 transition-colors cursor-pointer">
+                <Upload className="h-10 w-10 text-[#a5a9b8] mx-auto mb-3" />
+                <p className="text-sm font-medium text-[#15182b]">Arrastra archivos aquí o haz clic</p>
+                <p className="text-xs text-[#6b7185] mt-1">PDF o presentaciones (máx. 50MB)</p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-[#C8D4EC]" />
-                <span className="text-xs text-[#8A9BC8] font-medium">o agregar link de video</span>
-                <div className="flex-1 h-px bg-[#C8D4EC]" />
+                <div className="flex-1 h-px bg-[#e8e4dc]" />
+                <span className="text-xs text-[#a5a9b8] font-medium">o agregar link de video</span>
+                <div className="flex-1 h-px bg-[#e8e4dc]" />
               </div>
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8A9BC8]" />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#a5a9b8]" />
                     <Input placeholder="Pegar link de YouTube o Google Drive..." value={videoUrl}
                       onChange={(e) => setVideoUrl(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && previewEmbed && addVideoLink()}
                       className="h-11 pl-9 text-sm" />
                   </div>
                   <button type="button" onClick={addVideoLink} disabled={!previewEmbed}
-                    className="h-11 px-4 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors disabled:opacity-40 shrink-0"
+                    className="h-11 px-4 rounded-lg bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] transition-colors disabled:opacity-40 shrink-0"
                   >Agregar</button>
                 </div>
                 {videoUrl.trim() && (
-                  <div className="rounded-lg border border-[#C8D4EC] overflow-hidden bg-[#FAFBFF]">
+                  <div className="rounded-lg border border-[#e8e4dc] overflow-hidden bg-[#f6f3ee]">
                     {previewEmbed ? (
                       <iframe src={previewEmbed} title="Vista previa" className="w-full aspect-video" allowFullScreen />
                     ) : (
-                      <div className="flex items-center gap-2 p-3 text-sm text-[#8A9BC8]"><Video className="h-4 w-4" /><span>Link no reconocido.</span></div>
+                      <div className="flex items-center gap-2 p-3 text-sm text-[#a5a9b8]"><Video className="h-4 w-4" /><span>Link no reconocido.</span></div>
                     )}
                   </div>
                 )}
@@ -234,18 +237,18 @@ export default function ProfesorNuevaCapacitacionPage() {
               {videoLinks.length > 0 ? (
                 <div className="space-y-2">
                   {videoLinks.map((v) => (
-                    <div key={v.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF]">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EEF2FF] shrink-0"><Video className="h-4 w-4 text-[#4A5C8A]" /></div>
+                    <div key={v.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#e8e4dc] bg-[#f6f3ee]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf0fb] shrink-0"><Video className="h-4 w-4 text-[#6b7185]" /></div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#1A2F6B] truncate">{v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive"}</p>
-                        <p className="text-xs text-[#6B7AB0] truncate">{v.url}</p>
+                        <p className="text-sm font-medium text-[#15182b] truncate">{v.source === "youtube" ? "Video de YouTube" : "Video de Google Drive"}</p>
+                        <p className="text-xs text-[#6b7185] truncate">{v.url}</p>
                       </div>
-                      <button type="button" onClick={() => setVideoLinks(videoLinks.filter((x) => x.id !== v.id))} className="text-[#8A9BC8] hover:text-red-500 transition-colors"><X className="h-4 w-4" /></button>
+                      <button type="button" onClick={() => setVideoLinks(videoLinks.filter((x) => x.id !== v.id))} className="text-[#a5a9b8] hover:text-red-500 transition-colors"><X className="h-4 w-4" /></button>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center py-4 text-center"><FileText className="h-8 w-8 text-[#C8D4EC] mb-2" /><p className="text-sm text-[#6B7AB0]">Sin material cargado.</p></div>
+                <div className="flex flex-col items-center py-4 text-center"><FileText className="h-8 w-8 text-[#e8e4dc] mb-2" /><p className="text-sm text-[#6b7185]">Sin material cargado.</p></div>
               )}
             </CardContent>
           </Card>
@@ -253,30 +256,30 @@ export default function ProfesorNuevaCapacitacionPage() {
 
         {/* Step 3 */}
         {currentStep === 3 && (
-          <Card className="border-[#C8D4EC] shadow-sm">
+          <Card className="border-[#e8e4dc] shadow-sm">
             <CardContent className="p-6 space-y-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[#1A2F6B]">Incluir evaluación</p>
-                  <p className="text-xs text-[#6B7AB0] mt-0.5">Los colaboradores deberán aprobar para certificarse</p>
+                  <p className="text-sm font-medium text-[#15182b]">Incluir evaluación</p>
+                  <p className="text-xs text-[#6b7185] mt-0.5">Los colaboradores deberán aprobar para certificarse</p>
                 </div>
                 <button type="button" onClick={() => setHasQuiz(!hasQuiz)}
-                  className={`relative w-11 h-6 rounded-full transition-colors ${hasQuiz ? "bg-[#2B4BA8]" : "bg-[#C8D4EC]"}`}>
-                  <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-[#FAFBFF] shadow transition-transform ${hasQuiz ? "translate-x-5" : ""}`} />
+                  className={`relative w-11 h-6 rounded-full transition-colors ${hasQuiz ? "bg-[#2d4a8a]" : "bg-[#e8e4dc]"}`}>
+                  <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-[#f6f3ee] shadow transition-transform ${hasQuiz ? "translate-x-5" : ""}`} />
                 </button>
               </div>
               {hasQuiz && (
                 <>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-[#1A2F6B]">Nota mínima (%)</Label>
+                    <Label className="text-sm font-medium text-[#15182b]">Nota mínima (%)</Label>
                     <Input type="number" min={1} max={100} value={passingScore} onChange={(e) => setPassingScore(Number(e.target.value))} className="h-11 text-base w-32" />
                   </div>
                   <div className="space-y-4">
                     {questions.map((q, qi) => (
-                      <div key={q.id} className="p-4 rounded-lg border border-[#C8D4EC] space-y-3">
+                      <div key={q.id} className="p-4 rounded-lg border border-[#e8e4dc] space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-semibold text-[#1A2F6B]">Pregunta {qi + 1}</span>
-                          {questions.length > 1 && <button type="button" onClick={() => removeQuestion(q.id)} className="text-[#8A9BC8] hover:text-red-500"><Trash2 className="h-4 w-4" /></button>}
+                          <span className="text-sm font-semibold text-[#15182b]">Pregunta {qi + 1}</span>
+                          {questions.length > 1 && <button type="button" onClick={() => removeQuestion(q.id)} className="text-[#a5a9b8] hover:text-red-500"><Trash2 className="h-4 w-4" /></button>}
                         </div>
                         <Input placeholder="Escribe la pregunta..." value={q.text}
                           onChange={(e) => setQuestions(questions.map((qq) => qq.id === q.id ? { ...qq, text: e.target.value } : qq))}
@@ -286,18 +289,18 @@ export default function ProfesorNuevaCapacitacionPage() {
                             <div key={opt.id} className="flex items-center gap-2">
                               <button type="button"
                                 onClick={() => setQuestions(questions.map((qq) => qq.id === q.id ? { ...qq, options: qq.options.map((o, idx) => ({ ...o, isCorrect: idx === oi })) } : qq))}
-                                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${opt.isCorrect ? "border-[#2B4BA8] bg-[#2B4BA8]" : "border-[#C8D4EC] hover:border-slate-400"}`}
+                                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${opt.isCorrect ? "border-[#2d4a8a] bg-[#2d4a8a]" : "border-[#e8e4dc] hover:border-slate-400"}`}
                               >{opt.isCorrect && <Check className="h-3 w-3 text-white" />}</button>
                               <Input placeholder={`Opción ${oi + 1}`} value={opt.text}
                                 onChange={(e) => setQuestions(questions.map((qq) => qq.id === q.id ? { ...qq, options: qq.options.map((o) => o.id === opt.id ? { ...o, text: e.target.value } : o) } : qq))}
                                 className="h-10 text-sm flex-1" />
                             </div>
                           ))}
-                          <button type="button" onClick={() => addOption(q.id)} className="text-sm text-[#2B4BA8] hover:text-[#1A2F6B] font-medium">+ Agregar opción</button>
+                          <button type="button" onClick={() => addOption(q.id)} className="text-sm text-[#2d4a8a] hover:text-[#15182b] font-medium">+ Agregar opción</button>
                         </div>
                       </div>
                     ))}
-                    <button type="button" onClick={addQuestion} className="flex items-center gap-2 text-sm text-[#2B4BA8] hover:text-[#1A2F6B] font-medium">
+                    <button type="button" onClick={addQuestion} className="flex items-center gap-2 text-sm text-[#2d4a8a] hover:text-[#15182b] font-medium">
                       <Plus className="h-4 w-4" /> Agregar pregunta
                     </button>
                   </div>
@@ -311,17 +314,17 @@ export default function ProfesorNuevaCapacitacionPage() {
         <div className="flex items-center justify-between">
           <button type="button" disabled={saving}
             onClick={() => currentStep > 1 ? setCurrentStep(currentStep - 1) : router.back()}
-            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-sm font-medium text-[#1A2F6B] hover:bg-[#EEF2FF] transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-sm font-medium text-[#15182b] hover:bg-[#eaf0fb] transition-colors disabled:opacity-50"
           ><ArrowLeft className="h-4 w-4" />{currentStep > 1 ? "Anterior" : "Cancelar"}</button>
 
           {currentStep < 3 && (
             <button type="button" onClick={currentStep === 1 ? goToStep2 : () => setCurrentStep(3)}
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] transition-colors"
             >Siguiente <ArrowRight className="h-4 w-4" /></button>
           )}
           {currentStep === 3 && (
             <button type="button" onClick={handleSave} disabled={saving}
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors disabled:opacity-60"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] transition-colors disabled:opacity-60"
             >{saving ? <><Loader2 className="h-4 w-4 animate-spin" />Guardando...</> : "Guardar capacitación"}</button>
           )}
         </div>

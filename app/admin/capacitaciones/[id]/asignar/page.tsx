@@ -151,7 +151,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
   if (loadError) {
     return (
       <div>
-        <Topbar title="Asignar" />
+        <Topbar title="Asignar colaboradores" sub="Error al cargar." />
         <div className="p-6 text-sm text-red-600">Error al cargar colaboradores: {loadError}</div>
       </div>
     );
@@ -159,12 +159,12 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
   return (
     <div>
-      <Topbar title={`Asignar: ${trainingTitle}`} />
+      <Topbar title="Asignar colaboradores" sub={trainingTitle} />
 
       <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-4 lg:space-y-6">
         {/* Target Type Selection */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium text-[#1A2F6B]">Tipo de asignación</Label>
+          <Label className="text-sm font-medium text-[#15182b]">Tipo de asignación</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {targetOptions.map((opt) => (
               <button
@@ -178,16 +178,16 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                 }}
                 className={`flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all ${
                   targetType === opt.key
-                    ? "border-[#8A9BC8] bg-[#EEF2FF] ring-2 ring-[#2B4BA8]"
-                    : "border-[#C8D4EC] bg-[#FAFBFF] hover:bg-[#EEF2FF]/60"
+                    ? "border-[#a5a9b8] bg-[#eaf0fb] ring-2 ring-[#2d4a8a]"
+                    : "border-[#e8e4dc] bg-[#f6f3ee] hover:bg-[#eaf0fb]/60"
                 }`}
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#EEF2FF]">
-                  <opt.icon className={`h-5 w-5 ${targetType === opt.key ? "text-[#2B4BA8]" : "text-[#8A9BC8]"}`} />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#eaf0fb]">
+                  <opt.icon className={`h-5 w-5 ${targetType === opt.key ? "text-[#2d4a8a]" : "text-[#a5a9b8]"}`} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#1A2F6B]">{opt.label}</p>
-                  <p className="text-xs text-[#6B7AB0] mt-0.5">{opt.description}</p>
+                  <p className="text-sm font-semibold text-[#15182b]">{opt.label}</p>
+                  <p className="text-xs text-[#6b7185] mt-0.5">{opt.description}</p>
                 </div>
               </button>
             ))}
@@ -196,9 +196,9 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Sede selector */}
         {targetType === "SEDE" && (
-          <Card className="border-[#C8D4EC] shadow-sm">
+          <Card className="border-[#e8e4dc] shadow-sm">
             <CardContent className="p-5 space-y-3">
-              <Label className="text-sm font-medium text-[#1A2F6B]">Seleccionar sede</Label>
+              <Label className="text-sm font-medium text-[#15182b]">Seleccionar sede</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {Object.values(SEDES).map((sede) => (
                   <button
@@ -207,8 +207,8 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                     onClick={() => setTargetSede(sede.id)}
                     className={`p-4 rounded-xl border-2 text-center text-sm font-medium transition-all ${
                       targetSede === sede.id
-                        ? "border-[#8A9BC8] bg-[#EEF2FF] ring-2 ring-[#2B4BA8]"
-                        : "border-[#C8D4EC] bg-[#FAFBFF] hover:bg-[#EEF2FF]/60"
+                        ? "border-[#a5a9b8] bg-[#eaf0fb] ring-2 ring-[#2d4a8a]"
+                        : "border-[#e8e4dc] bg-[#f6f3ee] hover:bg-[#eaf0fb]/60"
                     }`}
                   >
                     {sede.nombre}
@@ -221,9 +221,9 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Area selector */}
         {targetType === "AREA" && (
-          <Card className="border-[#C8D4EC] shadow-sm">
+          <Card className="border-[#e8e4dc] shadow-sm">
             <CardContent className="p-5 space-y-3">
-              <Label className="text-sm font-medium text-[#1A2F6B]">Seleccionar área</Label>
+              <Label className="text-sm font-medium text-[#15182b]">Seleccionar área</Label>
               <div className="flex gap-2 flex-wrap">
                 {AREAS.map((a) => (
                   <button
@@ -232,8 +232,8 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                     onClick={() => setTargetArea(a)}
                     className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                       targetArea === a
-                        ? "border-[#8A9BC8] bg-[#EEF2FF] text-[#1A2F6B]"
-                        : "border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF]/60"
+                        ? "border-[#a5a9b8] bg-[#eaf0fb] text-[#15182b]"
+                        : "border-[#e8e4dc] bg-[#f6f3ee] text-[#6b7185] hover:bg-[#eaf0fb]/60"
                     }`}
                   >
                     {a}
@@ -246,7 +246,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Individual selector */}
         {targetType === "INDIVIDUAL" && (
-          <Card className="border-[#C8D4EC] shadow-sm">
+          <Card className="border-[#e8e4dc] shadow-sm">
             <CardContent className="p-5 space-y-3">
               <Input
                 placeholder="Buscar colaborador por nombre o email..."
@@ -255,7 +255,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                 className="h-11 text-base"
               />
               {filteredCollaborators.length === 0 ? (
-                <p className="text-sm text-[#6B7AB0] text-center py-4">Sin colaboradores.</p>
+                <p className="text-sm text-[#6b7185] text-center py-4">Sin colaboradores.</p>
               ) : (
                 <div className="space-y-1 max-h-72 overflow-y-auto">
                   {filteredCollaborators.map((user) => {
@@ -266,22 +266,22 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                         type="button"
                         onClick={() => toggleUser(user.id)}
                         className={`flex items-center gap-3 w-full p-3 rounded-lg text-left transition-colors ${
-                          selectedUsers.has(user.id) ? "bg-[#EEF2FF]" : "hover:bg-[#EEF2FF]/60"
+                          selectedUsers.has(user.id) ? "bg-[#eaf0fb]" : "hover:bg-[#eaf0fb]/60"
                         }`}
                       >
                         <div
                           className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
-                            selectedUsers.has(user.id) ? "border-[#2B4BA8] bg-[#2B4BA8]" : "border-[#C8D4EC]"
+                            selectedUsers.has(user.id) ? "border-[#2d4a8a] bg-[#2d4a8a]" : "border-[#e8e4dc]"
                           }`}
                         >
                           {selectedUsers.has(user.id) && <Check className="h-3 w-3 text-white" />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium ${user.active ? "text-[#1A2F6B]" : "text-[#8A9BC8]"}`}>
+                          <p className={`text-sm font-medium ${user.active ? "text-[#15182b]" : "text-[#a5a9b8]"}`}>
                             {name}
                             {!user.active && <span className="ml-1.5 text-xs font-normal">(Inactivo)</span>}
                           </p>
-                          {user.area && <p className="text-xs text-[#6B7AB0]">{user.area}</p>}
+                          {user.area && <p className="text-xs text-[#6b7185]">{user.area}</p>}
                         </div>
                         <SedeBadge sedeId={user.sede_id} sedeName={sedeName(user.sede_id)} size="sm" />
                       </button>
@@ -295,12 +295,12 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Due date */}
         {targetType && (
-          <Card className="border-[#C8D4EC] shadow-sm">
+          <Card className="border-[#e8e4dc] shadow-sm">
             <CardContent className="p-5">
               <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-[#8A9BC8]" />
+                <Calendar className="h-5 w-5 text-[#a5a9b8]" />
                 <div className="flex-1">
-                  <Label htmlFor="dueDate" className="text-sm font-medium text-[#1A2F6B]">
+                  <Label htmlFor="dueDate" className="text-sm font-medium text-[#15182b]">
                     Fecha límite (opcional)
                   </Label>
                   <Input
@@ -318,12 +318,12 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
 
         {/* Summary & Submit */}
         {targetType && (
-          <Card className="border-[#C8D4EC] bg-[#EEF2FF]/50 shadow-sm">
+          <Card className="border-[#e8e4dc] bg-[#eaf0fb]/50 shadow-sm">
             <CardContent className="p-5 space-y-3">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold text-[#1A2F6B]">Resumen de asignación</p>
-                  <p className="text-sm text-[#6B7AB0] mt-0.5">
+                  <p className="text-sm font-semibold text-[#15182b]">Resumen de asignación</p>
+                  <p className="text-sm text-[#6b7185] mt-0.5">
                     {affectedCount} {affectedCount === 1 ? "persona recibirá" : "personas recibirán"} esta capacitación
                     {dueDate && ` · Fecha límite: ${dueDate}`}
                   </p>
@@ -332,7 +332,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
                   type="button"
                   onClick={handleConfirm}
                   disabled={affectedCount === 0 || saving}
-                  className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                  className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                 >
                   {saving ? "Guardando…" : "Confirmar asignación"}
                 </button>
@@ -348,7 +348,7 @@ export default function AsignarPage({ params }: { params: Promise<{ id: string }
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-sm font-medium text-[#6B7AB0] hover:text-[#1A2F6B] transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[#6b7185] hover:text-[#15182b] transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Volver

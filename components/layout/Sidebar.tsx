@@ -18,31 +18,45 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase";
 
 const allNavItems = [
-  { label: "Dashboard",       href: "/admin/dashboard",       icon: LayoutDashboard, adminOnly: false },
-  { label: "Capacitaciones",  href: "/admin/capacitaciones",  icon: BookOpen,         adminOnly: false },
-  { label: "Colaboradores",   href: "/admin/colaboradores",   icon: Users,            adminOnly: false },
-  { label: "Reportes",        href: "/admin/reportes",        icon: BarChart3,        adminOnly: false },
-  { label: "Calendario",      href: "/admin/calendario",      icon: Calendar,         adminOnly: false },
-  { label: "Personal",        href: "/admin/personal",        icon: UserCog,          adminOnly: true },
+  { label: "Dashboard",       href: "/admin/dashboard",       icon: LayoutDashboard, group: "general", adminOnly: false },
+  { label: "Capacitaciones",  href: "/admin/capacitaciones",  icon: BookOpen,         group: "general", adminOnly: false },
+  { label: "Colaboradores",   href: "/admin/colaboradores",   icon: Users,            group: "general", adminOnly: false },
+  { label: "Reportes",        href: "/admin/reportes",        icon: BarChart3,        group: "general", adminOnly: false },
+  { label: "Calendario",      href: "/admin/calendario",      icon: Calendar,         group: "general", adminOnly: false },
+  { label: "Personal",        href: "/admin/personal",        icon: UserCog,          group: "equipo",  adminOnly: true },
 ];
+
+function getInitials(name: string): string {
+  return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+}
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true);
+  const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState("Administrador");
 
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return;
-      supabase.from("profiles").select("role").eq("id", user.id).single().then(({ data }) => {
-        setIsAdmin(data?.role === "ADMIN");
+      const name = user.user_metadata?.full_name ?? user.email ?? "";
+      setUserName(name);
+      supabase.from("profiles").select("role, sede_id").eq("id", user.id).single().then(({ data }) => {
+        if (!data) return;
+        setIsAdmin(data.role === "ADMIN");
+        setUserRole(data.role === "ADMIN" ? "Administrador" : "Profesor");
       });
     });
   }, []);
 
   const navItems = allNavItems.filter((item) => !item.adminOnly || isAdmin);
+  const generalItems = navItems.filter((i) => i.group === "general");
+  const equipoItems = navItems.filter((i) => i.group === "equipo");
+  const initials = userName ? getInitials(userName) : "--";
+  const displayName = userName.split(" ").slice(0, 2).join(" ");
 
   async function handleSignOut() {
     setSigningOut(true);
@@ -57,61 +71,100 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="fixed left-0 top-0 z-30 hidden lg:flex h-full w-64 flex-col border-r border-[#C8D4EC] bg-[#FAFBFF]">
-      {/* Subtle dot pattern overlay */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-dot-pattern opacity-20" />
-
-      {/* Logo */}
-      <div className="relative flex h-16 items-center px-5 border-b border-[#C8D4EC]">
+    <aside className="fixed left-0 top-0 z-30 hidden lg:flex h-full w-64 flex-col border-r border-[#e8e4dc] bg-white">
+      {/* Brand */}
+      <div className="flex h-[64px] items-center px-5 border-b border-[#f0ece4]">
         <Image src="/logo.png" alt="ALUMCO" width={130} height={40} className="object-contain" priority />
       </div>
 
       {/* Navigation */}
-      <nav aria-label="Navegación principal" className="relative flex-1 px-3 py-5 space-y-0.5">
-        {navItems.map((item, index) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 animate-slide-in-left ${
-                isActive
-                  ? "bg-[#2B4BA8] text-white sidebar-active-indicator shadow-sm shadow-[#2B4BA8]/20"
-                  : "text-[#6B7AB0] hover:bg-[#EEF2FF] hover:text-[#1A2F6B]"
-              }`}
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <item.icon
-                className={`h-[18px] w-[18px] flex-shrink-0 transition-colors ${
-                  isActive ? "text-[#8A9BC8]" : "text-[#8A9BC8]"
+      <nav aria-label="Navegación principal" className="flex-1 px-3 py-4 overflow-y-auto">
+        <p className="px-2.5 pb-2 text-[10px] font-[700] uppercase tracking-[0.14em] text-[#a5a9b8]">
+          General
+        </p>
+        <div className="space-y-0.5">
+          {generalItems.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-2.5 rounded-[10px] px-2.5 py-[9px] text-[13px] font-[500] transition-all duration-150 ${
+                  isActive
+                    ? "bg-[#2d4a8a] text-white font-[600] shadow-sm sidebar-active-indicator"
+                    : "text-[#6b7185] hover:bg-[#f7f5f0] hover:text-[#15182b]"
                 }`}
-              />
-              {item.label}
-            </Link>
-          );
-        })}
+              >
+                <item.icon
+                  className={`h-[17px] w-[17px] flex-shrink-0 ${
+                    isActive ? "text-[#a5c0f5]" : "text-[#a5a9b8]"
+                  }`}
+                />
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        {equipoItems.length > 0 && (
+          <>
+            <p className="mt-4 px-2.5 pb-2 text-[10px] font-[700] uppercase tracking-[0.14em] text-[#a5a9b8]">
+              Equipo
+            </p>
+            <div className="space-y-0.5">
+              {equipoItems.map((item) => {
+                const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-2.5 rounded-[10px] px-2.5 py-[9px] text-[13px] font-[500] transition-all duration-150 ${
+                      isActive
+                        ? "bg-[#2d4a8a] text-white font-[600] shadow-sm sidebar-active-indicator"
+                        : "text-[#6b7185] hover:bg-[#f7f5f0] hover:text-[#15182b]"
+                    }`}
+                  >
+                    <item.icon
+                      className={`h-[17px] w-[17px] flex-shrink-0 ${
+                        isActive ? "text-[#a5c0f5]" : "text-[#a5a9b8]"
+                      }`}
+                    />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        )}
       </nav>
 
       {/* Footer */}
-      <div className="relative px-3 pb-5">
-        <div className="h-px bg-gradient-to-r from-transparent via-[#C8D4EC] to-transparent mb-3" />
+      <div className="px-3 pb-4">
+        <div className="h-px bg-[#f0ece4] mb-3" />
 
-        {/* Font Size Switcher */}
+        {/* User info */}
+        {userName && (
+          <div className="flex items-center gap-2.5 px-2 py-2.5 mb-1">
+            <div className="w-9 h-9 rounded-[12px] bg-[#ff7c6b] text-white grid place-items-center text-[12px] font-[700] shrink-0">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <div className="text-[12.5px] font-[700] text-[#15182b] truncate">{displayName}</div>
+              <div className="text-[10.5px] text-[#6b7185]">{userRole}</div>
+            </div>
+          </div>
+        )}
+
         <FontSizeSwitcher />
-
-        <div className="mt-2" />
-
-        {/* Dark Mode Toggle */}
+        <div className="mt-1.5" />
         <DarkModeToggle />
-
         <div className="mt-1" />
-
         <button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#8A9BC8] hover:bg-[#EEF2FF] hover:text-[#6B7AB0] transition-all duration-200 disabled:opacity-50"
+          className="flex w-full items-center gap-2.5 rounded-[10px] px-2.5 py-[9px] text-[13px] font-[500] text-[#a5a9b8] hover:bg-[#f7f5f0] hover:text-[#6b7185] transition-all duration-150 disabled:opacity-50"
         >
-          <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
+          <LogOut className="h-[17px] w-[17px] flex-shrink-0" />
           {signingOut ? "Cerrando..." : "Cerrar sesión"}
         </button>
       </div>

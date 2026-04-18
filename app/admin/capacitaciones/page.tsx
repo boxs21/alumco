@@ -128,21 +128,32 @@ export default function CapacitacionesPage() {
 
   return (
     <div>
-      <Topbar title="Capacitaciones" />
+      <Topbar
+        title="Capacitaciones"
+        sub="Gestiona los cursos, módulos y asignaciones por sede."
+        right={
+          <Link
+            href="/admin/capacitaciones/nueva"
+            className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#ff7c6b] hover:bg-[#e86154] text-white text-[13px] font-[600] transition-colors"
+          >
+            <span className="text-base leading-none">+</span> Nueva capacitación
+          </Link>
+        }
+      />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Header with filters + action */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <div className="flex flex-wrap items-center gap-2 flex-1">
-            <div className="flex rounded-lg bg-[#EEF2FF] p-1">
+            <div className="flex rounded-lg bg-[#eaf0fb] p-1">
               {sedeTabs.map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setSedeTab(tab.key)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     sedeTab === tab.key
-                      ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
-                      : "text-[#6B7AB0] hover:text-[#1A2F6B]"
+                      ? "bg-[#f6f3ee] text-[#15182b] shadow-sm"
+                      : "text-[#6b7185] hover:text-[#15182b]"
                   }`}
                 >
                   {tab.label}
@@ -150,15 +161,15 @@ export default function CapacitacionesPage() {
               ))}
             </div>
 
-            <div className="flex rounded-lg bg-[#EEF2FF] p-1">
+            <div className="flex rounded-lg bg-[#eaf0fb] p-1">
               {statusOptions.map((opt) => (
                 <button
                   key={opt.key}
                   onClick={() => setStatusFilter(opt.key)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     statusFilter === opt.key
-                      ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
-                      : "text-[#6B7AB0] hover:text-[#1A2F6B]"
+                      ? "bg-[#f6f3ee] text-[#15182b] shadow-sm"
+                      : "text-[#6b7185] hover:text-[#15182b]"
                   }`}
                 >
                   {opt.label}
@@ -169,7 +180,7 @@ export default function CapacitacionesPage() {
 
           <Link
             href="/admin/capacitaciones/nueva"
-            className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-[#2B4BA8] text-white text-sm font-medium hover:bg-[#1A2F6B] transition-colors shadow-sm shrink-0"
+            className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] transition-colors shadow-sm shrink-0"
           >
             <Plus className="h-4 w-4" />
             Nueva capacitaci&oacute;n
@@ -177,13 +188,13 @@ export default function CapacitacionesPage() {
         </div>
 
         {loadError && (
-          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+          <div className="px-4 py-3 rounded-xl rounded-xl bg-[#ffe6e1] border border-[#ffccc5] text-[13px] text-[#e86154]">
             {loadError}
           </div>
         )}
 
         {loading ? (
-          <div className="text-sm text-[#6B7AB0] py-8 text-center">Cargando...</div>
+          <div className="text-sm text-[#6b7185] py-8 text-center">Cargando...</div>
         ) : filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
             {filtered.map((t, index) => {
@@ -218,17 +229,17 @@ export default function CapacitacionesPage() {
         open={!!deleteTarget}
         onOpenChange={(open) => { if (!open && !deleting) { setDeleteTarget(null); setFormDeleteError(null); } }}
       >
-        <DialogContent className="max-w-sm rounded-2xl border-[#C8D4EC]" aria-describedby={undefined}>
+        <DialogContent className="max-w-sm rounded-2xl border-[#e8e4dc]" aria-describedby={undefined}>
           <DialogHeader>
-            <DialogTitle className="text-[#1A2F6B] flex items-center gap-2">
+            <DialogTitle className="text-[#15182b] flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
               Eliminar capacitación
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-1">
-            <p className="text-sm text-[#6B7AB0]">
+            <p className="text-sm text-[#6b7185]">
               ¿Estás seguro de que quieres eliminar{" "}
-              <span className="font-semibold text-[#1A2F6B]">
+              <span className="font-semibold text-[#15182b]">
                 {deleteTarget?.title}
               </span>
               ? Esta acción también eliminará todas sus asignaciones y no se puede deshacer.
@@ -240,7 +251,7 @@ export default function CapacitacionesPage() {
               <button
                 onClick={() => setDeleteTarget(null)}
                 disabled={deleting}
-                className="flex-1 h-10 rounded-xl border border-[#C8D4EC] bg-[#FAFBFF] text-sm text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors disabled:opacity-50"
+                className="flex-1 h-10 rounded-xl border border-[#e8e4dc] bg-[#f6f3ee] text-sm text-[#6b7185] hover:bg-[#eaf0fb] transition-colors disabled:opacity-50"
               >
                 Cancelar
               </button>
