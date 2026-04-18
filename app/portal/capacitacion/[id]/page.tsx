@@ -8,17 +8,17 @@ import {
   ArrowRight, BookOpen, ClipboardList, ChevronLeft, Download,
 } from "lucide-react";
 
-/* ─── Design tokens (DESIGN.md) ─────────────────────────────── */
+/* ─── Design tokens ──────────────────────────────────────────── */
 const T = {
-  navy:      "#181d26",
-  blue:      "#1b61c9",
-  weakText:  "rgba(4,14,32,0.55)",
-  mutedText: "rgba(4,14,32,0.45)",
-  border:    "#e0e2e6",
-  surface:   "#f8fafc",
-  blueLight: "#eff6ff",
-  shadow:    "rgba(15,48,106,0.05) 0px 0px 20px",
-  shadowBtn: "rgba(45,127,249,0.28) 0px 1px 3px, rgba(0,0,0,0.08) 0px 0px 2px",
+  navy:      "#15182b",
+  blue:      "#2d4a8a",
+  weakText:  "#6b7185",
+  mutedText: "#a5a9b8",
+  border:    "#e8e4dc",
+  surface:   "#f6f3ee",
+  blueLight: "#eaf0fb",
+  shadow:    "0 1px 2px rgba(21,24,43,0.04), 0 6px 20px rgba(21,24,43,0.05)",
+  shadowBtn: "rgba(45,74,138,0.28) 0px 1px 3px, rgba(0,0,0,0.08) 0px 0px 2px",
 };
 
 /* ─── Types ──────────────────────────────────────────────────── */

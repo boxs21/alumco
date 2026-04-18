@@ -8,7 +8,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#FAFBFF]">
+    <div className="min-h-screen bg-[#f6f3ee]">
       <Sidebar />
       <main className="lg:ml-64 pb-16 lg:pb-0">{children}</main>
       <BottomNav />

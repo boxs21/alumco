@@ -1,11 +1,11 @@
 function Bone({ className }: { className: string }) {
-  return <div className={`animate-pulse rounded-lg bg-[#EEF2FF] ${className}`} />;
+  return <div className={`animate-pulse rounded-lg bg-[#eaf0fb] ${className}`} />;
 }
 
 export default function CalendarioLoading() {
   return (
     <div>
-      <div className="h-16 border-b border-[#C8D4EC] bg-[#FAFBFF] flex items-center justify-between px-4 lg:px-6">
+      <div className="h-16 border-b border-[#e8e4dc] bg-[#f6f3ee] flex items-center justify-between px-4 lg:px-6">
         <Bone className="h-5 w-28" />
         <Bone className="h-8 w-8 rounded-full" />
       </div>
@@ -25,9 +25,9 @@ export default function CalendarioLoading() {
         </div>
 
         {/* Calendar grid */}
-        <div className="rounded-2xl border border-[#C8D4EC] bg-[#FAFBFF] overflow-hidden">
+        <div className="rounded-2xl border border-[#e8e4dc] bg-[#f6f3ee] overflow-hidden">
           {/* Week headers */}
-          <div className="grid grid-cols-7 bg-[#EEF2FF] border-b border-[#C8D4EC]">
+          <div className="grid grid-cols-7 bg-[#eaf0fb] border-b border-[#e8e4dc]">
             {Array.from({ length: 7 }).map((_, i) => (
               <div key={i} className="py-2 flex justify-center">
                 <Bone className="h-3 w-6" />
@@ -42,7 +42,7 @@ export default function CalendarioLoading() {
               return (
                 <div
                   key={i}
-                  className={`min-h-[76px] lg:min-h-[96px] p-1.5 border-[#C8D4EC] ${
+                  className={`min-h-[76px] lg:min-h-[96px] p-1.5 border-[#e8e4dc] ${
                     !isLastRow ? "border-b" : ""
                   } ${!isLastCol ? "border-r" : ""}`}
                 >

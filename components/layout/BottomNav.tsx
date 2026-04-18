@@ -46,7 +46,7 @@ export default function BottomNav() {
   }
 
   return (
-    <nav aria-label="Navegación principal móvil" className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden border-t border-[#C8D4EC] bg-[#FAFBFF]/95 backdrop-blur-sm">
+    <nav aria-label="Navegación principal móvil" className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden border-t border-[#e8e4dc] bg-white/95 backdrop-blur-sm">
       {navItems.map((item) => {
         const isActive = pathname.startsWith(item.href);
         return (
@@ -54,24 +54,24 @@ export default function BottomNav() {
             key={item.href}
             href={item.href}
             className={`flex flex-1 flex-col items-center justify-center gap-1 py-2.5 transition-colors ${
-              isActive ? "text-[#2B4BA8]" : "text-[#8A9BC8] hover:text-[#6B7AB0]"
+              isActive ? "text-[#2d4a8a]" : "text-[#a5a9b8] hover:text-[#6b7185]"
             }`}
           >
             <item.icon
-              className={`h-[22px] w-[22px] ${isActive ? "text-[#2B4BA8]" : "text-[#8A9BC8]"}`}
+              className={`h-[22px] w-[22px] ${isActive ? "text-[#2d4a8a]" : "text-[#a5a9b8]"}`}
             />
-            <span className="text-[10px] font-medium leading-none">{item.shortLabel}</span>
+            <span className="text-[10px] font-[600] leading-none">{item.shortLabel}</span>
           </Link>
         );
       })}
       <button
         onClick={handleSignOut}
         disabled={signingOut}
-        className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[#8A9BC8] hover:text-[#6B7AB0] transition-colors disabled:opacity-50"
+        className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[#a5a9b8] hover:text-[#6b7185] transition-colors disabled:opacity-50"
         aria-label="Cerrar sesión"
       >
         <LogOut className="h-[22px] w-[22px]" />
-        <span className="text-[10px] font-medium leading-none">{signingOut ? "..." : "Salir"}</span>
+        <span className="text-[10px] font-[600] leading-none">{signingOut ? "..." : "Salir"}</span>
       </button>
     </nav>
   );

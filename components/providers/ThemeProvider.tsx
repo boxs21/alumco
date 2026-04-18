@@ -78,7 +78,7 @@ function applyThemeToDOM(theme: Theme) {
     root.setAttribute("data-dark", "true");
     root.style.setProperty("--primary-foreground", "#ffffff");
     // Emerald badges in dark mode
-    root.style.setProperty("--color-emerald-bg", "#1A2F6B");
+    root.style.setProperty("--color-emerald-bg", "#15182b");
     root.style.setProperty("--color-emerald-text", "#6ee7b7");
     root.style.setProperty("--color-amber-bg", "#2a2010");
     root.style.setProperty("--color-amber-text", "#fcd34d");

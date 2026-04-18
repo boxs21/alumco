@@ -58,9 +58,9 @@ function sessionsForDay(dateStr: string, sessions: SessionRow[]): SessionRow[] {
 function sedeStyle(sedeId: string | null) {
   if (sedeId === SEDES.CONCEPCION.id)
     return {
-      bar: "bg-[#2B4BA8]",
-      pill: "bg-[#2B4BA8]/[0.09] text-[#1A2F6B] border-[#2B4BA8]/25",
-      dot: "bg-[#2B4BA8]",
+      bar: "bg-[#2d4a8a]",
+      pill: "bg-[#2d4a8a]/[0.09] text-[#15182b] border-[#2d4a8a]/25",
+      dot: "bg-[#2d4a8a]",
     };
   if (sedeId === SEDES.COYHAIQUE.id)
     return {
@@ -69,9 +69,9 @@ function sedeStyle(sedeId: string | null) {
       dot: "bg-amber-500",
     };
   return {
-    bar: "bg-[#6B7AB0]",
-    pill: "bg-[#6B7AB0]/[0.08] text-[#1A2F6B] border-[#6B7AB0]/20",
-    dot: "bg-[#6B7AB0]",
+    bar: "bg-[#6b7185]",
+    pill: "bg-[#6b7185]/[0.08] text-[#15182b] border-[#6b7185]/20",
+    dot: "bg-[#6b7185]",
   };
 }
 
@@ -167,7 +167,7 @@ export default function PortalCalendarioPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {/* Sede filter */}
-          <div className="flex rounded-lg bg-[#EEF2FF] p-1 mr-1">
+          <div className="flex rounded-lg bg-[#eaf0fb] p-1 mr-1">
             {[
               { key: "global",            label: "Todas" },
               { key: SEDES.CONCEPCION.id, label: SEDES.CONCEPCION.nombre },
@@ -178,8 +178,8 @@ export default function PortalCalendarioPage() {
                 onClick={() => setSelectedSede(tab.key)}
                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   selectedSede === tab.key
-                    ? "bg-[#FAFBFF] text-[#1A2F6B] shadow-sm"
-                    : "text-[#6B7AB0] hover:text-[#1A2F6B]"
+                    ? "bg-[#f6f3ee] text-[#15182b] shadow-sm"
+                    : "text-[#6b7185] hover:text-[#15182b]"
                 }`}
               >
                 {tab.label}
@@ -190,21 +190,21 @@ export default function PortalCalendarioPage() {
           {/* Month navigation */}
           <button
             onClick={prevMonth}
-            className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors"
+            className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-[#6b7185] hover:bg-[#eaf0fb] transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
 
           <div className="w-44 text-center">
-            <span className="text-base font-semibold text-[#1A2F6B] tracking-tight">
+            <span className="text-base font-semibold text-[#15182b] tracking-tight">
               {MONTHS[month]}
             </span>
-            <span className="ml-1.5 text-base font-light text-[#6B7AB0]">{year}</span>
+            <span className="ml-1.5 text-base font-light text-[#6b7185]">{year}</span>
           </div>
 
           <button
             onClick={nextMonth}
-            className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors"
+            className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-[#6b7185] hover:bg-[#eaf0fb] transition-colors"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -212,7 +212,7 @@ export default function PortalCalendarioPage() {
           {(year !== today.getFullYear() || month !== today.getMonth()) && (
             <button
               onClick={goToday}
-              className="h-9 px-3 rounded-lg border border-[#C8D4EC] bg-[#FAFBFF] text-sm text-[#6B7AB0] hover:bg-[#EEF2FF] transition-colors"
+              className="h-9 px-3 rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-sm text-[#6b7185] hover:bg-[#eaf0fb] transition-colors"
             >
               Hoy
             </button>
@@ -220,9 +220,9 @@ export default function PortalCalendarioPage() {
         </div>
 
         {/* Legend */}
-        <div className="hidden sm:flex items-center gap-4 text-xs text-[#6B7AB0]">
+        <div className="hidden sm:flex items-center gap-4 text-xs text-[#6b7185]">
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#2B4BA8]" />
+            <span className="h-2 w-2 rounded-full bg-[#2d4a8a]" />
             Concepción
           </span>
           <span className="flex items-center gap-1.5">
@@ -233,20 +233,20 @@ export default function PortalCalendarioPage() {
       </div>
 
       {loadError && (
-        <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+        <div className="px-4 py-3 rounded-xl rounded-xl bg-[#ffe6e1] border border-[#ffccc5] text-[13px] text-[#e86154]">
           {loadError}
         </div>
       )}
 
       {/* Calendar grid */}
-      <Card className="border-[#C8D4EC] shadow-sm overflow-hidden">
+      <Card className="border-[#e8e4dc] shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {/* Week day headers */}
-          <div className="grid grid-cols-7 bg-[#EEF2FF] border-b border-[#C8D4EC]">
+          <div className="grid grid-cols-7 bg-[#eaf0fb] border-b border-[#e8e4dc]">
             {WEEK_DAYS.map((d) => (
               <div
                 key={d}
-                className="py-2 text-center text-[11px] font-semibold text-[#6B7AB0] uppercase tracking-wider"
+                className="py-2 text-center text-[11px] font-semibold text-[#6b7185] uppercase tracking-wider"
               >
                 {d}
               </div>
@@ -254,7 +254,7 @@ export default function PortalCalendarioPage() {
           </div>
 
           {loading ? (
-            <div className="py-20 text-center text-sm text-[#6B7AB0]">
+            <div className="py-20 text-center text-sm text-[#6b7185]">
               Cargando calendario...
             </div>
           ) : (
@@ -272,10 +272,10 @@ export default function PortalCalendarioPage() {
                     key={dateStr}
                     className={cn(
                       "min-h-[76px] lg:min-h-[96px] p-1 lg:p-1.5",
-                      "border-b border-r border-[#C8D4EC]",
+                      "border-b border-r border-[#e8e4dc]",
                       isLastRow && "border-b-0",
                       isLastCol && "border-r-0",
-                      inMonth ? "bg-[#FAFBFF]" : "bg-[#FAFBFF]/50",
+                      inMonth ? "bg-[#f6f3ee]" : "bg-[#f6f3ee]/50",
                     )}
                   >
                     <div className="flex items-start justify-between mb-0.5">
@@ -293,9 +293,9 @@ export default function PortalCalendarioPage() {
                       <span
                         className={cn(
                           "text-xs font-medium h-6 w-6 flex items-center justify-center rounded-full",
-                          isToday && "bg-[#2B4BA8] text-white",
-                          !isToday && inMonth && "text-[#1A2F6B]",
-                          !isToday && !inMonth && "text-[#8A9BC8]",
+                          isToday && "bg-[#2d4a8a] text-white",
+                          !isToday && inMonth && "text-[#15182b]",
+                          !isToday && !inMonth && "text-[#a5a9b8]",
                         )}
                       >
                         {day.getDate()}
@@ -332,7 +332,7 @@ export default function PortalCalendarioPage() {
                         );
                       })}
                       {daySessions.length > 2 && (
-                        <p className="text-[10px] font-medium text-[#6B7AB0] pl-1">
+                        <p className="text-[10px] font-medium text-[#6b7185] pl-1">
                           +{daySessions.length - 2} más
                         </p>
                       )}
@@ -347,13 +347,13 @@ export default function PortalCalendarioPage() {
 
       {/* Session list */}
       {!loading && visibleSessions.length > 0 && (
-        <Card className="border-[#C8D4EC] shadow-sm">
+        <Card className="border-[#e8e4dc] shadow-sm">
           <CardContent className="p-4 lg:p-5">
             <div className="flex items-baseline gap-2 mb-4">
-              <h3 className="text-sm font-semibold text-[#1A2F6B] tracking-tight">
+              <h3 className="text-sm font-semibold text-[#15182b] tracking-tight">
                 {MONTHS[month]} {year}
               </h3>
-              <span className="text-xs text-[#8A9BC8]">
+              <span className="text-xs text-[#a5a9b8]">
                 {visibleSessions.length} sesión{visibleSessions.length !== 1 ? "es" : ""}
               </span>
             </div>
@@ -365,34 +365,34 @@ export default function PortalCalendarioPage() {
                 return (
                   <div
                     key={s.id}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-[#C8D4EC] bg-[#FAFBFF]"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-[#e8e4dc] bg-[#f6f3ee]"
                   >
                     <div className={cn("w-[3px] self-stretch rounded-full flex-shrink-0", style.bar)} />
 
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-[#1A2F6B] truncate leading-snug">
+                      <p className="text-sm font-semibold text-[#15182b] truncate leading-snug">
                         {title}
                       </p>
                       <div className="flex items-center gap-2 flex-wrap mt-0.5">
-                        <p className="text-xs text-[#6B7AB0]">
+                        <p className="text-xs text-[#6b7185]">
                           {formatDateRange(s.start_date, s.end_date)}
                         </p>
                         {s.sede_id && (
                           <>
-                            <span className="text-[#C8D4EC]">·</span>
-                            <span className="flex items-center gap-1 text-xs text-[#6B7AB0]">
+                            <span className="text-[#e8e4dc]">·</span>
+                            <span className="flex items-center gap-1 text-xs text-[#6b7185]">
                               <span className={cn("h-1.5 w-1.5 rounded-full flex-shrink-0", style.dot)} />
                               {sedeName(s.sede_id)}
                             </span>
                           </>
                         )}
-                        <span className="text-[#C8D4EC]">·</span>
-                        <span className="text-xs text-[#6B7AB0]">
+                        <span className="text-[#e8e4dc]">·</span>
+                        <span className="text-xs text-[#6b7185]">
                           {s.modality === "PRESENCIAL" ? "Presencial" : "Online"}
                         </span>
                       </div>
                       {s.notes && (
-                        <p className="text-xs text-[#8A9BC8] mt-0.5 italic truncate">{s.notes}</p>
+                        <p className="text-xs text-[#a5a9b8] mt-0.5 italic truncate">{s.notes}</p>
                       )}
                     </div>
                   </div>
@@ -405,13 +405,13 @@ export default function PortalCalendarioPage() {
 
       {!loading && visibleSessions.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="h-12 w-12 rounded-2xl bg-[#EEF2FF] flex items-center justify-center mb-3">
-            <Calendar className="h-6 w-6 text-[#8A9BC8]" />
+          <div className="h-12 w-12 rounded-2xl bg-[#eaf0fb] flex items-center justify-center mb-3">
+            <Calendar className="h-6 w-6 text-[#a5a9b8]" />
           </div>
-          <p className="text-sm font-medium text-[#1A2F6B]">
+          <p className="text-sm font-medium text-[#15182b]">
             Sin sesiones en {MONTHS[month]}
           </p>
-          <p className="text-xs text-[#6B7AB0] mt-1">
+          <p className="text-xs text-[#6b7185] mt-1">
             No hay capacitaciones programadas para este mes.
           </p>
         </div>

@@ -7,9 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter), -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-plus-jakarta), -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-inter), -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-plus-jakarta), -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,61 +48,60 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* ─── Semantic Theme Variables ─── */
-  --color-forest: #4a6fa5;
-  --color-forest-hover: #6389bf;
-  --color-forest-light: #e8eff7;
-  --color-forest-olive: #a0b8d0;
-  --color-forest-sage: #4a6a80;
-  --color-forest-ivory: #fafbfc;
-  --color-forest-text: #2a3a4a;
-  --color-forest-border: #d4e1ed;
-  --color-forest-success: #6389bf;
-  --color-forest-warning: #c0a040;
-  --color-forest-danger: #E8445A;
+  /* ─── Alumo Design Tokens ─── */
+  --color-navy:        #2d4a8a;
+  --color-navy-deep:   #1f3769;
+  --color-navy-soft:   #eaf0fb;
+  --color-coral:       #ff7c6b;
+  --color-coral-deep:  #e86154;
+  --color-coral-soft:  #ffe6e1;
+  --color-mustard:     #f2b544;
+  --color-mustard-soft:#fdf1d8;
+  --color-green:       #3c9d70;
+  --color-green-soft:  #dbeee3;
 
   /* Sede colors */
-  --color-sede-concepcion: #4a6fa5;
-  --color-sede-concepcion-bg: #e8eff7;
-  --color-sede-coyhaique: #c0a040;
-  --color-sede-coyhaique-bg: #f7f3e4;
-  --color-sede-global: #4a6a80;
-  --color-sede-global-bg: #e8eff7;
+  --color-sede-concepcion: #2d4a8a;
+  --color-sede-concepcion-bg: #eaf0fb;
+  --color-sede-coyhaique: #f2b544;
+  --color-sede-coyhaique-bg: #fdf1d8;
+  --color-sede-global: #6b7185;
+  --color-sede-global-bg: #f0ece4;
 }
 
 :root {
-  --background: #fafbfc;
-  --foreground: #2a3a4a;
-  --card: #fafbfc;
-  --card-foreground: #2a3a4a;
-  --popover: #fafbfc;
-  --popover-foreground: #2a3a4a;
-  --primary: #4a6fa5;
+  --background: #f6f3ee;
+  --foreground: #15182b;
+  --card: #ffffff;
+  --card-foreground: #15182b;
+  --popover: #ffffff;
+  --popover-foreground: #15182b;
+  --primary: #2d4a8a;
   --primary-foreground: #ffffff;
-  --secondary: #e8eff7;
-  --secondary-foreground: #2a3a4a;
-  --muted: #e8eff7;
-  --muted-foreground: #4a6a80;
-  --accent: #e8eff7;
-  --accent-foreground: #2a3a4a;
-  --destructive: #E8445A;
-  --border: #d4e1ed;
-  --input: #d4e1ed;
-  --ring: #4a6fa5;
-  --chart-1: #4a6fa5;
-  --chart-2: #6389bf;
-  --chart-3: #c0a040;
-  --chart-4: #E8445A;
-  --chart-5: #a0b8d0;
-  --radius: 0.625rem;
-  --sidebar: #fafbfc;
-  --sidebar-foreground: #2a3a4a;
-  --sidebar-primary: #4a6fa5;
+  --secondary: #eaf0fb;
+  --secondary-foreground: #15182b;
+  --muted: #f0ece4;
+  --muted-foreground: #6b7185;
+  --accent: #eaf0fb;
+  --accent-foreground: #15182b;
+  --destructive: #ff7c6b;
+  --border: #e8e4dc;
+  --input: #e8e4dc;
+  --ring: #2d4a8a;
+  --chart-1: #2d4a8a;
+  --chart-2: #ff7c6b;
+  --chart-3: #f2b544;
+  --chart-4: #3c9d70;
+  --chart-5: #a5a9b8;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #15182b;
+  --sidebar-primary: #2d4a8a;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8eff7;
-  --sidebar-accent-foreground: #2a3a4a;
-  --sidebar-border: #d4e1ed;
-  --sidebar-ring: #4a6fa5;
+  --sidebar-accent: #eaf0fb;
+  --sidebar-accent-foreground: #15182b;
+  --sidebar-border: #e8e4dc;
+  --sidebar-ring: #2d4a8a;
 }
 
 @layer base {
@@ -110,15 +110,23 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-plus-jakarta), -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "ss02", "cv11";
   }
   html {
     @apply font-sans;
     font-size: 15px;
   }
   h1, h2, h3 {
-    font-family: var(--font-heading);
+    font-family: var(--font-plus-jakarta), -apple-system, system-ui, sans-serif;
     font-weight: 700;
-    letter-spacing: 0.12px;
+    letter-spacing: -0.015em;
+  }
+  em {
+    font-family: var(--font-fraunces), Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
   }
 }
 
@@ -128,77 +136,36 @@
    When data-theme is set, all colors respond dynamically.
    ══════════════════════════════════════════════════════ */
 
-/* --- Primary (Forest Green → dynamic) --- */
-[data-theme] .bg-\[\#2B4BA8\]  { background-color: var(--primary) !important; }
-[data-theme] .text-\[\#2B4BA8\] { color: var(--primary) !important; }
-[data-theme] .border-\[\#2B4BA8\] { border-color: var(--primary) !important; }
-[data-theme] .ring-\[\#2B4BA8\] { --tw-ring-color: var(--primary) !important; }
-[data-theme] .from-\[\#2B4BA8\] { --tw-gradient-from: var(--primary) !important; }
-[data-theme] .to-\[\#2B4BA8\] { --tw-gradient-to: var(--primary) !important; }
-[data-theme] .shadow-\[\#2B4BA8\]\/20 { --tw-shadow-color: color-mix(in srgb, var(--primary) 20%, transparent) !important; }
-[data-theme] .shadow-\[\#2B4BA8\]\/30 { --tw-shadow-color: color-mix(in srgb, var(--primary) 30%, transparent) !important; }
+/* --- Primary (Navy → dynamic) --- */
+[data-theme] .bg-\[\#2d4a8a\]  { background-color: var(--primary) !important; }
+[data-theme] .text-\[\#2d4a8a\] { color: var(--primary) !important; }
+[data-theme] .border-\[\#2d4a8a\] { border-color: var(--primary) !important; }
+[data-theme] .from-\[\#2d4a8a\] { --tw-gradient-from: var(--primary) !important; }
+[data-theme] .to-\[\#2d4a8a\] { --tw-gradient-to: var(--primary) !important; }
 
-/* --- Primary Hover --- */
-[data-theme] .bg-\[\#2B4BA8\]  { background-color: var(--color-forest-hover) !important; }
-[data-theme] .text-\[\#2B4BA8\] { color: var(--color-forest-hover) !important; }
-[data-theme] .from-\[\#2B4BA8\] { --tw-gradient-from: var(--color-forest-hover) !important; }
-[data-theme] .to-\[\#2B4BA8\] { --tw-gradient-to: var(--color-forest-hover) !important; }
+/* --- Dark navy --- */
+[data-theme] .bg-\[\#1f3769\]  { background-color: color-mix(in srgb, var(--primary) 80%, black) !important; }
+[data-theme] .text-\[\#1f3769\] { color: var(--foreground) !important; }
 
-/* --- Dark primary (hover of primary) --- */
-[data-theme] .bg-\[\#1A2F6B\]  { background-color: color-mix(in srgb, var(--primary) 80%, black) !important; }
-[data-theme] .hover\:bg-\[\#1A2F6B\]:hover { background-color: color-mix(in srgb, var(--primary) 80%, black) !important; }
-[data-theme] .from-\[\#1A2F6B\] { --tw-gradient-from: color-mix(in srgb, var(--primary) 80%, black) !important; }
-[data-theme] .hover\:from-\[\#1A2F6B\]:hover { --tw-gradient-from: color-mix(in srgb, var(--primary) 80%, black) !important; }
-[data-theme] .to-\[\#1A2F6B\] { --tw-gradient-to: color-mix(in srgb, var(--color-forest-hover) 85%, black) !important; }
-[data-theme] .hover\:to-\[\#1A2F6B\]:hover { --tw-gradient-to: color-mix(in srgb, var(--color-forest-hover) 85%, black) !important; }
+/* --- Background --- */
+[data-theme] .bg-\[\#f6f3ee\]  { background-color: var(--background) !important; }
+[data-theme] .bg-\[\#f6f3ee\]\/95 { background-color: color-mix(in srgb, var(--background) 95%, transparent) !important; }
 
-/* --- Foreground / Text --- */
-[data-theme] .text-\[\#1A2F6B\] { color: var(--foreground) !important; }
-[data-theme] .bg-\[\#1A2F6B\]  { background-color: var(--foreground) !important; }
+/* --- Secondary / Navy soft --- */
+[data-theme] .bg-\[\#eaf0fb\]  { background-color: var(--secondary) !important; }
+[data-theme] .hover\:bg-\[\#eaf0fb\]:hover { background-color: var(--secondary) !important; }
 
-/* --- Background / Ivory --- */
-[data-theme] .bg-\[\#FAFBFF\]  { background-color: var(--background) !important; }
-[data-theme] .text-\[\#FAFBFF\] { color: var(--background) !important; }
+/* --- Coral --- */
+[data-theme] .bg-\[\#ff7c6b\]  { background-color: var(--destructive) !important; }
+[data-theme] .text-\[\#ff7c6b\] { color: var(--destructive) !important; }
+[data-theme] .hover\:bg-\[\#e86154\]:hover { background-color: color-mix(in srgb, var(--destructive) 90%, black) !important; }
 
-/* --- Background opacity variants (critical for sticky headers / bottom navs with backdrop-blur) --- */
-[data-theme] .bg-\[\#FAFBFF\]\/95 { background-color: color-mix(in srgb, var(--background) 95%, transparent) !important; }
-[data-theme] .bg-\[\#FAFBFF\]\/80 { background-color: color-mix(in srgb, var(--background) 80%, transparent) !important; }
-[data-theme] .bg-\[\#FAFBFF\]\/60 { background-color: color-mix(in srgb, var(--background) 60%, transparent) !important; }
-[data-theme] .bg-\[\#FAFBFF\]\/50 { background-color: color-mix(in srgb, var(--background) 50%, transparent) !important; }
-
-/* --- Secondary / Light --- */
-[data-theme] .bg-\[\#EEF2FF\]  { background-color: var(--secondary) !important; }
-[data-theme] .hover\:bg-\[\#EEF2FF\]:hover { background-color: var(--secondary) !important; }
-[data-theme] .text-\[\#EEF2FF\] { color: var(--secondary) !important; }
-[data-theme] .bg-\[\#EEF2FF\]\/60 { background-color: color-mix(in srgb, var(--secondary) 60%, transparent) !important; }
-[data-theme] .bg-\[\#EEF2FF\]\/80 { background-color: color-mix(in srgb, var(--secondary) 80%, transparent) !important; }
-[data-theme] .bg-\[\#EEF2FF\]\/30 { background-color: color-mix(in srgb, var(--secondary) 30%, transparent) !important; }
-[data-theme] .bg-\[\#EEF2FF\]\/50 { background-color: color-mix(in srgb, var(--secondary) 50%, transparent) !important; }
-[data-theme] .hover\:bg-\[\#EEF2FF\]\/60:hover { background-color: color-mix(in srgb, var(--secondary) 60%, transparent) !important; }
-
-/* --- Muted / Sage --- */
-[data-theme] .text-\[\#6B7AB0\] { color: var(--muted-foreground) !important; }
-[data-theme] .bg-\[\#6B7AB0\]  { background-color: var(--muted-foreground) !important; }
-
-/* --- Muted improved contrast --- */
-[data-theme] .text-\[\#4A5C8A\] { color: var(--muted-foreground) !important; }
-
-/* --- Accent / Olive --- */
-[data-theme] .text-\[\#8A9BC8\] { color: var(--color-forest-olive) !important; }
-[data-theme] .bg-\[\#8A9BC8\]  { background-color: var(--color-forest-olive) !important; }
+/* --- Muted --- */
+[data-theme] .text-\[\#6b7185\] { color: var(--muted-foreground) !important; }
+[data-theme] .text-\[\#a5a9b8\] { color: var(--muted-foreground) !important; }
 
 /* --- Border --- */
-[data-theme] .border-\[\#C8D4EC\] { border-color: var(--border) !important; }
-[data-theme] .border-\[\#C8D4EC\]\/80 { border-color: color-mix(in srgb, var(--border) 80%, transparent) !important; }
-[data-theme] .border-\[\#8A9BC8\] { border-color: var(--color-forest-olive) !important; }
-[data-theme] .hover\:border-\[\#8A9BC8\]:hover { border-color: var(--color-forest-olive) !important; }
-[data-theme] .via-\[\#C8D4EC\] { --tw-gradient-via: var(--border) !important; }
-
-/* --- Sede Concepcion gradient --- */
-[data-theme] .bg-gradient-to-r.from-\[\#2B4BA8\].to-\[\#2B4BA8\] {
-  --tw-gradient-from: var(--primary) !important;
-  --tw-gradient-to: var(--color-forest-hover) !important;
-}
+[data-theme] .border-\[\#e8e4dc\] { border-color: var(--border) !important; }
 
 /* --- Focus ring --- */
 [data-theme] :focus-visible {
@@ -207,29 +174,7 @@
 
 /* --- Scrollbar --- */
 [data-theme] ::-webkit-scrollbar-thumb {
-  background: var(--color-forest-olive) !important;
-}
-[data-theme] ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted-foreground) !important;
-}
-
-/* --- Login bg --- */
-[data-theme] .login-bg {
-  background-color: var(--background) !important;
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, var(--secondary) 0%, transparent 70%),
-    radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--secondary) 60%, transparent) 0%, transparent 50%),
-    radial-gradient(circle at 20% 70%, color-mix(in srgb, var(--border) 30%, transparent) 0%, transparent 40%) !important;
-}
-
-/* --- Dot pattern --- */
-[data-theme] .bg-dot-pattern {
-  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px) !important;
-}
-
-/* --- Sidebar active indicator --- */
-[data-theme] .sidebar-active-indicator::before {
-  background: var(--color-forest-olive) !important;
+  background: #a5a9b8 !important;
 }
 
 /* --- Card hover shadow --- */
@@ -243,7 +188,7 @@
 /* ══════════════════════════════════════════════════════
    DARK THEME OVERRIDES
    When data-dark is set, override colors that don't use
-   CSS variables (hardcoded emerald, amber, white bgs)
+   CSS variables (hardcoded values in class names)
    ══════════════════════════════════════════════════════ */
 
 /* White/card backgrounds → dark card bg */
@@ -252,34 +197,35 @@
   background-color: var(--card) !important;
 }
 
+/* Warm off-white → dark bg */
+[data-dark] .bg-\[\#f6f3ee\] {
+  background-color: #1a1c2a !important;
+}
+
 /* Emerald badges in dark mode */
 [data-dark] .bg-emerald-50 {
-  background-color: var(--color-emerald-bg, #1A2F6B) !important;
+  background-color: #0f3a22 !important;
 }
 [data-dark] .text-emerald-700,
 [data-dark] .text-emerald-600 {
-  color: var(--color-emerald-text, #6ee7b7) !important;
-}
-[data-dark] .bg-emerald-100 {
-  background-color: #0f3a22 !important;
+  color: #6ee7b7 !important;
 }
 
 /* Amber badges in dark mode */
 [data-dark] .bg-amber-50 {
-  background-color: var(--color-amber-bg, #2a2010) !important;
+  background-color: #2a2010 !important;
 }
 [data-dark] .text-amber-700,
 [data-dark] .text-amber-500 {
-  color: var(--color-amber-text, #fcd34d) !important;
+  color: #fcd34d !important;
 }
 
-/* Red/destructive badges in dark mode */
-[data-dark] .bg-red-50,
-[data-dark] .bg-\[\#FEF0F2\] {
+/* Coral error states in dark mode */
+[data-dark] .bg-\[\#ffe6e1\] {
   background-color: #2a1010 !important;
 }
-[data-dark] .text-red-600 {
-  color: #fca5a5 !important;
+[data-dark] .text-\[\#e86154\] {
+  color: #ff9a8d !important;
 }
 
 /* Dark mode gradient buttons text stays white */
@@ -287,7 +233,7 @@
   color: #ffffff !important;
 }
 
-/* ─── Dark mode: inputs get elevated bg so they're visible on dark background ─── */
+/* ─── Dark mode: inputs ─── */
 [data-dark] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="range"]),
 [data-dark] textarea,
 [data-dark] select {
@@ -296,7 +242,7 @@
   border-color: var(--border) !important;
 }
 
-/* ─── Dark mode: card shadows use dark overlay (no light glow) ─── */
+/* ─── Dark mode: card shadows ─── */
 [data-dark] .shadow-xl {
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 10px 30px -5px rgb(0 0 0 / 0.5) !important;
 }
@@ -307,20 +253,9 @@
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.3) !important;
 }
 
-/* ─── Dark mode: table row hover and active ─── */
+/* ─── Dark mode: table row hover ─── */
 [data-dark] .hover\:bg-muted\/50:hover {
   background-color: color-mix(in srgb, var(--secondary) 60%, transparent) !important;
-}
-
-/* ─── Dark mode: avatar and ring colors ─── */
-[data-dark] .ring-\[\#EEF2FF\] {
-  --tw-ring-color: var(--border) !important;
-}
-[data-dark] .from-\[\#EEF2FF\] {
-  --tw-gradient-from: var(--secondary) !important;
-}
-[data-dark] .to-\[\#C8D4EC\] {
-  --tw-gradient-to: var(--border) !important;
 }
 
 /* ─── Dark mode: card-hover shadow ─── */
@@ -330,17 +265,6 @@
     0 0 0 1px var(--border),
     0 4px 12px rgb(0 0 0 / 0.35),
     0 8px 24px rgb(0 0 0 / 0.25) !important;
-}
-
-/* ─── Dark mode: toggle/tab active state ─── */
-[data-dark] .bg-\[\#FAFBFF\].text-\[\#1A2F6B\] {
-  background-color: var(--secondary) !important;
-  color: var(--foreground) !important;
-}
-
-/* ─── Dark mode: toggle switch thumb ─── */
-[data-dark] .bg-\[\#FAFBFF\].shadow {
-  background-color: var(--foreground) !important;
 }
 
 /* ─── Animations ─── */
@@ -422,21 +346,21 @@
 
 /* ─── Background patterns ─── */
 .bg-dot-pattern {
-  background-image: radial-gradient(circle, #d4e1ed 1px, transparent 1px);
+  background-image: radial-gradient(circle, #e8e4dc 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .bg-grid-pattern {
   background-image:
-    linear-gradient(to right, #d4e1ed20 1px, transparent 1px),
-    linear-gradient(to bottom, #d4e1ed20 1px, transparent 1px);
+    linear-gradient(to right, #e8e4dc20 1px, transparent 1px),
+    linear-gradient(to bottom, #e8e4dc20 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
 .bg-leaf-pattern {
   background-image:
-    radial-gradient(ellipse at 20% 50%, #e8eff7 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, #e8eff7 0%, transparent 40%);
+    radial-gradient(ellipse at 20% 50%, #eaf0fb 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, #eaf0fb 0%, transparent 40%);
 }
 
 /* ─── Card hover ─── */
@@ -455,11 +379,11 @@
 
 /* ─── Login background ─── */
 .login-bg {
-  background-color: #fafbfc;
+  background-color: #f6f3ee;
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, #e8eff7 0%, transparent 70%),
-    radial-gradient(circle at 80% 80%, #e8eff760 0%, transparent 50%),
-    radial-gradient(circle at 20% 70%, #d4e1ed30 0%, transparent 40%);
+    radial-gradient(ellipse 80% 50% at 50% -20%, #eaf0fb 0%, transparent 70%),
+    radial-gradient(circle at 80% 80%, #ffe6e160 0%, transparent 50%),
+    radial-gradient(circle at 20% 70%, #fdf1d830 0%, transparent 40%);
 }
 
 /* ─── Sidebar active indicator ─── */
@@ -476,7 +400,7 @@
   width: 3px;
   height: 60%;
   border-radius: 0 4px 4px 0;
-  background: #a0b8d0;
+  background: #ff7c6b;
 }
 
 /* ─── Smooth scrollbar ─── */
