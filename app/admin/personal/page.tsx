@@ -101,7 +101,7 @@ export default function PersonalPage() {
   const [formEmail, setFormEmail] = useState("");
   const [formPassword, setFormPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [formRole, setFormRole] = useState<"COLLABORATOR" | "ADMIN">("COLLABORATOR");
+  const [formRole, setFormRole] = useState<"COLLABORATOR" | "ADMIN" | "PROFESOR">("COLLABORATOR");
   const [formSedeId, setFormSedeId] = useState("");
   const [formArea, setFormArea] = useState("");
   const [saving, setSaving] = useState(false);
