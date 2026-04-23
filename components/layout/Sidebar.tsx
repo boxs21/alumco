@@ -47,7 +47,12 @@ export default function Sidebar() {
       supabase.from("profiles").select("role, sede_id").eq("id", user.id).single().then(({ data }) => {
         if (!data) return;
         setIsAdmin(data.role === "ADMIN");
-        setUserRole(data.role === "ADMIN" ? "Administrador" : "Profesor");
+        const labelMap = {
+          ADMIN: "Administrador",
+          PROFESOR: "Profesor",
+          COLLABORATOR: "Colaborador",
+        };
+        setUserRole(labelMap[data.role as keyof typeof labelMap] || "Usuario");
       });
     });
   }, []);

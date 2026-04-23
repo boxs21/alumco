@@ -24,6 +24,17 @@ Almacena las dos residencias de la ONG.
 
 ---
 
+### areas
+Áreas de trabajo de la ONG, administrables.
+
+| Columna | Tipo | Nullable | Default | Notas |
+|---|---|---|---|---|
+| id | uuid | NO | gen_random_uuid() | PK |
+| name | text | NO | — | Nombre del área, UNIQUE |
+| created_at | timestamptz | SÍ | now() | — |
+
+---
+
 ### profiles
 Extiende auth.users de Supabase. Un perfil por usuario.
 
@@ -32,7 +43,7 @@ Extiende auth.users de Supabase. Un perfil por usuario.
 | id | uuid | NO | — | PK, FK → auth.users.id |
 | name | text | SÍ | — | Nombre completo |
 | email | text | SÍ | — | UNIQUE |
-| role | text | NO | COLLABORATOR | Valores: ADMIN, COLLABORATOR |
+| role | text | NO | COLLABORATOR | Valores: ADMIN, PROFESOR, COLLABORATOR |
 | area | text | SÍ | — | Ej: Cuidado, Enfermería, Administración |
 | sede_id | uuid | SÍ | — | FK → sedes.id |
 | active | boolean | SÍ | true | False = usuario desactivado |

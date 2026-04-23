@@ -36,7 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase";
-import { SEDES, AREAS, sedeName } from "@/lib/config";
+import { SEDES, sedeName } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -45,10 +45,15 @@ interface Profile {
   id: string;
   name: string | null;
   email: string | null;
-  role: "ADMIN" | "COLLABORATOR";
+  role: "ADMIN" | "PROFESOR" | "COLLABORATOR";
   area: string | null;
   sede_id: string | null;
   active: boolean;
+}
+
+interface Area {
+  id: string;
+  name: string;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -81,14 +86,16 @@ export default function PersonalPage() {
   const router = useRouter();
 
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [sedes, setSedes] = useState<{id: string, nombre: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // Filters
   const [sedeTab, setSedeTab] = useState("ALL");
   const [showInactive, setShowInactive] = useState(false);
 
-  // Modal
+  // Modal Nuevo
   const [showModal, setShowModal] = useState(false);
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
@@ -100,28 +107,53 @@ export default function PersonalPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  // Modal Edición
+  const [editProfile, setEditProfile] = useState<Profile | null>(null);
+  const [editRole, setEditRole] = useState<"ADMIN" | "COLLABORATOR">("COLLABORATOR");
+  const [editSede, setEditSede] = useState("");
+  const [editArea, setEditArea] = useState("");
+  const [editActive, setEditActive] = useState(true);
+  const [editing, setEditing] = useState(false);
+
+  // Modal Áreas
+  const [areas, setAreas] = useState<Area[]>([]);
+  const [showAreasModal, setShowAreasModal] = useState(false);
+  const [newAreaName, setNewAreaName] = useState("");
+  const [creatingArea, setCreatingArea] = useState(false);
+
   // ─── Load ──────────────────────────────────────────────────────────────
 
-  const loadProfiles = useCallback(async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     setLoadError(null);
     const supabase = createClient();
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, name, email, role, area, sede_id, active")
-      .order("name");
-    if (error) {
+    const [
+      { data: userData },
+      { data: profilesData, error: profilesError },
+      { data: areasData },
+      { data: sedesData },
+    ] = await Promise.all([
+      supabase.auth.getUser(),
+      supabase.from("profiles").select("id, name, email, role, area, sede_id, active").order("name"),
+      supabase.from("areas").select("id, name").order("name"),
+      supabase.from("sedes").select("id, nombre").order("nombre"),
+    ]);
+
+    if (profilesError) {
       setLoadError("No se pudo cargar el personal.");
       setLoading(false);
       return;
     }
-    setProfiles((data ?? []) as Profile[]);
+    setCurrentUserId(userData?.user?.id ?? null);
+    setProfiles((profilesData ?? []) as Profile[]);
+    setAreas((areasData ?? []) as Area[]);
+    setSedes(sedesData ?? []);
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    loadProfiles();
-  }, [loadProfiles]);
+    loadData();
+  }, [loadData]);
 
   // ─── Filtered list ─────────────────────────────────────────────────────
 
@@ -142,6 +174,7 @@ export default function PersonalPage() {
     setFormSedeId("");
     setFormArea("");
     setFormError(null);
+    setSaving(false);
   }
 
   // ─── Create user ───────────────────────────────────────────────────────
@@ -163,30 +196,106 @@ export default function PersonalPage() {
     setSaving(true);
     setFormError(null);
 
-    const res = await fetch("/api/admin/create-user", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formName,
-        email: formEmail,
-        password: formPassword,
-        role: formRole,
-        sede_id: formSedeId || null,
-        area: formArea || null,
-      }),
-    });
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formName,
+          email: formEmail,
+          password: formPassword,
+          role: formRole,
+          sede_id: formSedeId || null,
+          area: formArea || null,
+        }),
+      });
 
-    const json = await res.json();
+      let json;
+      try {
+        json = await res.json();
+      } catch (err) {
+        throw new Error("Error de servidor. Respuesta no válida.");
+      }
 
-    if (!res.ok) {
-      setFormError(json.error ?? "Error al crear el usuario.");
+      if (!res.ok) {
+        setFormError(json.error ?? "Error al crear el usuario.");
+        setSaving(false);
+        return;
+      }
+
+      setShowModal(false);
+      resetForm();
+      loadData();
+    } catch (error: any) {
+      setFormError(error.message || "Error al conectar con el servidor.");
       setSaving(false);
-      return;
     }
+  }
 
-    setShowModal(false);
-    resetForm();
-    loadProfiles();
+  // ─── Edit user ─────────────────────────────────────────────────────────
+
+  async function handleSaveEdit() {
+    if (!editProfile) return;
+    setEditing(true);
+    try {
+      const res = await fetch(`/api/admin/colaboradores/${editProfile.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          area: editArea === "none" ? null : editArea,
+          sede_id: editSede === "none" ? null : editSede,
+          active: editActive,
+          role: editRole,
+        }),
+      });
+      if (!res.ok) throw new Error("Error al guardar");
+
+      setProfiles(profiles.map(p => p.id === editProfile.id ? { 
+        ...p, 
+        area: editArea === "none" ? null : editArea, 
+        sede_id: editSede === "none" ? null : editSede, 
+        active: editActive, 
+        role: editRole 
+      } : p));
+      setEditProfile(null);
+    } catch (err) {
+      alert("Error al actualizar colaborador");
+    } finally {
+      setEditing(false);
+    }
+  }
+
+  // ─── Area CRUD ─────────────────────────────────────────────────────────
+
+  async function handleCreateArea() {
+    if (!newAreaName.trim()) return;
+    setCreatingArea(true);
+    try {
+      const res = await fetch("/api/admin/areas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newAreaName }),
+      });
+      if (!res.ok) throw new Error("Error creating area");
+      const { area } = await res.json();
+      setAreas([...areas, area].sort((a, b) => a.name.localeCompare(b.name)));
+      setNewAreaName("");
+    } catch (error) {
+      alert("Error al crear área. Verifica que no exista ya.");
+    } finally {
+      setCreatingArea(false);
+    }
+  }
+
+  async function handleDeleteArea(id: string) {
+    if (!confirm("¿Seguro que deseas eliminar esta área?")) return;
+    try {
+      const res = await fetch(`/api/admin/areas/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setAreas(areas.filter(a => a.id !== id));
+    } catch (e) {
+      alert("Error al eliminar área");
+    }
   }
 
   // ─── Render ────────────────────────────────────────────────────────────
@@ -196,6 +305,23 @@ export default function PersonalPage() {
       <Topbar
         title="Personal"
         sub="Gestiona los accesos y cuentas del equipo."
+        right={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowAreasModal(true)}
+              className="inline-flex items-center h-9 px-4 rounded-full border border-[#e8e4dc] bg-white hover:bg-[#f6f3ee] text-[#15182b] text-[13px] font-[600] transition-colors"
+            >
+              Administrar Áreas
+            </button>
+            <button
+              onClick={() => { resetForm(); setShowModal(true); }}
+              className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] transition-colors"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Nuevo usuario</span>
+            </button>
+          </div>
+        }
       />
 
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
@@ -237,14 +363,6 @@ export default function PersonalPage() {
               {showInactive ? "Mostrando inactivos" : "Ver inactivos"}
             </button>
           </div>
-
-          <button
-            onClick={() => { resetForm(); setShowModal(true); }}
-            className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Nuevo usuario</span>
-          </button>
         </div>
 
         {/* ── Load error ── */}
@@ -321,9 +439,11 @@ export default function PersonalPage() {
                         <span className={`inline-flex px-2.5 py-0.5 rounded-full text-[10.5px] font-[700] border ${
                           p.role === "ADMIN"
                             ? "bg-[#eaf0fb] text-[#2d4a8a] border-[#c3d5f4]"
+                            : p.role === "PROFESOR"
+                            ? "bg-[#fef3c7] text-[#92400e] border-[#fde68a]"
                             : "bg-[#f0ece4] text-[#6b7185] border-[#e8e4dc]"
                         }`}>
-                          {p.role === "ADMIN" ? "Admin" : "Colaborador"}
+                          {p.role === "ADMIN" ? "Admin" : p.role === "PROFESOR" ? "Profesor" : "Colaborador"}
                         </span>
                       </TableCell>
                       <TableCell className="text-sm text-[#6b7185] hidden lg:table-cell">
@@ -353,16 +473,26 @@ export default function PersonalPage() {
                         </span>
                       </TableCell>
                       <TableCell>
-                        {p.role === "COLLABORATOR" && (
-                          <button
-                            onClick={() =>
-                              router.push(`/admin/colaboradores/${p.id}`)
-                            }
-                            className="h-7 px-2.5 rounded-lg text-xs text-[#2d4a8a] hover:bg-[#eaf0fb] transition-colors font-medium"
-                          >
-                            Ver
-                          </button>
-                        )}
+                        <div className="flex justify-end gap-2">
+                          {p.id !== currentUserId ? (
+                            <button
+                              onClick={() => {
+                                setEditProfile(p);
+                                setEditRole(p.role);
+                                setEditSede(p.sede_id || "none");
+                                setEditArea(p.area || "none");
+                                setEditActive(p.active);
+                              }}
+                              className="h-7 px-2.5 rounded-lg text-xs text-[#6b7185] hover:bg-[#eaf0fb] transition-colors font-medium border border-[#e8e4dc]"
+                            >
+                              Editar
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-[#a5a9b8] italic pr-2">
+                              Tú
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );})}
@@ -380,7 +510,7 @@ export default function PersonalPage() {
         )}
       </div>
 
-      {/* ── Create modal ── */}
+      {/* ── Nuevo usuario modal ── */}
       <Dialog
         open={showModal}
         onOpenChange={(open) => {
@@ -463,7 +593,7 @@ export default function PersonalPage() {
               <Select
                 value={formRole}
                 onValueChange={(v) =>
-                  setFormRole(v as "COLLABORATOR" | "ADMIN")
+                  setFormRole(v as "COLLABORATOR" | "ADMIN" | "PROFESOR")
                 }
               >
                 <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
@@ -471,6 +601,7 @@ export default function PersonalPage() {
                 </SelectTrigger>
                 <SelectContent className="rounded-xl">
                   <SelectItem value="COLLABORATOR">Colaborador</SelectItem>
+                  <SelectItem value="PROFESOR">Profesor</SelectItem>
                   <SelectItem value="ADMIN">Admin</SelectItem>
                 </SelectContent>
               </Select>
@@ -480,37 +611,32 @@ export default function PersonalPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-sm font-medium text-[#15182b]">Sede</Label>
-                <Select value={formSedeId} onValueChange={setFormSedeId}>
+                <Select value={formSedeId || "none"} onValueChange={(v) => setFormSedeId(v === "none" ? "" : v)}>
                   <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
                     <SelectValue placeholder="Sin sede" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    <SelectItem value={SEDES.CONCEPCION.id}>
-                      <span className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-[#2d4a8a]" />
-                        Concepción
-                      </span>
-                    </SelectItem>
-                    <SelectItem value={SEDES.COYHAIQUE.id}>
-                      <span className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-[#F5A623]" />
-                        Coyhaique
-                      </span>
-                    </SelectItem>
+                    <SelectItem value="none">Sin sede</SelectItem>
+                    {sedes.map(s => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.nombre}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-1.5">
                 <Label className="text-sm font-medium text-[#15182b]">Área</Label>
-                <Select value={formArea} onValueChange={setFormArea}>
+                <Select value={formArea || "none"} onValueChange={(v) => setFormArea(v === "none" ? "" : v)}>
                   <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
                     <SelectValue placeholder="Sin área" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    {AREAS.map((a) => (
-                      <SelectItem key={a} value={a}>
-                        {a}
+                    <SelectItem value="none">Sin área</SelectItem>
+                    {areas.map((a) => (
+                      <SelectItem key={a.name} value={a.name}>
+                        {a.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -548,6 +674,116 @@ export default function PersonalPage() {
                   "Crear usuario"
                 )}
               </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Editar usuario modal ── */}
+      <Dialog open={!!editProfile} onOpenChange={(open) => !open && setEditProfile(null)}>
+        <DialogContent className="max-w-sm rounded-2xl border-[#e8e4dc]">
+          <DialogHeader>
+            <DialogTitle className="text-[#15182b]">Editar Personal</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-[#15182b]">Rol</label>
+              <Select value={editRole} onValueChange={(v) => setEditRole(v as "ADMIN" | "PROFESOR" | "COLLABORATOR")}>
+                <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="COLLABORATOR">Colaborador</SelectItem>
+                  <SelectItem value="PROFESOR">Profesor</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-[#15182b]">Sede</label>
+              <Select value={editSede} onValueChange={setEditSede}>
+                <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
+                  <SelectValue placeholder="Sin sede" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sin sede</SelectItem>
+                  {sedes.map(s => <SelectItem key={s.id} value={s.id}>{s.nombre}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-[#15182b]">Área</label>
+              <Select value={editArea} onValueChange={setEditArea}>
+                <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
+                  <SelectValue placeholder="Sin área" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sin área</SelectItem>
+                  {areas.map(a => <SelectItem key={a.name} value={a.name}>{a.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-[#15182b]">Estado</label>
+              <Select value={editActive ? "true" : "false"} onValueChange={(v) => setEditActive(v === "true")}>
+                <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="true">Activo</SelectItem>
+                  <SelectItem value="false">Inactivo</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <button onClick={() => setEditProfile(null)} className="flex-1 h-10 rounded-xl border border-[#e8e4dc] bg-[#f6f3ee] text-sm text-[#6b7185] hover:bg-[#eaf0fb]">Cancelar</button>
+              <button onClick={handleSaveEdit} disabled={editing} className="flex-1 h-10 rounded-xl bg-[#2d4a8a] text-white text-sm hover:bg-[#15182b] disabled:opacity-50">
+                {editing ? "Guardando..." : "Guardar"}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Administrar áreas modal ── */}
+      <Dialog open={showAreasModal} onOpenChange={setShowAreasModal}>
+        <DialogContent className="max-w-md rounded-2xl border-[#e8e4dc]">
+          <DialogHeader>
+            <DialogTitle className="text-[#15182b]">Administrar Áreas</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Nombre de la nueva área..."
+                value={newAreaName}
+                onChange={(e) => setNewAreaName(e.target.value)}
+                className="flex-1 h-10 px-3 rounded-xl border border-[#e8e4dc] text-sm"
+              />
+              <button
+                onClick={handleCreateArea}
+                disabled={creatingArea || !newAreaName.trim()}
+                className="h-10 px-4 rounded-xl bg-[#2d4a8a] text-white text-sm font-medium hover:bg-[#15182b] disabled:opacity-50"
+              >
+                Añadir
+              </button>
+            </div>
+            <div className="max-h-[300px] overflow-y-auto space-y-2 border border-[#e8e4dc] rounded-xl p-2 bg-[#fcfbfa]">
+              {areas.length === 0 ? (
+                <p className="text-sm text-[#a5a9b8] text-center py-4">No hay áreas creadas.</p>
+              ) : (
+                areas.map(a => (
+                  <div key={a.id} className="flex items-center justify-between p-2 rounded-lg bg-white border border-[#f0ece4] shadow-sm">
+                    <span className="text-sm font-medium text-[#15182b]">{a.name}</span>
+                    <button 
+                      onClick={() => handleDeleteArea(a.id)}
+                      className="text-xs font-medium text-[#e86154] hover:underline"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </DialogContent>

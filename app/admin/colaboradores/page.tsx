@@ -13,6 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase";
 import { Users } from "lucide-react";
 
@@ -23,6 +25,7 @@ interface Profile {
   area: string | null;
   sede_id: string | null;
   active: boolean;
+  role: string;
 }
 
 interface Assignment {
@@ -33,6 +36,11 @@ interface Assignment {
 interface Sede {
   id: string;
   nombre: string;
+}
+
+interface Area {
+  id: string;
+  name: string;
 }
 
 function getInitials(name: string): string {
@@ -56,7 +64,15 @@ export default function ColaboradoresPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [sedes, setSedes] = useState<Sede[]>([]);
+  const [areas, setAreas] = useState<Area[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [editProfile, setEditProfile] = useState<Profile | null>(null);
+  const [editRole, setEditRole] = useState<"ADMIN" | "COLLABORATOR">("COLLABORATOR");
+  const [editSede, setEditSede] = useState("");
+  const [editArea, setEditArea] = useState("");
+  const [editActive, setEditActive] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -65,28 +81,53 @@ export default function ColaboradoresPage() {
         { data: profilesData, error: profilesError },
         { data: assignmentsData },
         { data: sedesData },
+        { data: areasData },
       ] = await Promise.all([
-        supabase.from("profiles").select("id, name, email, area, sede_id, active").eq("role", "COLLABORATOR").order("name"),
+        supabase.from("profiles").select("id, name, email, area, sede_id, active, role").eq("role", "COLLABORATOR").order("name"),
         supabase.from("assignments").select("user_id, status"),
         supabase.from("sedes").select("id, nombre").order("nombre"),
+        supabase.from("areas").select("id, name").order("name"),
       ]);
       if (profilesError) {
-        // RLS or schema issue — surface the error code so it's visible in console
         throw new Error(`profiles query failed: ${profilesError.code} ${profilesError.message}`);
       }
       setProfiles(profilesData ?? []);
       setAssignments(assignmentsData ?? []);
       setSedes(sedesData ?? []);
+      setAreas(areasData ?? []);
       setLoading(false);
     }
     load().catch((err) => {
-      // eslint-disable-next-line no-console
       console.error(err);
       setLoading(false);
     });
   }, []);
 
-  // Use real sede IDs from the database, not hardcoded constants
+  async function handleSaveEdit() {
+    if (!editProfile) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/colaboradores/${editProfile.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          area: editArea || null,
+          sede_id: editSede || null,
+          active: editActive,
+          role: editRole,
+        }),
+      });
+      if (!res.ok) throw new Error("Error al guardar");
+      
+      setProfiles(profiles.map(p => p.id === editProfile.id ? { ...p, area: editArea, sede_id: editSede, active: editActive, role: editRole } : p));
+      setEditProfile(null);
+    } catch (err) {
+      alert("Error al actualizar colaborador");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   const filtered = profiles.filter((u) => {
     if (sedeTab === "ALL") return true;
     return u.sede_id === sedeTab;
@@ -115,12 +156,14 @@ export default function ColaboradoresPage() {
         title="Colaboradores"
         sub={`${profiles.length} personas · 2 sedes`}
         right={
-          <Link
-            href="/admin/personal"
-            className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#ff7c6b] hover:bg-[#e86154] text-white text-[13px] font-[600] transition-colors"
-          >
-            <span className="text-base leading-none">+</span> Invitar colaborador
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/admin/personal"
+              className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#ff7c6b] hover:bg-[#e86154] text-white text-[13px] font-[600] transition-colors"
+            >
+              <span className="text-base leading-none">+</span> Invitar colaborador
+            </Link>
+          </div>
         }
       />
 
@@ -209,12 +252,26 @@ export default function ColaboradoresPage() {
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Link
-                            href={`/admin/colaboradores/${user.id}`}
-                            className="inline-flex items-center h-8 px-3 rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-xs font-[600] text-[#15182b] hover:bg-[#eaf0fb] transition-colors"
-                          >
-                            Ver perfil →
-                          </Link>
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => {
+                                setEditProfile(user);
+                                setEditRole(user.role as any);
+                                setEditSede(user.sede_id || "");
+                                setEditArea(user.area || "");
+                                setEditActive(user.active);
+                              }}
+                              className="inline-flex items-center h-8 px-3 rounded-lg border border-[#e8e4dc] bg-white text-xs font-[600] text-[#6b7185] hover:bg-[#f6f3ee] transition-colors"
+                            >
+                              Editar
+                            </button>
+                            <Link
+                              href={`/admin/colaboradores/${user.id}`}
+                              className="inline-flex items-center h-8 px-3 rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-xs font-[600] text-[#15182b] hover:bg-[#eaf0fb] transition-colors"
+                            >
+                              Ver perfil →
+                            </Link>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -264,12 +321,26 @@ export default function ColaboradoresPage() {
                         </div>
                         <span className="text-xs tabular-nums text-[#6b7185]">{done}/{total} cursos</span>
                       </div>
-                      <Link
-                        href={`/admin/colaboradores/${user.id}`}
-                        className="text-xs font-[600] text-[#2d4a8a] hover:text-[#15182b] transition-colors"
-                      >
-                        Ver perfil →
-                      </Link>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => {
+                            setEditProfile(user);
+                            setEditRole(user.role as any);
+                            setEditSede(user.sede_id || "");
+                            setEditArea(user.area || "");
+                            setEditActive(user.active);
+                          }}
+                          className="text-xs font-[600] text-[#6b7185] hover:text-[#15182b] transition-colors"
+                        >
+                          Editar
+                        </button>
+                        <Link
+                          href={`/admin/colaboradores/${user.id}`}
+                          className="text-xs font-[600] text-[#2d4a8a] hover:text-[#15182b] transition-colors"
+                        >
+                          Ver perfil →
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 );
@@ -278,6 +349,71 @@ export default function ColaboradoresPage() {
           </>
         )}
       </div>
+
+      <Dialog open={!!editProfile} onOpenChange={(open) => !open && setEditProfile(null)}>
+        <DialogContent className="max-w-sm rounded-2xl border-[#e8e4dc]">
+          <DialogHeader>
+            <DialogTitle className="text-[#15182b]">Editar Colaborador</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-[#15182b]">Rol</label>
+              <Select value={editRole} onValueChange={(v) => setEditRole(v as any)}>
+                <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="COLLABORATOR">Colaborador</SelectItem>
+                  <SelectItem value="PROFESOR">Profesor</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-[#15182b]">Sede</label>
+              <Select value={editSede} onValueChange={setEditSede}>
+                <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
+                  <SelectValue placeholder="Sin sede" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Sin sede</SelectItem>
+                  {sedes.map(s => <SelectItem key={s.id} value={s.id}>{s.nombre}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-[#15182b]">Área</label>
+              <Select value={editArea} onValueChange={setEditArea}>
+                <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
+                  <SelectValue placeholder="Sin área" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Sin área</SelectItem>
+                  {areas.map(a => <SelectItem key={a.name} value={a.name}>{a.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-[#15182b]">Estado</label>
+              <Select value={editActive ? "true" : "false"} onValueChange={(v) => setEditActive(v === "true")}>
+                <SelectTrigger className="h-10 rounded-xl border-[#e8e4dc]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="true">Activo</SelectItem>
+                  <SelectItem value="false">Inactivo</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <button onClick={() => setEditProfile(null)} className="flex-1 h-10 rounded-xl border border-[#e8e4dc] bg-[#f6f3ee] text-sm text-[#6b7185] hover:bg-[#eaf0fb]">Cancelar</button>
+              <button onClick={handleSaveEdit} disabled={saving} className="flex-1 h-10 rounded-xl bg-[#2d4a8a] text-white text-sm hover:bg-[#15182b] disabled:opacity-50">
+                {saving ? "Guardando..." : "Guardar"}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
