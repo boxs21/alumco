@@ -109,7 +109,7 @@ export default function PersonalPage() {
 
   // Modal Edición
   const [editProfile, setEditProfile] = useState<Profile | null>(null);
-  const [editRole, setEditRole] = useState<"ADMIN" | "COLLABORATOR">("COLLABORATOR");
+  const [editRole, setEditRole] = useState<"ADMIN" | "COLLABORATOR" | "PROFESOR">("COLLABORATOR");
   const [editSede, setEditSede] = useState("");
   const [editArea, setEditArea] = useState("");
   const [editActive, setEditActive] = useState(true);
