@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Settings, Search } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface TopbarProps {
@@ -40,14 +40,6 @@ export default function Topbar({ title, sub, right }: TopbarProps) {
         >
           <Bell className="h-4 w-4" />
           <span className="absolute top-[7px] right-[7px] w-[7px] h-[7px] bg-[#ff7c6b] rounded-full border-2 border-white" />
-        </button>
-
-        {/* Settings */}
-        <button
-          className="w-9 h-9 bg-white border border-[#e8e4dc] text-[#6b7185] rounded-[10px] grid place-items-center hover:bg-[#f7f5f0] hover:text-[#15182b] transition-colors"
-          aria-label="Configuración"
-        >
-          <Settings className="h-4 w-4" />
         </button>
 
         {right}

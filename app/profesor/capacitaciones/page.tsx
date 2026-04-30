@@ -80,14 +80,6 @@ export default function ProfesorCapacitacionesPage() {
       <Topbar
         title="Capacitaciones"
         sub="Gestiona los cursos, módulos y asignaciones por sede."
-        right={
-          <Link
-            href="/profesor/capacitaciones/nueva"
-            className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#ff7c6b] hover:bg-[#e86154] text-white text-[13px] font-[600] transition-colors"
-          >
-            <span className="text-base leading-none">+</span> Nueva capacitación
-          </Link>
-        }
       />
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
