@@ -141,20 +141,16 @@ export default function HistorialPage() {
                           {c.issued_at ? new Date(c.issued_at).toLocaleDateString("es-CL") : "—"}
                         </TableCell>
                         <TableCell className="text-right">
-                          {c.pdf_url ? (
-                            <a
-                              href={c.pdf_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              aria-label={`Descargar certificado de ${getTitle(c)}`}
-                              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[9px] border border-[#e8e4dc] bg-[#f7f5f0] text-[12px] font-[600] text-[#15182b] hover:bg-[#eaf0fb] hover:border-[#c3d5f4] transition-colors"
-                            >
-                              <Download className="h-3.5 w-3.5" aria-hidden="true" />
-                              Descargar
-                            </a>
-                          ) : (
-                            <span className="text-[12px] text-[#a5a9b8]">Sin PDF</span>
-                          )}
+                          <a
+                            href={`/api/certificate/${c.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Descargar certificado de ${getTitle(c)}`}
+                            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[9px] border border-[#e8e4dc] bg-[#f7f5f0] text-[12px] font-[600] text-[#15182b] hover:bg-[#eaf0fb] hover:border-[#c3d5f4] transition-colors"
+                          >
+                            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                            Descargar
+                          </a>
                         </TableCell>
                       </TableRow>
                     );
@@ -181,20 +177,15 @@ export default function HistorialPage() {
                       <span className="text-[11.5px] text-[#6b7185]">
                         {c.issued_at ? new Date(c.issued_at).toLocaleDateString("es-CL") : "—"}
                       </span>
-                      {c.pdf_url ? (
-                        <a
-                          href={c.pdf_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[12px] font-[600] text-[#2d4a8a] hover:text-[#15182b] transition-colors"
-                        >
-                          Descargar →
-                        </a>
-                      ) : (
-                        <span className="text-[11.5px] text-[#a5a9b8]">Sin certificado</span>
-                      )}
-                    </div>
-                  </div>
+                      <a
+                        href={`/api/certificate/${c.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[12px] font-[600] text-[#2d4a8a] hover:text-[#15182b] transition-colors"
+                      >
+                        Descargar →
+                      </a>
+                    </div>                  </div>
                 );
               })}
             </div>

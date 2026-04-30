@@ -159,9 +159,6 @@ export default function ReportesPage() {
             <button className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-white border border-[#e8e4dc] text-[#15182b] text-[13px] font-[600] hover:bg-[#f7f5f0] transition-colors">
               Período: 2026
             </button>
-            <button className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#ff7c6b] hover:bg-[#e86154] text-white text-[13px] font-[600] transition-colors">
-              Exportar PDF
-            </button>
           </div>
         }
       />

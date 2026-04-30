@@ -58,7 +58,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
   const quizStartRef              = useRef<string | null>(null);
 
   /* Certificate */
-  const [pdfUrl,   setPdfUrl]   = useState<string | null>(null);
+  const [certId,   setCertId]   = useState<string | null>(null);
   const [certCode, setCertCode] = useState<string | null>(null);
 
   /* Data */
@@ -92,7 +92,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
       if (user) {
         const { data: cert } = await supabase
           .from("certificates")
-          .select("pdf_url, verification_code")
+          .select("id, verification_code")
           .eq("user_id", user.id)
           .eq("training_id", id)
           .maybeSingle();
@@ -101,7 +101,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
           setAlreadyDone(true);
           setSubmitted(true);
           setPassed(true);
-          setPdfUrl(cert.pdf_url ?? null);
+          setCertId(cert.id);
           setCertCode(cert.verification_code ?? null);
           setCurrentStep("certificate");
         }
@@ -204,11 +204,18 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
             verification_code: verCode,
             issued_at:         new Date().toISOString(),
           })
-          .select("pdf_url, verification_code")
+          .select("id, pdf_url, verification_code")
           .single();
 
         if (certRow) {
-          setPdfUrl(certRow.pdf_url ?? null);
+          // Trigger PDF generation
+          try {
+            await fetch(`/api/certificate/${certRow.id}`);
+          } catch (e) {
+            console.error("Error generating PDF:", e);
+          }
+          
+          setCertId(certRow.id);
           setCertCode(certRow.verification_code ?? null);
         }
 
@@ -238,7 +245,7 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
 
     const verCode = crypto.randomUUID();
 
-    const { error: certErr } = await supabase
+    const { data: certRow, error: certErr } = await supabase
       .from("certificates")
       .insert({
         user_id:           uid,
@@ -246,13 +253,24 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
         attempt_id:        null,
         verification_code: verCode,
         issued_at:         new Date().toISOString(),
-      });
+      })
+      .select("id, verification_code")
+      .single();
 
-    if (certErr) {
-      setSaveError(certErr.message);
+    if (certErr || !certRow) {
+      setSaveError(certErr?.message || "Error al crear el certificado");
       setSaving(false);
       return;
     }
+
+    try {
+      await fetch(`/api/certificate/${certRow.id}`);
+    } catch (e) {
+      console.error("Error generating PDF:", e);
+    }
+    
+    setCertId(certRow.id);
+    setCertCode(certRow.verification_code);
 
     await supabase
       .from("assignments")
@@ -665,9 +683,9 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                       </p>
                     )}
 
-                    {pdfUrl ? (
+                    {certId ? (
                       <a
-                        href={pdfUrl}
+                        href={`/api/certificate/${certId}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ background: T.blue, boxShadow: T.shadowBtn, letterSpacing: "0.08px" }}
