@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, BookOpen, Calendar, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase";
-import DarkModeToggle from "@/components/shared/DarkModeToggle";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 import { Toaster } from "sonner";
 
@@ -92,7 +91,6 @@ function Sidebar() {
 
         <FontSizeSwitcher />
         <div className="mt-2" />
-        <DarkModeToggle />
         <div className="mt-1" />
         <button
           onClick={handleSignOut}

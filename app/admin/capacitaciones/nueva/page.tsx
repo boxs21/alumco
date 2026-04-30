@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Topbar from "@/components/layout/Topbar";
@@ -44,6 +44,7 @@ const steps = [
 ];
 
 interface VideoLink { id: string; url: string; embedUrl: string; source: "youtube" | "gdrive" }
+interface UploadedFile { id: string; name: string; url: string; size: number }
 interface Question {
   id: string;
   text: string;
@@ -68,6 +69,10 @@ export default function NuevaCapacitacionPage() {
   const [videoUrl, setVideoUrl] = useState("");
   const [videoLinks, setVideoLinks] = useState<VideoLink[]>([]);
   const previewEmbed = videoUrl.trim() ? getEmbedUrl(videoUrl.trim()) : null;
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function addVideoLink() {
     const embed = getEmbedUrl(videoUrl.trim());
@@ -79,6 +84,48 @@ export default function NuevaCapacitacionPage() {
 
   function removeVideoLink(id: string) {
     setVideoLinks(videoLinks.filter((v) => v.id !== id));
+  }
+
+  async function handleFileSelect(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setUploadError(null);
+    const allowed = [
+      "application/pdf",
+      "application/vnd.ms-powerpoint",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/x-msvideo",
+    ];
+    const maxSize = 50 * 1024 * 1024;
+    const supabase = createClient();
+
+    for (const file of Array.from(files)) {
+      if (!allowed.includes(file.type)) {
+        setUploadError(`"${file.name}" no es PDF ni presentación.`);
+        continue;
+      }
+      if (file.size > maxSize) {
+        setUploadError(`"${file.name}" supera el límite de 50MB.`);
+        continue;
+      }
+      setUploading(true);
+      const path = `${crypto.randomUUID()}-${file.name}`;
+      const { error } = await supabase.storage.from("training-files").upload(path, file);
+      if (error) {
+        setUploadError(`Error al subir "${file.name}": ${error.message}`);
+        setUploading(false);
+        continue;
+      }
+      const { data: urlData } = supabase.storage.from("training-files").getPublicUrl(path);
+      setUploadedFiles((prev) => [...prev, { id: crypto.randomUUID(), name: file.name, url: urlData.publicUrl, size: file.size }]);
+      setUploading(false);
+    }
+  }
+
+  async function removeUploadedFile(file: UploadedFile) {
+    const supabase = createClient();
+    const path = new URL(file.url).pathname.split("/training-files/")[1];
+    if (path) await supabase.storage.from("training-files").remove([path]);
+    setUploadedFiles((prev) => prev.filter((f) => f.id !== file.id));
   }
 
   // Step 3
@@ -176,6 +223,19 @@ export default function NuevaCapacitacionPage() {
           type: "VIDEO",
           url: v.url,
           order: i + 1,
+        }))
+      );
+    }
+
+    // 3. Insert uploaded files (PDF / presentations)
+    if (uploadedFiles.length > 0) {
+      await supabase.from("files").insert(
+        uploadedFiles.map((f, i) => ({
+          training_id: trainingId,
+          name: f.name,
+          type: f.name.match(/\.(mp4|webm|ogg|mov|avi)$/i) ? "VIDEO" : "PDF",
+          url: f.url,
+          order: videoLinks.length + i + 1,
         }))
       );
     }
@@ -358,13 +418,33 @@ export default function NuevaCapacitacionPage() {
           <Card className="border-[#e8e4dc] shadow-sm">
             <CardContent className="p-6 space-y-5">
               {/* File dropzone */}
-              <div className="border-2 border-dashed border-[#e8e4dc] rounded-xl p-8 text-center hover:border-[#6b7185] hover:bg-[#eaf0fb]/30 transition-colors cursor-pointer">
-                <Upload className="h-10 w-10 text-[#a5a9b8] mx-auto mb-3" />
+              <div
+                className="border-2 border-dashed border-[#e8e4dc] rounded-xl p-8 text-center hover:border-[#6b7185] hover:bg-[#eaf0fb]/30 transition-colors cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => { e.preventDefault(); handleFileSelect(e.dataTransfer.files); }}
+              >
+                {uploading ? (
+                  <Loader2 className="h-10 w-10 text-[#2d4a8a] mx-auto mb-3 animate-spin" />
+                ) : (
+                  <Upload className="h-10 w-10 text-[#a5a9b8] mx-auto mb-3" />
+                )}
                 <p className="text-sm font-medium text-[#15182b]">
-                  Arrastra archivos aquí o haz clic para seleccionar
+                  {uploading ? "Subiendo archivo…" : "Arrastra archivos aquí o haz clic para seleccionar"}
                 </p>
-                <p className="text-xs text-[#6b7185] mt-1">PDF o presentaciones (máx. 50MB)</p>
+                <p className="text-xs text-[#6b7185] mt-1">PDF, presentaciones o videos (máx. 50MB)</p>
               </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.ppt,.pptx,.mp4,.webm,.ogg,.mov,.avi,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,video/*"
+                multiple
+                className="hidden"
+                onChange={(e) => handleFileSelect(e.target.files)}
+              />
+              {uploadError && (
+                <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{uploadError}</p>
+              )}
 
               {/* Divider */}
               <div className="flex items-center gap-3">
@@ -416,8 +496,27 @@ export default function NuevaCapacitacionPage() {
                 )}
               </div>
 
-              {videoLinks.length > 0 ? (
+              {(uploadedFiles.length > 0 || videoLinks.length > 0) ? (
                 <div className="space-y-2">
+                  {uploadedFiles.map((f) => (
+                    <div key={f.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#e8e4dc] bg-[#f6f3ee]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf0fb] shrink-0">
+                        <FileText className="h-4 w-4 text-[#6b7185]" aria-hidden="true" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[#15182b] truncate">{f.name}</p>
+                        <p className="text-xs text-[#6b7185]">{(f.size / 1024 / 1024).toFixed(2)} MB</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeUploadedFile(f)}
+                        aria-label="Eliminar archivo"
+                        className="text-[#a5a9b8] hover:text-red-500 transition-colors shrink-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
                   {videoLinks.map((v) => (
                     <div key={v.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#e8e4dc] bg-[#f6f3ee]">
                       <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf0fb] shrink-0">

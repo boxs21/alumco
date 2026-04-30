@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { BookOpen, History, LogOut, CalendarDays } from "lucide-react";
 import Image from "next/image";
-import DarkModeToggle from "@/components/shared/DarkModeToggle";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -81,9 +80,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           {/* Right: settings + user + logout */}
           <div className="flex items-center gap-1 lg:gap-2">
             <FontSizeSwitcher compact />
-            <DarkModeToggle compact />
-
-            <div className="w-px h-5 bg-[#e8e4dc] mx-1 hidden sm:block" aria-hidden="true" />
+<div className="w-px h-5 bg-[#e8e4dc] mx-1 hidden sm:block" aria-hidden="true" />
 
             <div className="hidden sm:flex items-center gap-2 bg-[#f7f5f0] rounded-full pl-1 pr-3.5 py-1">
               <Avatar className="h-7 w-7 lg:h-7 lg:w-7">

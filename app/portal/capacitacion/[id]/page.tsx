@@ -5,7 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import {
   FileText, Video, Presentation, Check, Award,
-  ArrowRight, BookOpen, ClipboardList, ChevronLeft, Download,
+  ArrowRight, BookOpen, ClipboardList, ChevronLeft, Download, ExternalLink,
 } from "lucide-react";
 
 /* ─── Design tokens ──────────────────────────────────────────── */
@@ -486,6 +486,18 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                         >
                           {file.type}
                         </span>
+                        {file.url && (
+                          <a
+                            href={file.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: T.blue }}
+                            className="flex items-center gap-1 text-xs font-medium hover:underline shrink-0"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            Ver
+                          </a>
+                        )}
                       </div>
                     );
                   })

@@ -12,7 +12,6 @@ import {
   LogOut,
   UserCog,
 } from "lucide-react";
-import DarkModeToggle from "@/components/shared/DarkModeToggle";
 import FontSizeSwitcher from "@/components/shared/FontSizeSwitcher";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase";
@@ -162,7 +161,6 @@ export default function Sidebar() {
 
         <FontSizeSwitcher />
         <div className="mt-1.5" />
-        <DarkModeToggle />
         <div className="mt-1" />
         <button
           onClick={handleSignOut}
