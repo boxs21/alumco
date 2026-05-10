@@ -67,10 +67,11 @@ export default function ColaboradoresPage() {
   const [areas, setAreas] = useState<Area[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
   const [editProfile, setEditProfile] = useState<Profile | null>(null);
   const [editRole, setEditRole] = useState<"ADMIN" | "COLLABORATOR">("COLLABORATOR");
-  const [editSede, setEditSede] = useState("");
-  const [editArea, setEditArea] = useState("");
+  const [editSede, setEditSede] = useState("none");
+  const [editArea, setEditArea] = useState("none");
   const [editActive, setEditActive] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -82,11 +83,13 @@ export default function ColaboradoresPage() {
         { data: assignmentsData },
         { data: sedesData },
         { data: areasData },
+        { data: userData },
       ] = await Promise.all([
         supabase.from("profiles").select("id, name, email, area, sede_id, active, role").eq("role", "COLLABORATOR").order("name"),
         supabase.from("assignments").select("user_id, status"),
         supabase.from("sedes").select("id, nombre").order("nombre"),
         supabase.from("areas").select("id, name").order("name"),
+        supabase.auth.getUser(),
       ]);
       if (profilesError) {
         throw new Error(`profiles query failed: ${profilesError.code} ${profilesError.message}`);
@@ -95,6 +98,10 @@ export default function ColaboradoresPage() {
       setAssignments(assignmentsData ?? []);
       setSedes(sedesData ?? []);
       setAreas(areasData ?? []);
+      if (userData?.user?.id) {
+        const { data: myProfile } = await supabase.from("profiles").select("role").eq("id", userData.user.id).single();
+        setCurrentUserRole(myProfile?.role ?? null);
+      }
       setLoading(false);
     }
     load().catch((err) => {
@@ -111,15 +118,15 @@ export default function ColaboradoresPage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          area: editArea || null,
-          sede_id: editSede || null,
+          area: editArea === "none" ? null : editArea,
+          sede_id: editSede === "none" ? null : editSede,
           active: editActive,
           role: editRole,
         }),
       });
       if (!res.ok) throw new Error("Error al guardar");
       
-      setProfiles(profiles.map(p => p.id === editProfile.id ? { ...p, area: editArea, sede_id: editSede, active: editActive, role: editRole } : p));
+      setProfiles(profiles.map(p => p.id === editProfile.id ? { ...p, area: editArea === "none" ? null : editArea, sede_id: editSede === "none" ? null : editSede, active: editActive, role: editRole } : p));
       setEditProfile(null);
     } catch (err) {
       alert("Error al actualizar colaborador");
@@ -253,18 +260,20 @@ export default function ColaboradoresPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => {
-                                setEditProfile(user);
-                                setEditRole(user.role as any);
-                                setEditSede(user.sede_id || "");
-                                setEditArea(user.area || "");
-                                setEditActive(user.active);
-                              }}
-                              className="inline-flex items-center h-8 px-3 rounded-lg border border-[#e8e4dc] bg-white text-xs font-[600] text-[#6b7185] hover:bg-[#f6f3ee] transition-colors"
-                            >
-                              Editar
-                            </button>
+                            {currentUserRole === "ADMIN" && (
+                              <button
+                                onClick={() => {
+                                  setEditProfile(user);
+                                  setEditRole(user.role as any);
+                                  setEditSede(user.sede_id || "none");
+                                  setEditArea(user.area || "none");
+                                  setEditActive(user.active);
+                                }}
+                                className="inline-flex items-center h-8 px-3 rounded-lg border border-[#e8e4dc] bg-white text-xs font-[600] text-[#6b7185] hover:bg-[#f6f3ee] transition-colors"
+                              >
+                                Editar
+                              </button>
+                            )}
                             <Link
                               href={`/admin/colaboradores/${user.id}`}
                               className="inline-flex items-center h-8 px-3 rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-xs font-[600] text-[#15182b] hover:bg-[#eaf0fb] transition-colors"
@@ -322,18 +331,20 @@ export default function ColaboradoresPage() {
                         <span className="text-xs tabular-nums text-[#6b7185]">{done}/{total} cursos</span>
                       </div>
                       <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => {
-                            setEditProfile(user);
-                            setEditRole(user.role as any);
-                            setEditSede(user.sede_id || "");
-                            setEditArea(user.area || "");
-                            setEditActive(user.active);
-                          }}
-                          className="text-xs font-[600] text-[#6b7185] hover:text-[#15182b] transition-colors"
-                        >
-                          Editar
-                        </button>
+                        {currentUserRole === "ADMIN" && (
+                          <button
+                            onClick={() => {
+                              setEditProfile(user);
+                              setEditRole(user.role as any);
+                              setEditSede(user.sede_id || "none");
+                              setEditArea(user.area || "none");
+                              setEditActive(user.active);
+                            }}
+                            className="text-xs font-[600] text-[#6b7185] hover:text-[#15182b] transition-colors"
+                          >
+                            Editar
+                          </button>
+                        )}
                         <Link
                           href={`/admin/colaboradores/${user.id}`}
                           className="text-xs font-[600] text-[#2d4a8a] hover:text-[#15182b] transition-colors"
@@ -376,7 +387,7 @@ export default function ColaboradoresPage() {
                   <SelectValue placeholder="Sin sede" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Sin sede</SelectItem>
+                  <SelectItem value="none">Sin sede</SelectItem>
                   {sedes.map(s => <SelectItem key={s.id} value={s.id}>{s.nombre}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -388,7 +399,7 @@ export default function ColaboradoresPage() {
                   <SelectValue placeholder="Sin área" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Sin área</SelectItem>
+                  <SelectItem value="none">Sin área</SelectItem>
                   {areas.map(a => <SelectItem key={a.name} value={a.name}>{a.name}</SelectItem>)}
                 </SelectContent>
               </Select>

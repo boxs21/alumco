@@ -109,12 +109,14 @@ export async function GET(
       }
     }
 
-    // Return the PDF as response
+    const inline = request.nextUrl.searchParams.get('mode') === 'inline';
+    const filename = `Certificado_${training.title.replace(/\s+/g, '_')}.pdf`;
+
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="Certificado_${training.title.replace(/\s+/g, '_')}.pdf"`,
+        'Content-Disposition': `${inline ? 'inline' : 'attachment'}; filename="${filename}"`,
       },
     });
   } catch (error) {

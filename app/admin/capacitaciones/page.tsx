@@ -8,13 +8,19 @@ import TrainingCard from "@/components/shared/TrainingCard";
 import EmptyState from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase";
 import { SEDES, sedeName } from "@/lib/config";
-import { Plus, BookOpen, AlertCircle } from "lucide-react";
+import { Plus, BookOpen, AlertCircle, ChevronDown } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Training {
   id: string;
@@ -32,8 +38,10 @@ interface Assignment {
 export default function CapacitacionesPage() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [sedeTab, setSedeTab] = useState("ALL");
+  const [areaFilter, setAreaFilter] = useState("ALL");
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [areas, setAreas] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Training | null>(null);
@@ -43,9 +51,10 @@ export default function CapacitacionesPage() {
   useEffect(() => {
     const supabase = createClient();
     async function load() {
-      const [{ data: trainingsData, error: e1 }, { data: assignmentsData, error: e2 }] = await Promise.all([
+      const [{ data: trainingsData, error: e1 }, { data: assignmentsData, error: e2 }, { data: areasData }] = await Promise.all([
         supabase.from("trainings").select("id, title, target_area, status, sede_id").order("created_at", { ascending: false }),
         supabase.from("assignments").select("training_id, status"),
+        supabase.from("areas").select("name").order("name"),
       ]);
       if (e1 ?? e2) {
         console.error("[capacitaciones] load error:", (e1 ?? e2)?.message);
@@ -55,6 +64,7 @@ export default function CapacitacionesPage() {
       }
       setTrainings((trainingsData as Training[]) ?? []);
       setAssignments(assignmentsData ?? []);
+      setAreas((areasData ?? []).map((a) => a.name));
       setLoading(false);
     }
     load();
@@ -111,8 +121,30 @@ export default function CapacitacionesPage() {
     if (sedeTab === "CONCEPCION" && t.sede_id !== SEDES.CONCEPCION.id && t.sede_id !== null) return false;
     if (sedeTab === "COYHAIQUE" && t.sede_id !== SEDES.COYHAIQUE.id && t.sede_id !== null) return false;
     if (statusFilter !== "ALL" && t.status !== statusFilter) return false;
+    if (areaFilter !== "ALL" && (t.target_area || "Sin área") !== areaFilter) return false;
     return true;
   });
+
+  const AREA_PRIORITY = ["Cuidado", "Enfermería", "Administración"];
+
+  const byArea: Record<string, Training[]> = {};
+  for (const t of filtered) {
+    const area = t.target_area || "Sin área";
+    if (!byArea[area]) byArea[area] = [];
+    byArea[area].push(t);
+  }
+  const areaOrder = [
+    ...AREA_PRIORITY.filter((a) => byArea[a]),
+    ...Object.keys(byArea).filter((a) => !AREA_PRIORITY.includes(a) && a !== "Sin área"),
+    ...(byArea["Sin área"] ? ["Sin área"] : []),
+  ];
+
+  const AREA_ACCENT: Record<string, { bg: string; text: string; border: string; dot: string }> = {
+    "Cuidado":        { bg: "#ffe6e1", text: "#c0392b", border: "#ffb3a7", dot: "#e86154" },
+    "Enfermería":     { bg: "#e4f5e9", text: "#2e7d45", border: "#9fd8ad", dot: "#4caf6e" },
+    "Administración": { bg: "#fdf1d8", text: "#7a5200", border: "#f5d68a", dot: "#f2b544" },
+    "Sin área":       { bg: "#f0ece4", text: "#6b7185", border: "#e8e4dc", dot: "#a5a9b8" },
+  };
 
   const sedeTabs = [
     { key: "ALL",        label: "Todas" },
@@ -168,6 +200,42 @@ export default function CapacitacionesPage() {
                 </button>
               ))}
             </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${
+                  areaFilter !== "ALL"
+                    ? "border-[#2d4a8a] bg-[#eaf0fb] text-[#2d4a8a]"
+                    : "border-[#e8e4dc] bg-[#f6f3ee] text-[#6b7185] hover:bg-[#eaf0fb]"
+                }`}>
+                  {areaFilter === "ALL" ? "Área" : areaFilter}
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="rounded-xl border-[#e8e4dc] min-w-[160px]">
+                <DropdownMenuItem
+                  onClick={() => setAreaFilter("ALL")}
+                  className={`text-sm rounded-lg ${areaFilter === "ALL" ? "font-semibold text-[#15182b]" : "text-[#6b7185]"}`}
+                >
+                  Todas las áreas
+                </DropdownMenuItem>
+                {areas.map((a) => (
+                  <DropdownMenuItem
+                    key={a}
+                    onClick={() => setAreaFilter(a)}
+                    className={`text-sm rounded-lg ${areaFilter === a ? "font-semibold text-[#15182b]" : "text-[#6b7185]"}`}
+                  >
+                    {a}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuItem
+                  onClick={() => setAreaFilter("Sin área")}
+                  className={`text-sm rounded-lg ${areaFilter === "Sin área" ? "font-semibold text-[#15182b]" : "text-[#6b7185]"}`}
+                >
+                  Sin área
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           <Link
@@ -188,23 +256,45 @@ export default function CapacitacionesPage() {
         {loading ? (
           <div className="text-sm text-[#6b7185] py-8 text-center">Cargando...</div>
         ) : filtered.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
-            {filtered.map((t, index) => {
-              const ta = assignments.filter((a) => a.training_id === t.id);
+          <div className="space-y-8">
+            {areaOrder.map((area) => {
+              const accent = AREA_ACCENT[area] ?? { bg: "#f0ece4", text: "#6b7185", border: "#e8e4dc", dot: "#6b7185" };
               return (
-                <TrainingCard
-                  key={t.id}
-                  id={t.id}
-                  title={t.title}
-                  area={t.target_area}
-                  status={t.status}
-                  sedeId={t.sede_id}
-                  sedeName={sedeName(t.sede_id)}
-                  completados={ta.filter((a) => a.status === "COMPLETED").length}
-                  asignados={ta.length}
-                  delay={index}
-                  onDelete={() => setDeleteTarget(t)}
-                />
+                <div key={area}>
+                  {/* Area header */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[12px] font-[700] tracking-[0.04em]"
+                      style={{ background: accent.bg, color: accent.text, borderColor: accent.border }}
+                    >
+                      <span className="h-2 w-2 rounded-full shrink-0" style={{ background: accent.dot }} />
+                      {area}
+                    </div>
+                    <span className="text-[12px] text-[#a5a9b8]">
+                      {byArea[area].length} capacitación{byArea[area].length !== 1 ? "es" : ""}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                    {byArea[area].map((t, index) => {
+                      const ta = assignments.filter((a) => a.training_id === t.id);
+                      return (
+                        <TrainingCard
+                          key={t.id}
+                          id={t.id}
+                          title={t.title}
+                          area={t.target_area}
+                          status={t.status}
+                          sedeId={t.sede_id}
+                          sedeName={sedeName(t.sede_id)}
+                          completados={ta.filter((a) => a.status === "COMPLETED").length}
+                          asignados={ta.length}
+                          delay={index}
+                          onDelete={() => setDeleteTarget(t)}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>

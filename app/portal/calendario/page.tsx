@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase";
@@ -57,22 +58,10 @@ function sessionsForDay(dateStr: string, sessions: SessionRow[]): SessionRow[] {
 
 function sedeStyle(sedeId: string | null) {
   if (sedeId === SEDES.CONCEPCION.id)
-    return {
-      bar: "bg-[#2d4a8a]",
-      pill: "bg-[#2d4a8a]/[0.09] text-[#15182b] border-[#2d4a8a]/25",
-      dot: "bg-[#2d4a8a]",
-    };
+    return { bar: "#2d4a8a", chipBg: "#eaf0fb", chipText: "#2d4a8a", dotBg: "#2d4a8a", dateBox: "#2d4a8a" };
   if (sedeId === SEDES.COYHAIQUE.id)
-    return {
-      bar: "bg-amber-500",
-      pill: "bg-amber-500/[0.10] text-amber-900 border-amber-400/30",
-      dot: "bg-amber-500",
-    };
-  return {
-    bar: "bg-[#6b7185]",
-    pill: "bg-[#6b7185]/[0.08] text-[#15182b] border-[#6b7185]/20",
-    dot: "bg-[#6b7185]",
-  };
+    return { bar: "#f2b544", chipBg: "#fdf1d8", chipText: "#8a6410", dotBg: "#f2b544", dateBox: "#f2b544" };
+  return   { bar: "#6b7185", chipBg: "#f0ece4", chipText: "#6b7185", dotBg: "#6b7185", dateBox: "#6b7185" };
 }
 
 function formatDateRange(start: string, end: string): string {
@@ -90,6 +79,7 @@ function sessionTitle(s: SessionRow): string {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function PortalCalendarioPage() {
+  const router = useRouter();
   const today = new Date();
 
   const [year, setYear] = useState(today.getFullYear());
@@ -108,13 +98,26 @@ export default function PortalCalendarioPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setLoading(false); return; }
 
-    const [{ data: sessionsData, error }, { data: profile }] = await Promise.all([
-      supabase
-        .from("sessions")
-        .select("id, training_id, sede_id, start_date, end_date, modality, notes, trainings(title, sede_id)")
-        .order("start_date"),
+    // Get user's assigned training IDs + profile sede
+    const [{ data: assignments }, { data: profile }] = await Promise.all([
+      supabase.from("assignments").select("training_id").eq("user_id", user.id),
       supabase.from("profiles").select("sede_id").eq("id", user.id).single(),
     ]);
+
+    const trainingIds = (assignments ?? []).map((a) => a.training_id);
+
+    if (trainingIds.length === 0) {
+      setSessions([]);
+      if (profile?.sede_id) setSelectedSede(profile.sede_id);
+      setLoading(false);
+      return;
+    }
+
+    const { data: sessionsData, error } = await supabase
+      .from("sessions")
+      .select("id, training_id, sede_id, start_date, end_date, modality, notes, trainings(title, sede_id)")
+      .in("training_id", trainingIds)
+      .order("start_date");
 
     if (error) {
       setLoadError("No se pudieron cargar las sesiones.");
@@ -123,10 +126,7 @@ export default function PortalCalendarioPage() {
     }
 
     setSessions((sessionsData ?? []) as unknown as SessionRow[]);
-
-    // Pre-seleccionar la sede del colaborador
     if (profile?.sede_id) setSelectedSede(profile.sede_id);
-
     setLoading(false);
   }, []);
 
@@ -164,6 +164,11 @@ export default function PortalCalendarioPage() {
     <div className="space-y-4 lg:space-y-5">
 
       {/* Header */}
+      <div>
+        <h1 className="text-[22px] font-[800] tracking-[-0.025em] text-[#15182b]">Mi calendario</h1>
+        <p className="text-[13px] text-[#6b7185] mt-0.5">Sesiones de tus capacitaciones asignadas</p>
+      </div>
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {/* Sede filter */}
@@ -187,7 +192,6 @@ export default function PortalCalendarioPage() {
             ))}
           </div>
 
-          {/* Month navigation */}
           <button
             onClick={prevMonth}
             className="h-9 w-9 flex items-center justify-center rounded-lg border border-[#e8e4dc] bg-[#f6f3ee] text-[#6b7185] hover:bg-[#eaf0fb] transition-colors"
@@ -195,7 +199,7 @@ export default function PortalCalendarioPage() {
             <ChevronLeft className="h-4 w-4" />
           </button>
 
-          <div className="w-44 text-center">
+          <div className="w-48 text-center">
             <span className="text-base font-semibold text-[#15182b] tracking-tight">
               {MONTHS[month]}
             </span>
@@ -233,37 +237,32 @@ export default function PortalCalendarioPage() {
       </div>
 
       {loadError && (
-        <div className="px-4 py-3 rounded-xl rounded-xl bg-[#ffe6e1] border border-[#ffccc5] text-[13px] text-[#e86154]">
+        <div className="px-4 py-2.5 rounded-xl bg-[#ffe6e1] border border-[#ffccc5] text-[13px] text-[#e86154]">
           {loadError}
         </div>
       )}
 
       {/* Calendar grid */}
-      <Card className="border-[#e8e4dc] shadow-sm overflow-hidden">
+      <Card className="border-[#e8e4dc] shadow-sm overflow-hidden animate-fade-in">
         <CardContent className="p-0">
           {/* Week day headers */}
-          <div className="grid grid-cols-7 bg-[#eaf0fb] border-b border-[#e8e4dc]">
+          <div className="grid grid-cols-7 border-b border-[#e8e4dc]" style={{ background: "#f7f5f0" }}>
             {WEEK_DAYS.map((d) => (
-              <div
-                key={d}
-                className="py-2 text-center text-[11px] font-semibold text-[#6b7185] uppercase tracking-wider"
-              >
+              <div key={d} className="py-[14px] text-center text-[10.5px] font-[700] text-[#a5a9b8] uppercase tracking-[0.14em]">
                 {d}
               </div>
             ))}
           </div>
 
           {loading ? (
-            <div className="py-20 text-center text-sm text-[#6b7185]">
-              Cargando calendario...
-            </div>
+            <div className="py-20 text-center text-[13px] text-[#6b7185]">Cargando calendario...</div>
           ) : (
             <div className="grid grid-cols-7">
               {gridDays.map((day, idx) => {
                 const dateStr = toDateStr(day);
                 const inMonth = day.getMonth() === month;
                 const isToday = dateStr === todayStr;
-                const daySessions = sessionsForDay(dateStr, visibleSessions);
+                const daySessions = sessionsForDay(dateStr, visibleSessions).filter((s) => s.start_date === dateStr);
                 const isLastRow = idx >= 35;
                 const isLastCol = (idx + 1) % 7 === 0;
 
@@ -271,71 +270,51 @@ export default function PortalCalendarioPage() {
                   <div
                     key={dateStr}
                     className={cn(
-                      "min-h-[76px] lg:min-h-[96px] p-1 lg:p-1.5",
-                      "border-b border-r border-[#e8e4dc]",
+                      "min-h-[108px] p-2.5",
+                      "border-b border-r border-[#f0ece4]",
                       isLastRow && "border-b-0",
                       isLastCol && "border-r-0",
-                      inMonth ? "bg-[#f6f3ee]" : "bg-[#f6f3ee]/50",
                     )}
+                    style={!inMonth ? { background: "#f7f5f0" } : { background: "white" }}
                   >
-                    <div className="flex items-start justify-between mb-0.5">
-                      <div className="flex items-center gap-0.5 pt-0.5 pl-0.5">
-                        {daySessions.length > 0 && daySessions.slice(0, 3).map((s) => {
-                          const st = sedeStyle(s.sede_id);
-                          return (
-                            <span
-                              key={s.id}
-                              className={cn("h-1 w-1 rounded-full flex-shrink-0", st.dot)}
-                            />
-                          );
-                        })}
-                      </div>
+                    {/* Day number */}
+                    <div className="flex justify-between items-start mb-1">
                       <span
-                        className={cn(
-                          "text-xs font-medium h-6 w-6 flex items-center justify-center rounded-full",
-                          isToday && "bg-[#2d4a8a] text-white",
-                          !isToday && inMonth && "text-[#15182b]",
-                          !isToday && !inMonth && "text-[#a5a9b8]",
-                        )}
+                        className="text-[12px] font-[700]"
+                        style={
+                          isToday
+                            ? { background: "#ff7c6b", color: "white", borderRadius: "50%", width: 24, height: 24, display: "inline-flex", alignItems: "center", justifyContent: "center" }
+                            : { color: inMonth ? "#15182b" : "#a5a9b8" }
+                        }
                       >
                         {day.getDate()}
                       </span>
+                      {daySessions.length > 2 && (
+                        <span className="text-[10px] text-[#a5a9b8]">+{daySessions.length - 2}</span>
+                      )}
                     </div>
 
-                    <div className="space-y-0.5">
+                    {/* Event chips */}
+                    <div className="space-y-[5px]">
                       {daySessions.slice(0, 2).map((s) => {
-                        const style = sedeStyle(s.sede_id);
-                        const isStart = s.start_date === dateStr;
-                        const isEnd = s.end_date === dateStr;
+                        const st = sedeStyle(s.sede_id);
                         const title = sessionTitle(s);
-
                         return (
                           <div
                             key={s.id}
+                            onClick={() => router.push(`/portal/capacitacion/${s.training_id}`)}
                             title={title}
-                            className={cn(
-                              "relative h-5 text-[10px] font-semibold leading-5 truncate border select-none",
-                              style.pill,
-                              isStart && isEnd && "rounded-full px-1.5",
-                              isStart && !isEnd && "rounded-l-full pl-1.5 rounded-r-none border-r-0 pr-0",
-                              !isStart && isEnd && "rounded-r-full pr-1 rounded-l-none border-l-0 pl-0",
-                              !isStart && !isEnd && "rounded-none border-x-0 px-0",
-                            )}
+                            className="flex items-center gap-[5px] px-[7px] py-[3px] rounded-[6px] text-[10.5px] font-[600] overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                            style={{ background: st.chipBg, color: st.chipText }}
                           >
-                            {isStart && (
-                              <span className="hidden lg:flex items-center gap-0.5 pl-0.5">
-                                <span className={cn("h-1.5 w-1.5 rounded-full flex-shrink-0 -mt-px", style.dot)} />
-                                <span className="truncate">{title}</span>
-                              </span>
-                            )}
+                            <span
+                              className="w-[3px] h-[10px] rounded-[2px] flex-shrink-0"
+                              style={{ background: st.bar }}
+                            />
+                            <span className="truncate">{title}</span>
                           </div>
                         );
                       })}
-                      {daySessions.length > 2 && (
-                        <p className="text-[10px] font-medium text-[#6b7185] pl-1">
-                          +{daySessions.length - 2} más
-                        </p>
-                      )}
                     </div>
                   </div>
                 );
@@ -347,54 +326,71 @@ export default function PortalCalendarioPage() {
 
       {/* Session list */}
       {!loading && visibleSessions.length > 0 && (
-        <Card className="border-[#e8e4dc] shadow-sm">
+        <Card className="border-[#e8e4dc] shadow-sm animate-fade-in">
           <CardContent className="p-4 lg:p-5">
-            <div className="flex items-baseline gap-2 mb-4">
-              <h3 className="text-sm font-semibold text-[#15182b] tracking-tight">
-                {MONTHS[month]} {year}
-              </h3>
-              <span className="text-xs text-[#a5a9b8]">
-                {visibleSessions.length} sesión{visibleSessions.length !== 1 ? "es" : ""}
+            <h3 className="text-[13px] font-[700] text-[#15182b] uppercase tracking-[0.05em] mb-3">
+              Sesiones del mes
+              <span className="ml-2 text-[11px] font-[500] text-[#a5a9b8] normal-case tracking-normal">
+                {visibleSessions.length} en {MONTHS[month]}
               </span>
-            </div>
+            </h3>
             <div className="space-y-2">
               {visibleSessions.map((s) => {
-                const style = sedeStyle(s.sede_id);
+                const st = sedeStyle(s.sede_id);
                 const title = sessionTitle(s);
+                const startDate = parseLocalDate(s.start_date);
+                const dayAbbr = startDate.toLocaleDateString("es-CL", { weekday: "short" }).toUpperCase().replace(".", "").slice(0, 3);
+                const dayNum  = startDate.getDate();
 
                 return (
                   <div
                     key={s.id}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-[#e8e4dc] bg-[#f6f3ee]"
+                    className="flex items-center gap-3 px-3 py-[10px] rounded-[12px] border border-[#e8e4dc] bg-[#f7f5f0]"
                   >
-                    <div className={cn("w-[3px] self-stretch rounded-full flex-shrink-0", style.bar)} />
+                    {/* Date box */}
+                    <div
+                      className="w-11 h-11 rounded-[12px] flex flex-col items-center justify-center shrink-0"
+                      style={{
+                        background: st.dateBox,
+                        color: st.dateBox === "#f2b544" ? "#4a3410" : "white",
+                      }}
+                    >
+                      <span className="text-[9px] font-[700] uppercase tracking-[0.1em] leading-none">{dayAbbr}</span>
+                      <span className="text-[17px] font-[800] leading-tight tabular-nums">{dayNum}</span>
+                    </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-[#15182b] truncate leading-snug">
-                        {title}
-                      </p>
+                      <p className="text-[13.5px] font-[600] text-[#15182b] truncate leading-snug">{title}</p>
                       <div className="flex items-center gap-2 flex-wrap mt-0.5">
-                        <p className="text-xs text-[#6b7185]">
-                          {formatDateRange(s.start_date, s.end_date)}
-                        </p>
+                        <span className="text-[11.5px] text-[#6b7185]">{formatDateRange(s.start_date, s.end_date)}</span>
                         {s.sede_id && (
                           <>
                             <span className="text-[#e8e4dc]">·</span>
-                            <span className="flex items-center gap-1 text-xs text-[#6b7185]">
-                              <span className={cn("h-1.5 w-1.5 rounded-full flex-shrink-0", style.dot)} />
+                            <span
+                              className="inline-flex items-center gap-1 text-[11.5px] font-[600]"
+                              style={{ color: st.chipText }}
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full" style={{ background: st.bar }} />
                               {sedeName(s.sede_id)}
                             </span>
                           </>
                         )}
                         <span className="text-[#e8e4dc]">·</span>
-                        <span className="text-xs text-[#6b7185]">
+                        <span className="text-[11.5px] text-[#6b7185]">
                           {s.modality === "PRESENCIAL" ? "Presencial" : "Online"}
                         </span>
                       </div>
                       {s.notes && (
-                        <p className="text-xs text-[#a5a9b8] mt-0.5 italic truncate">{s.notes}</p>
+                        <p className="text-[11px] text-[#a5a9b8] italic truncate mt-0.5">{s.notes}</p>
                       )}
                     </div>
+
+                    <button
+                      onClick={() => router.push(`/portal/capacitacion/${s.training_id}`)}
+                      className="h-7 px-2.5 rounded-[8px] text-[12px] font-[600] text-[#2d4a8a] hover:bg-[#eaf0fb] transition-colors border border-[#e8e4dc] bg-white shrink-0"
+                    >
+                      Ver
+                    </button>
                   </div>
                 );
               })}
@@ -404,16 +400,12 @@ export default function PortalCalendarioPage() {
       )}
 
       {!loading && visibleSessions.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in">
           <div className="h-12 w-12 rounded-2xl bg-[#eaf0fb] flex items-center justify-center mb-3">
             <Calendar className="h-6 w-6 text-[#a5a9b8]" />
           </div>
-          <p className="text-sm font-medium text-[#15182b]">
-            Sin sesiones en {MONTHS[month]}
-          </p>
-          <p className="text-xs text-[#6b7185] mt-1">
-            No hay capacitaciones programadas para este mes.
-          </p>
+          <p className="text-sm font-medium text-[#15182b]">Sin sesiones en {MONTHS[month]}</p>
+          <p className="text-xs text-[#6b7185] mt-1">No hay capacitaciones programadas para este mes.</p>
         </div>
       )}
     </div>

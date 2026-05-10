@@ -20,7 +20,16 @@ interface TrainingCardProps {
 
 type ColorScheme = "navy" | "coral" | "mustard" | "green";
 
-const SCHEMES: ColorScheme[] = ["navy", "coral", "mustard", "green"];
+const AREA_SCHEME: Record<string, ColorScheme> = {
+  "Cuidado":        "coral",
+  "Enfermería":     "green",
+  "Administración": "mustard",
+};
+
+function areaScheme(area: string | null | undefined): ColorScheme {
+  if (!area) return "green";
+  return AREA_SCHEME[area] ?? "green";
+}
 
 const schemeConfig: Record<ColorScheme, {
   soft: string;
@@ -54,7 +63,7 @@ export default function TrainingCard({
   delay = 0,
   onDelete,
 }: TrainingCardProps) {
-  const scheme = SCHEMES[delay % SCHEMES.length];
+  const scheme = areaScheme(area);
   const s = schemeConfig[scheme];
   const statusInfo = statusConfig[status];
   const progress = asignados > 0 ? Math.round((completados / asignados) * 100) : 0;

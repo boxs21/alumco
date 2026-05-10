@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase";
 import { Download, History, Award, Clock, TrendingUp } from "lucide-react";
+import CertificatePreviewModal from "@/components/certificate/CertificatePreviewModal";
 
 interface Certificate {
   id: string;
@@ -23,6 +24,7 @@ interface Certificate {
 export default function HistorialPage() {
   const [certs, setCerts] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [previewCertId, setPreviewCertId] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -141,16 +143,14 @@ export default function HistorialPage() {
                           {c.issued_at ? new Date(c.issued_at).toLocaleDateString("es-CL") : "—"}
                         </TableCell>
                         <TableCell className="text-right">
-                          <a
-                            href={`/api/certificate/${c.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`Descargar certificado de ${getTitle(c)}`}
+                          <button
+                            onClick={() => setPreviewCertId(c.id)}
+                            aria-label={`Ver certificado de ${getTitle(c)}`}
                             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[9px] border border-[#e8e4dc] bg-[#f7f5f0] text-[12px] font-[600] text-[#15182b] hover:bg-[#eaf0fb] hover:border-[#c3d5f4] transition-colors"
                           >
                             <Download className="h-3.5 w-3.5" aria-hidden="true" />
-                            Descargar
-                          </a>
+                            Ver certificado
+                          </button>
                         </TableCell>
                       </TableRow>
                     );
@@ -177,14 +177,12 @@ export default function HistorialPage() {
                       <span className="text-[11.5px] text-[#6b7185]">
                         {c.issued_at ? new Date(c.issued_at).toLocaleDateString("es-CL") : "—"}
                       </span>
-                      <a
-                        href={`/api/certificate/${c.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => setPreviewCertId(c.id)}
                         className="text-[12px] font-[600] text-[#2d4a8a] hover:text-[#15182b] transition-colors"
                       >
-                        Descargar →
-                      </a>
+                        Ver certificado →
+                      </button>
                     </div>                  </div>
                 );
               })}
@@ -198,6 +196,14 @@ export default function HistorialPage() {
           </div>
         )}
       </div>
+
+      {previewCertId && (
+        <CertificatePreviewModal
+          certId={previewCertId}
+          open={!!previewCertId}
+          onClose={() => setPreviewCertId(null)}
+        />
+      )}
     </div>
   );
 }

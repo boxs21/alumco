@@ -7,6 +7,7 @@ import {
   FileText, Video, Presentation, Check, Award,
   ArrowRight, BookOpen, ClipboardList, ChevronLeft, Download, ExternalLink,
 } from "lucide-react";
+import CertificatePreviewModal from "@/components/certificate/CertificatePreviewModal";
 
 /* ─── Design tokens ──────────────────────────────────────────── */
 const T = {
@@ -58,8 +59,9 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
   const quizStartRef              = useRef<string | null>(null);
 
   /* Certificate */
-  const [certId,   setCertId]   = useState<string | null>(null);
-  const [certCode, setCertCode] = useState<string | null>(null);
+  const [certId,      setCertId]      = useState<string | null>(null);
+  const [certCode,    setCertCode]    = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   /* Data */
   const [trainingTitle, setTrainingTitle] = useState("");
@@ -684,16 +686,14 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
                     )}
 
                     {certId ? (
-                      <a
-                        href={`/api/certificate/${certId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => setShowPreview(true)}
                         style={{ background: T.blue, boxShadow: T.shadowBtn, letterSpacing: "0.08px" }}
                         className="inline-flex items-center gap-2 h-10 lg:h-11 px-6 rounded-xl text-white text-sm font-medium hover:brightness-110 transition-all"
                       >
                         <Download className="h-4 w-4" aria-hidden="true" />
-                        Descargar certificado
-                      </a>
+                        Ver certificado
+                      </button>
                     ) : (
                       <div
                         style={{
@@ -842,6 +842,14 @@ export default function CapacitacionPortalPage({ params }: { params: Promise<{ i
           </div>
         </div>
       </div>
+
+      {certId && (
+        <CertificatePreviewModal
+          certId={certId}
+          open={showPreview}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
     </div>
   );
 }
